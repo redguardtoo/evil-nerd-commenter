@@ -52,9 +52,10 @@
   (interactive)
   (global-set-key "\M-;" 'evilnc-comment-or-uncomment-lines)
   ;; set hot key for evil-mode, package evil-leader is needed
-  (if (fboundp 'evil-leader/set-key)
-      ;; same as nerd commenter in vim
-      (evil-leader/set-key "ci" 'evilnc-comment-or-uncomment-lines))
-  )
+  (eval-after-load 'evil-leader
+    '(progn
+       ;; same as nerd commenter in vim
+       (evil-leader/set-key "ci" 'evilnc-comment-or-uncomment-lines))
+       ))
 
 (provide 'evil-nerd-commenter)
