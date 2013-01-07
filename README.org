@@ -1,0 +1,42 @@
+* evil-nerd-commenter (current version 0.0.1)
+As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
+
+As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
+
+That's why I develop this Nerd Commenter simulator for Emacs people.
+* Install
+cpputils-cmake is already uploaded to [[http://marmalade-repo.org/]]. So the best way to install it is using Emacs' package manager.
+* Set up
+Nothing to set up. There is only one command "evilnc-comment-or-uncomment-lines". Just use it.
+
+You may use the hotkeys defined in evil-nerd-commenter by add following line into ~/.emacs:
+#+BEGIN_SRC elisp
+(evilnc-default-hotkeys)
+#+END_SRC
+
+The hotkey is "M-;" in emacs normal mode and "<Leader>ci" (",ci") in evil-mode.
+* Usage
+Example 1:
+"M-x evilnc-comment-or-uncomment-lines" comment/uncomment current line.
+
+Example 2:
+"C-u NUM M-x evilnc-comment-or-uncomment-lines" comment/uncomment next NUM lines.
+
+Example 3:
+Select a region and "M-x evilnc-comment-or-uncomment-lines". The region will automatically expand to contain whole lines. Then  comment/uncomment the region.
+
+Example 4:
+If you use [[http://emacswiki.org/emacs/Evil][evil-mode]] and get the package evil-leader installed. Comment 9 lines could be as easily as type "9,ci" (only four keys).
+* Contact me
+You can report bugs at [[https://github.com/redguardtoo/evil-nerd]]-commenter. My email is <chenbin DOT sh AT gmail>.
+* License
+Copyright (C) 2012 Chen Bin
+
+Author: Chen Bin <chenbin DOT sh AT gmail DOT com
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see [[http://www.gnu.org/licenses/]].
+
