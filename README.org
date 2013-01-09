@@ -1,4 +1,4 @@
-* evil-nerd-commenter (current version 0.0.1)
+* evil-nerd-commenter (current version 0.0.2)
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
@@ -9,26 +9,41 @@ Say you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", 
 * Install
 cpputils-cmake is already uploaded to [[http://marmalade-repo.org/]]. So the best way to install it is using Emacs' package manager.
 * Set up
-Nothing to set up. There is only one command "evilnc-comment-or-uncomment-lines". Just use it.
+Nothing to set up.
 
 You may use the hotkeys defined in evil-nerd-commenter by add following line into ~/.emacs:
 #+BEGIN_SRC elisp
 (evilnc-default-hotkeys)
 #+END_SRC
 
-The hotkey is "M-;" in emacs normal mode and "<Leader>ci" (",ci") in evil-mode.
+I prefer vi key binds. So I use [[http://emacswiki.org/emacs/Evil][evil-mode]] and evil-leader.
+
+Here is my configuration for evil-mode:
+#+BEGIN_SRC elisp
+(require 'evil)
+(require 'evil-leader)
+(setq evil-leader/leader "," evil-leader/in-all-states t)
+(evil-leader/set-key
+  "ci" 'evilnc-comment-or-uncomment-lines
+  "cc" 'evilnc-comment-or-uncomment-to-the-line
+  )
+#+END_SRC
 * Usage
+These are available commands:
+- evilnc-comment-or-uncomment-lines :: comment/uncomment lines.
+- evilnc-comment-or-uncomment-to-the-line :: comment/uncomment from current line to the specified line.
+
 Example 1:
-"M-x evilnc-comment-or-uncomment-lines" comment/uncomment current line.
+"C-u NUM M-x evilnc-comment-or-uncomment-lines", comment/uncomment next NUM lines.
 
 Example 2:
-"C-u NUM M-x evilnc-comment-or-uncomment-lines" comment/uncomment next NUM lines.
-
-Example 3:
 Select a region and "M-x evilnc-comment-or-uncomment-lines". The region will automatically expand to contain whole lines. Then  comment/uncomment the region.
 
+Example 3:
+If you use [[http://emacswiki.org/emacs/Evil][evil-mode]] and get the package evil-leader installed. Comment 9 lines could be as easily as type "9<Leader>ci" (only four keys).
+
 Example 4:
-If you use [[http://emacswiki.org/emacs/Evil][evil-mode]] and get the package evil-leader installed. Comment 9 lines could be as easily as type "9,ci" (only four keys).
+"C-u 56 M-x evilnc-comment-or-uncomment-to-the-line", comment/uncomment from current line to line 56.
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd]]-commenter. My email is <chenbin DOT sh AT gmail>.
 * License
