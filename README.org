@@ -7,7 +7,7 @@ That's why I develop this Nerd Commenter simulator for Emacs people.
 * Why evil-nerd-commenter is better? Show me a simple use case!
 Say you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", now you can press "M-9 M-;" or ",9ci".
 * Install
-cpputils-cmake is already uploaded to [[http://marmalade-repo.org/]]. So the best way to install it is using Emacs' package manager.
+evil-nerd-commenter is already uploaded to [[http://marmalade-repo.org/]]. So the best way to install it is using Emacs' package manager.
 * Set up
 Nothing to set up.
 
