@@ -11,12 +11,14 @@ evil-nerd-commenter is already uploaded to [[http://marmalade-repo.org/]]. So th
 * Set up
 Nothing to set up.
 
-You may use the hotkeys defined in evil-nerd-commenter by add following line into ~/.emacs:
+You may add below line into ~/.emacs which use hotkey "M-;" to toggle comment:
 #+BEGIN_SRC elisp
 (evilnc-default-hotkeys)
 #+END_SRC
 
-I prefer vi key binds. So I use [[http://emacswiki.org/emacs/Evil][evil-mode]] and evil-leader.
+The advantage of use "M-;" is you can set mark on the first line and scroll serveral pages down and comment all the lines in that region by "M-;".
+
+I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]] and evil-leader.
 
 Here is my configuration for evil-mode:
 #+BEGIN_SRC elisp
