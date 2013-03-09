@@ -6,22 +6,25 @@ As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Comm
 That's why I develop this Nerd Commenter simulator for Emacs people.
 * Why evil-nerd-commenter is better? Show me a simple use case!
 Say you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", now you can press "M-9 M-;" or ",9ci".
+
+The key point is you need NOT mark any text to comment line(s)!
 * Install
 evil-nerd-commenter is already uploaded to [[http://marmalade-repo.org/]]. So the best way to install it is using Emacs' package manager.
 * Set up
 Nothing to set up.
 
 You may add below line into ~/.emacs which use hotkey "M-;" to toggle comment:
-#+BEGIN_SRC elisp
-(evilnc-default-hotkeys)
+#+BEGIN_SRC lisp
+(global-set-key "\M-;" 'evilnc-comment-or-uncomment-lines)
+(global-set-key "\M-:" 'evilnc-comment-or-uncomment-to-the-line)
 #+END_SRC
 
-The advantage of use "M-;" is you can set mark on the first line and scroll serveral pages down and comment all the lines in that region by "M-;".
+The advantage of use "M-;" is you can set mark on the first line and scroll several pages down and comment all the lines in that region by "M-;".
 
 I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]] and evil-leader.
 
 Here is my configuration for evil-mode:
-#+BEGIN_SRC elisp
+#+BEGIN_SRC lisp
 (require 'evil)
 (require 'evil-leader)
 (setq evil-leader/leader "," evil-leader/in-all-states t)
