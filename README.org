@@ -19,7 +19,7 @@ You may add below line into ~/.emacs which use hotkey "M-;" to toggle comment:
 (global-set-key "\M-:" 'evilnc-comment-or-uncomment-to-the-line)
 #+END_SRC
 
-The advantage of use "M-;" is you can set mark on the first line and scroll several pages down and comment all the lines in that region by "M-;".
+The advantage of use "M-;" is you can set mark on the first line and scroll several pages down and comment all the lines in that region by "M-;". The key point here is you save the extra two key strikes to make marked region wrap the whole content of first and second line.
 
 I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]] and evil-leader.
 
