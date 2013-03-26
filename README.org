@@ -1,4 +1,4 @@
-* evil-nerd-commenter (current version 0.0.2)
+* evil-nerd-commenter (current version 0.0.3)
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
@@ -25,7 +25,7 @@ The advantage of use "M-;" is you can set mark on the first line and scroll seve
 
 I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]] and evil-leader.
 
-Here is my configuration for evil-mode:
+Here is my configuration for evil-mode (OPTIONAL, some people don't use evil-mode at all because they don't like vi key bindings):
 #+BEGIN_SRC lisp
 (require 'evil)
 (require 'evil-leader)
@@ -36,21 +36,22 @@ Here is my configuration for evil-mode:
   )
 #+END_SRC
 * Usage
-These are available commands:
+Here are available commands:
 - evilnc-comment-or-uncomment-lines :: comment/uncomment lines.
 - evilnc-comment-or-uncomment-to-the-line :: comment/uncomment from current line to the specified line.
+- evilnc-toggle-comment-empty-lines :: toggle the flag to comment/uncomment empty lines
 
 Example 1:
 "C-u NUM M-x evilnc-comment-or-uncomment-lines", comment/uncomment next NUM lines.
 
 Example 2:
-Select a region and "M-x evilnc-comment-or-uncomment-lines". The region will automatically expand to contain whole lines. Then  comment/uncomment the region.
+Select a region and "M-x evilnc-comment-or-uncomment-lines". The region will be *automatically expanded to contain whole lines*. Then we comment/uncomment the region.
 
 Example 3:
 If you use [[http://emacswiki.org/emacs/Evil][evil-mode]] and get the package evil-leader installed. Comment 9 lines could be as easily as type "9<Leader>ci" (only four keys).
 
 Example 4:
-"C-u 56 M-x evilnc-comment-or-uncomment-to-the-line", comment/uncomment from current line to line 56.
+"C-u 56 M-x evilnc-comment-or-uncomment-to-the-line", comment/uncomment *from current line* to line 56.
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd]]-commenter. My email is <chenbin DOT sh AT gmail>.
 * License

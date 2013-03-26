@@ -4,7 +4,7 @@
 ;; Author: Chen Bin <chenbin DOT sh AT gmail>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
 ;; Keywords: commenter vim line evil
-;; Version: 0.0.2
+;; Version: 0.0.3
 
 ;; This file is not part of GNU Emacs.
 
@@ -47,6 +47,18 @@
           )
         )
   ))
+
+;;;###autoload
+(defun evilnc-toggle-comment-empty-lines ()
+  (interactive)
+  (if comment-empty-lines
+      (setq comment-empty-lines nil)
+    (setq comment-empty-lines t)
+    )
+  (message (if comment-empty-lines
+               "Empty line(s) will be commented"
+             "Empty line(s) will NOT be commented"))
+  )
 
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-lines (&optional NUM)
