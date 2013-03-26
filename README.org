@@ -53,11 +53,11 @@ If you use [[http://emacswiki.org/emacs/Evil][evil-mode]] and get the package ev
 Example 4:
 "C-u 56 M-x evilnc-comment-or-uncomment-to-the-line", comment/uncomment *from current line* to line 56.
 * Contact me
-You can report bugs at [[https://github.com/redguardtoo/evil-nerd]]-commenter. My email is <chenbin DOT sh AT gmail>.
+You can report bugs at [[https://github.com/redguardtoo/evil-nerd]]-commenter. My email is <chenbin.sh@gmail.com>.
 * License
 Copyright (C) 2012 Chen Bin
 
-Author: Chen Bin <chenbin DOT sh AT gmail DOT com
+Author: Chen Bin <chenbin.sh@gmail.com>
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
