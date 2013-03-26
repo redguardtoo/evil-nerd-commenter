@@ -1,7 +1,7 @@
 ;;; evil-nerd-commenter --- Comment/uncomment lines efficiently. Like Nerd Commenter in Vim
 
 ;; Copyright (C) 2012 Chen Bin
-;; Author: Chen Bin <chenbin.sh@gmail.com>
+;; Author: Chen Bin <chenbin DOT sh AT gmail>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
 ;; Keywords: commenter vim line evil
 ;; Version: 0.0.2

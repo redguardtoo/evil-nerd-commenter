@@ -8,6 +8,8 @@ That's why I develop this Nerd Commenter simulator for Emacs people.
 Say you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", now you can press "M-9 M-;" or ",9ci".
 
 The key point is you need NOT mark any text to comment line(s)!
+
+So you strike less keys to comment code than the origial "M-x comment-dwim".
 * Install
 evil-nerd-commenter is already uploaded to [[http://marmalade-repo.org/]]. So the best way to install it is using Emacs' package manager.
 * Set up
