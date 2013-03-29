@@ -4,7 +4,7 @@
 ;; Author: Chen Bin <chenbin DOT sh AT gmail>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
 ;; Keywords: commenter vim line evil
-;; Version: 0.0.3
+;; Version: 0.0.4
 
 ;; This file is not part of GNU Emacs.
 
@@ -21,13 +21,32 @@
 ;;; Code:
 
 ;; shamelessly copied from goto-line
-(defun evilnc-goto-line (line)
+(defun evilnc--goto-line (line)
   (save-restriction
     (widen)
     (goto-char (point-min))
     (if (eq selective-display t)
 	(re-search-forward "[\n\C-m]" nil 'end (1- line))
       (forward-line (1- line))))
+  )
+
+(defun evilnc--fix-buggy-major-modes ()
+  "fix major modes whose comment regex is buggy.
+@see http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html"
+  (when (string= major-mode "autoconf-mode")
+    ;; since comment-use-syntax is nil in autoconf.el, the comment-start-skip need
+    ;; make sure the its first parenthesized expression match the string exactly before
+    ;; the "dnl", check the comment-start-skip in lisp-mode may give you some hint.
+    ;; See code in (defun comment-search-forward) from emacs 24.2.1:
+    ;; (if (not comment-use-syntax)
+    ;;     (if (re-search-forward comment-start-skip limit noerror)
+    ;;     (or (match-end 1) (match-beginning 0))
+    ;; My regex make sure (match-end 1) return the position of comment starter
+    (when (and (boundp 'comment-use-syntax) (not comment-use-syntax))
+        ;; Maybe autoconf.el will (setq comment-use-syntax t) in the future?
+        (setq comment-start-skip "^\\(\\s*\\)\\(dnl\\|#\\) +")
+      )
+    )
   )
 
 ;;;###autoload
@@ -38,15 +57,16 @@
       (let ((b (line-beginning-position))
             (e (line-end-position)))
         (save-excursion
-          (evilnc-goto-line LINENUM)
+          (evilnc--goto-line LINENUM)
           (if (< (line-beginning-position) b)
               (setq b (line-beginning-position)))
           (if (> (line-end-position) e)
               (setq e (line-end-position)))
+          (evilnc--fix-buggy-major-modes)
           (comment-or-uncomment-region b e)
           )
         )
-  ))
+    ))
 
 ;;;###autoload
 (defun evilnc-toggle-comment-empty-lines ()
@@ -74,6 +94,7 @@
         (save-excursion
           (forward-line (- NUM 1))
           (setq e (line-end-position))
+          (evilnc--fix-buggy-major-modes)
           (comment-or-uncomment-region b e)
           )
         )
@@ -86,6 +107,7 @@
         (setq b (line-beginning-position))
         (goto-char e)
         (setq e (line-end-position))
+        (evilnc--fix-buggy-major-modes)
         (comment-or-uncomment-region b e)))
     ))
 
