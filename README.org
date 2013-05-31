@@ -1,9 +1,16 @@
-* evil-nerd-commenter (current version 0.0.4)
+* evil-nerd-commenter (current version 0.0.5)
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
 
 That's why I develop this Nerd Commenter simulator for Emacs people.
+
+Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]]
+and [[https://github.com/cofi/evil-leader][evil-leader]].
+
+Evil and evil-leader make you take advantage of power of Vi to comment lines in shocking speed.
+For example, you can press key `99,ci` to comment out 99 lines.
+
 * Why evil-nerd-commenter is better? 
 ** A simple use case on the efficiency
 Say you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", now you can press "M-9 M-;" or ",9ci".
@@ -28,14 +35,14 @@ The advantage of use "M-;" is you can set mark on the first line and scroll seve
 
 I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]] and evil-leader.
 
-Here is my configuration for evil-mode (OPTIONAL, some people don't use evil-mode at all because they don't like vi key bindings):
+Here is my configuration for evil-mode (*OPTIONAL!* some people don't use evil-mode at all because they don't like vi key bindings):
 #+BEGIN_SRC lisp
 (require 'evil)
 (require 'evil-leader)
 (setq evil-leader/leader "," evil-leader/in-all-states t)
 (evil-leader/set-key
   "ci" 'evilnc-comment-or-uncomment-lines
-  "cc" 'evilnc-comment-or-uncomment-to-the-line
+  "cl" 'evilnc-comment-or-uncomment-to-the-line
   )
 #+END_SRC
 * Usage
@@ -57,14 +64,3 @@ Example 4:
 "C-u 56 M-x evilnc-comment-or-uncomment-to-the-line", comment/uncomment *from current line* to line 56.
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd]]-commenter. My email is <chenbin.sh@gmail.com>.
-* License
-Copyright (C) 2012 Chen Bin
-
-Author: Chen Bin <chenbin.sh@gmail.com>
-
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program. If not, see [[http://www.gnu.org/licenses/]].
-

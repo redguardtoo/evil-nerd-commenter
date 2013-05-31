@@ -1,22 +1,49 @@
 ;;; evil-nerd-commenter --- Comment/uncomment lines efficiently. Like Nerd Commenter in Vim
 
-;; Copyright (C) 2012 Chen Bin
-;; Author: Chen Bin <chenbin DOT sh AT gmail>
-;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Keywords: commenter vim line evil
-;; Version: 0.0.4
+;; Copyright (C) 2013 Chen Bin
 
+;; Author: Chen Bin <chenbin.sh@gmail.com>
+;; URL: http://github.com/redguardtoo/evil-nerd-commenter
+;; Version: 0.0.5
+;; Keywords: commenter vim line evil
+;;
 ;; This file is not part of GNU Emacs.
 
-;; This file is free software (GPLv3 License)
+;;; License:
 
-;; How to set it up:
-;; 1. "evilnc-default-hotkeys" will assign hotkey "M-;" for emacs normal mode and "<Leader>ci" for evil-mode.
-;; 2. Calling (evilnc-default-hotkeys) is NOT needed if you define your own hotkey.
+;; This file is part of evil-nerd-commenter
 ;;
-;; How to use:
-;; 1. "evilnc-comment-or-uncomment-lines" - comment/uncomment lines.
-;; 2. "evilnc-comment-or-uncomment-to-the-line" - comment/uncomment from current line to the specified line
+;; evil-nerd-commenter is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as published
+;; by the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+;;
+;; evil-nerd-commenter is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;
+;; This program emulates nerd-commenter.vim by Marty Grenfell.
+;; It help you comment/uncomment multiple lines without selecting them.
+;;
+;; `M-x evilnc-default-hotkeys` assigns hotkey `M-;` to `evilnc-comment-or-uncomment-lines'
+;; `M-x evilnc-comment-or-uncomment-lines` comment or uncomment lines.
+;; `M-x evilnc-comment-or-uncomment-to-the-line` will comment/uncomment from current line to
+;; the specified line number. The line number is passed as parameter of the command.
+;; For example, `C-u 99 evilnc-comment-or-uncomment-to-the-line` will comment code from
+;; current line to line 99.
+;;
+;; Though this program could be used *independently*, I highly recommend you use it with
+;; evil (http://gitorious.org/evil) and evil-leader (https://github.com/cofi/evil-leader).
+;;
+;; Evil and evil-leader make you take advantage of power of Vi to comment lines in shocking speed.
+;; For example, you can press key `99,ci` to comment out 99 lines.
+
 
 ;;; Code:
 
@@ -103,6 +130,13 @@
       (let ((b (region-beginning))
             (e (region-end))
             )
+        ;; another work around for evil-visual-line bug:
+        ;; in evil-mode, if we use hot key V `M-x evil-visual-line` to select line
+        ;; the (line-beginning-position) of the line which is after the last selected
+        ;; line is always (region-end)! Don't know why.
+        (if (and (> e b) (= e (line-beginning-position)) (boundp 'evil-state) (string= evil-state 'visual))
+            (setq e (1- e))
+            )
         (goto-char b)
         (setq b (line-beginning-position))
         (goto-char e)
@@ -120,3 +154,5 @@
   )
 
 (provide 'evil-nerd-commenter)
+
+;;; evil-nerd-commenter.el ends here
