@@ -63,4 +63,4 @@ If you use [[http://emacswiki.org/emacs/Evil][evil-mode]] and get the package ev
 Example 4:
 "C-u 56 M-x evilnc-comment-or-uncomment-to-the-line", comment/uncomment *from current line* to line 56.
 * Contact me
-You can report bugs at [[https://github.com/redguardtoo/evil-nerd]]-commenter. My email is <chenbin.sh@gmail.com>.
+You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
