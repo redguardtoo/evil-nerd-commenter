@@ -76,7 +76,7 @@
     )
   )
 
-(defun evilnc--operation-on-lines-or-region (fn)
+(defun evilnc--operation-on-lines-or-region (fn,&optional NUM)
   (if (not (region-active-p))
       (let ((b (line-beginning-position))
             e)
@@ -152,7 +152,8 @@
   (evilnc--operation-on-lines-or-region '(lambda (b e)
                                            (evilnc--fix-buggy-major-modes)
                                            (comment-or-uncomment-region b e)
-                                           ))
+                                           )
+                                        NUM)
   )
 
 ;;;###autoload
