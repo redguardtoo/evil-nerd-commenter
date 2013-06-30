@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 0.0.5
+;; Version: 0.0.6
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -76,6 +76,40 @@
     )
   )
 
+(defun evilnc--operation-on-lines-or-region (fn)
+  (if (not (region-active-p))
+      (let ((b (line-beginning-position))
+            e)
+        (save-excursion
+          (forward-line (- NUM 1))
+          (setq e (line-end-position))
+          )
+        (funcall fn b e)
+        )
+    ;; expand selected region
+    (progn
+      (save-excursion
+        (let ((b (region-beginning))
+              (e (region-end))
+              )
+          ;; another work around for evil-visual-line bug:
+          ;; in evil-mode, if we use hot key V `M-x evil-visual-line` to select line
+          ;; the (line-beginning-position) of the line which is after the last selected
+          ;; line is always (region-end)! Don't know why.
+          (if (and (> e b) (= e (line-beginning-position)) (boundp 'evil-state) (string= evil-state 'visual))
+              (setq e (1- e))
+            )
+          (goto-char b)
+          (setq b (line-beginning-position))
+          (goto-char e)
+          (setq e (line-end-position))
+          ))
+      (funcall fn b e)
+      )
+    )
+  )
+
+;; ==== below this line are public commands
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-to-the-line (&optional LINENUM)
   "Comment or uncomment from the current line to the LINENUM line"
@@ -115,42 +149,39 @@
    Case 2: If a region selected, the region is expand to make sure the region contain
    whole lines. Then we comment/uncomment the expanded region. NUM is ignored."
   (interactive "p")
-  (if (not (region-active-p))
-      (let ((b (line-beginning-position))
-            e)
-        (save-excursion
-          (forward-line (- NUM 1))
-          (setq e (line-end-position))
-          (evilnc--fix-buggy-major-modes)
-          (comment-or-uncomment-region b e)
-          )
-        )
-    ;; expand selected region
-    (save-excursion
-      (let ((b (region-beginning))
-            (e (region-end))
-            )
-        ;; another work around for evil-visual-line bug:
-        ;; in evil-mode, if we use hot key V `M-x evil-visual-line` to select line
-        ;; the (line-beginning-position) of the line which is after the last selected
-        ;; line is always (region-end)! Don't know why.
-        (if (and (> e b) (= e (line-beginning-position)) (boundp 'evil-state) (string= evil-state 'visual))
-            (setq e (1- e))
-            )
-        (goto-char b)
-        (setq b (line-beginning-position))
-        (goto-char e)
-        (setq e (line-end-position))
-        (evilnc--fix-buggy-major-modes)
-        (comment-or-uncomment-region b e)))
-    ))
+  (evilnc--operation-on-lines-or-region '(lambda (b e)
+                                           (evilnc--fix-buggy-major-modes)
+                                           (comment-or-uncomment-region b e)
+                                           ))
+  )
+
+;;;###autoload
+(defun evilnc-copy-and-comment-lines (&optional NUM)
+  "Copy and paste lines. Then comment original lines.
+   Case 1: If no region selected, operate on current line. if NUM>1, comment/uncomment
+   extra N-1 lines from next line
+   Case 2: If a region selected, the region is expand to make sure the region contain
+   whole lines. Then we operate the expanded region. NUM is ignored.
+"
+  (interactive "p")
+  (evilnc--operation-on-lines-or-region
+   '(lambda (beg end)
+      (evilnc--fix-buggy-major-modes)
+      (let ((str (buffer-substring-no-properties beg end)))
+        (goto-char end)
+        (newline 1)
+        (insert-before-markers str)
+        (comment-region beg end)
+        )))
+  )
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()
   "Set the hotkeys of evil-nerd-comment"
   (interactive)
-  (global-set-key "\M-;" 'evilnc-comment-or-uncomment-lines)
-  (global-set-key "\M-:" 'evilnc-comment-or-uncomment-to-the-line)
+  (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
+  (global-set-key (kbd "M-:") 'evilnc-comment-or-uncomment-to-the-line)
+  (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
   )
 
 (provide 'evil-nerd-commenter)

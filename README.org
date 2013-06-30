@@ -1,9 +1,9 @@
-* evil-nerd-commenter (current version 0.0.5)
+* evil-nerd-commenter (current version 0.0.6)
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
 
-That's why I develop this Nerd Commenter simulator for Emacs people.
+That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also add my own comment related utilities into this plugin, like command to command *AND* copy lines.
 
 Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]]
 and [[https://github.com/cofi/evil-leader][evil-leader]].
@@ -25,10 +25,11 @@ evil-nerd-commenter is already uploaded to [[http://marmalade-repo.org/]]. So th
 * Set up
 Nothing to set up.
 
-You may add below line into ~/.emacs which use hotkey "M-;" to toggle comment:
+You may add below line into ~/.emacs which use hot key "M-;" to toggle comment:
 #+BEGIN_SRC lisp
-(global-set-key "\M-;" 'evilnc-comment-or-uncomment-lines)
-(global-set-key "\M-:" 'evilnc-comment-or-uncomment-to-the-line)
+(global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
+(global-set-key (kbd "M-:") 'evilnc-comment-or-uncomment-to-the-line)
+(global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
 #+END_SRC
 
 The advantage of use "M-;" is you can set mark on the first line and scroll several pages down and comment all the lines in that region by "M-;". The key point here is you save the extra two key strikes to make marked region wrap the whole content of first and second line.
@@ -43,12 +44,14 @@ Here is my configuration for evil-mode (*OPTIONAL!* some people don't use evil-m
 (evil-leader/set-key
   "ci" 'evilnc-comment-or-uncomment-lines
   "cl" 'evilnc-comment-or-uncomment-to-the-line
+  "cc" 'evilnc-copy-and-comment-lines
   )
 #+END_SRC
 * Usage
 Here are available commands:
 - evilnc-comment-or-uncomment-lines :: comment/uncomment lines.
 - evilnc-comment-or-uncomment-to-the-line :: comment/uncomment from current line to the specified line.
+- evilnc-copy-and-comment-lines :: copy and paste lines, then comment out original lines
 - evilnc-toggle-comment-empty-lines :: toggle the flag to comment/uncomment empty lines
 
 Example 1:
