@@ -3,21 +3,19 @@ As a developer, I often need comment/uncomment lines for debugging or adding som
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
 
-That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also add my own comment related utilities into this plugin, like command to command *AND* copy lines.
+That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 0.0.6.
 
-Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]]
-and [[https://github.com/cofi/evil-leader][evil-leader]].
+Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]] and [[https://github.com/cofi/evil-leader][evil-leader]].
 
-Evil and evil-leader make you take advantage of power of Vi to comment lines in shocking speed.
-For example, you can press key `99,ci` to comment out 99 lines.
+Evil and evil-leader make you take advantage of power of Vi to comment lines in shocking speed. For example, you can press key `99,ci` to comment out 99 lines.
 
 * Why evil-nerd-commenter is better? 
 ** A simple use case on the efficiency
 Say you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", now you can press "M-9 M-;" or ",9ci".
 
-The key point is you need NOT mark any text to comment line(s)!
+The key point is you need *NOT* mark any text to comment line(s)!
 
-So you strike less keys to comment code than the original "M-x comment-dwim".
+So you strike less keys than the original "M-x comment-dwim".
 ** The commenter will ALWAYS work even the official Emacs has some bug
 I'll provide long-term support for this plugin for *ANY language* in the future. Here is a example how I work around [[https://github.com/redguardtoo/evil-nerd-commenter/issues/3][a bug in autoconf.el]]. 
 * Install
@@ -27,6 +25,7 @@ Nothing to set up.
 
 You may add below line into ~/.emacs which use hot key "M-;" to toggle comment:
 #+BEGIN_SRC lisp
+(require 'evil-nerd-commenter)
 (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
 (global-set-key (kbd "M-:") 'evilnc-comment-or-uncomment-to-the-line)
 (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
@@ -65,5 +64,8 @@ If you use [[http://emacswiki.org/emacs/Evil][evil-mode]] and get the package ev
 
 Example 4:
 "C-u 56 M-x evilnc-comment-or-uncomment-to-the-line", comment/uncomment *from current line* to line 56.
+
+Example 5:
+"C-u 2 M-x evilnc-copy-and-comment-lines", copy 2 lines and paste them below the original line. Then comment out original lines. The focus will be moved to the new lines.
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
