@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 0.0.6
+;; Version: 0.0.7
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -76,7 +76,7 @@
     )
   )
 
-(defun evilnc--operation-on-lines-or-region (fn,&optional NUM)
+(defun evilnc--operation-on-lines-or-region (fn &optional NUM)
   (if (not (region-active-p))
       (let ((b (line-beginning-position))
             e)
@@ -173,7 +173,8 @@
         (newline 1)
         (insert-before-markers str)
         (comment-region beg end)
-        )))
+        ))
+   NUM)
   )
 
 ;;;###autoload
