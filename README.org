@@ -16,6 +16,9 @@ Say you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", 
 The key point is you need *NOT* mark any text to comment line(s)!
 
 So you strike less keys than the original "M-x comment-dwim".
+
+Here is the live demo:
+[[https://raw.github.com/redguardtoo/evil-nerd-commenter/master/evil-nerd-commenter-demo.gif]]
 ** The commenter will ALWAYS work even the official Emacs has some bug
 I'll provide long-term support for this plugin for *ANY language* in the future. Here is a example how I work around [[https://github.com/redguardtoo/evil-nerd-commenter/issues/3][a bug in autoconf.el]]. 
 * Install
