@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 0.0.7
+;; Version: 0.0.8
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -103,8 +103,8 @@
           (setq b (line-beginning-position))
           (goto-char e)
           (setq e (line-end-position))
+          (funcall fn b e)
           ))
-      (funcall fn b e)
       )
     )
   )
