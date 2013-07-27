@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 0.0.8
+;; Version: 0.0.9
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -39,9 +39,9 @@
 ;; current line to line 99.
 ;;
 ;; Though this program could be used *independently*, I highly recommend you use it with
-;; evil (http://gitorious.org/evil) and evil-leader (https://github.com/cofi/evil-leader).
+;; evil (http://gitorious.org/evil)
 ;;
-;; Evil and evil-leader make you take advantage of power of Vi to comment lines in shocking speed.
+;; Evil makes you take advantage of power of Vi to comment lines in shocking speed.
 ;; For example, you can press key `99,ci` to comment out 99 lines.
 
 
@@ -184,6 +184,12 @@
   (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
   (global-set-key (kbd "M-:") 'evilnc-comment-or-uncomment-to-the-line)
   (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
+  (eval-after-load 'evil
+    '(progn
+       (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
+       (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
+       (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
+       ))
   )
 
 (provide 'evil-nerd-commenter)

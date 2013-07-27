@@ -1,13 +1,13 @@
-* evil-nerd-commenter (current version 0.0.8)
+* evil-nerd-commenter (current version 0.0.9)
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
 
-That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 0.0.8.
+That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 0.0.9.
 
-Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]] and [[https://github.com/cofi/evil-leader][evil-leader]].
+Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]].
 
-Evil and evil-leader make you take advantage of power of Vi to comment lines in shocking speed. For example, you can press key `99,ci` to comment out 99 lines.
+Evil makes you take advantage of power of Vi to comment lines in shocking speed. For example, you can press key `99,ci` to comment out 99 lines.
 
 * Why evil-nerd-commenter is better? 
 ** A simple use case on the efficiency
@@ -26,28 +26,40 @@ evil-nerd-commenter is already uploaded to [[http://marmalade-repo.org/]]. So th
 * Set up
 Nothing to set up.
 
-You may add below line into ~/.emacs which use hot key "M-;" to toggle comment:
+You may add one line of emacs lisp code into ~/.emacs to let evil-nerd-commenter assign hot keys for you:
 #+BEGIN_SRC lisp
-(require 'evil-nerd-commenter)
-(global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
-(global-set-key (kbd "M-:") 'evilnc-comment-or-uncomment-to-the-line)
-(global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
+(evilnc-default-hotkeys)
 #+END_SRC
 
+The content of evilnc-default-hotkeys:
+#+BEGIN_SRC lisp
+(defun evilnc-default-hotkeys ()
+  "Set the hotkeys of evil-nerd-comment"
+  (interactive)
+  (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
+  (global-set-key (kbd "M-:") 'evilnc-comment-or-uncomment-to-the-line)
+  (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
+  (eval-after-load 'evil
+    '(progn
+       (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
+       (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
+       (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
+       ))
+  )
+#+END_SRC
+
+
+As you can see, the default hot key for commenting lines is "M-;" when you don't use [[http://emacswiki.org/emacs/Evil][evil-mode]].
 The advantage of use "M-;" is you can set mark on the first line and scroll several pages down and comment all the lines in that region by "M-;". The key point here is you save the extra two key strikes to make marked region wrap the whole content of first and second line.
 
-I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]] and evil-leader.
+I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]].
 
 Here is my configuration for evil-mode (*OPTIONAL!* some people don't use evil-mode at all because they don't like vi key bindings):
 #+BEGIN_SRC lisp
 (require 'evil)
-(require 'evil-leader)
-(setq evil-leader/leader "," evil-leader/in-all-states t)
-(evil-leader/set-key
-  "ci" 'evilnc-comment-or-uncomment-lines
-  "cl" 'evilnc-comment-or-uncomment-to-the-line
-  "cc" 'evilnc-copy-and-comment-lines
-  )
+(define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
+(define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
+(define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
 #+END_SRC
 * Usage
 Here are available commands:
@@ -63,7 +75,7 @@ Example 2:
 Select a region and "M-x evilnc-comment-or-uncomment-lines". The region will be *automatically expanded to contain whole lines*. Then we comment/uncomment the region.
 
 Example 3:
-If you use [[http://emacswiki.org/emacs/Evil][evil-mode]] and get the package evil-leader installed. Comment 9 lines could be as easily as type "9<Leader>ci" (only four keys).
+If you use [[http://emacswiki.org/emacs/Evil][evil-mode]] installed. Comment 9 lines could be as easily as type "9,ci" (only four keys).
 
 Example 4:
 "C-u 56 M-x evilnc-comment-or-uncomment-to-the-line", comment/uncomment *from current line* to line 56.
