@@ -31,7 +31,9 @@ You may add one line of emacs lisp code into ~/.emacs to let evil-nerd-commenter
 (evilnc-default-hotkeys)
 #+END_SRC
 
-The content of evilnc-default-hotkeys:
+And *that's ALL*!
+
+Further explanation, the content of evilnc-default-hotkeys is:
 #+BEGIN_SRC lisp
 (defun evilnc-default-hotkeys ()
   "Set the hotkeys of evil-nerd-comment"
