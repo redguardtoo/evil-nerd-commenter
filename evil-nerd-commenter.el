@@ -109,7 +109,74 @@
     )
   )
 
+
+(defun evilnc--comment-or-uncomment-one-paragraph ()
+  (let (b e (forward-search-done nil))
+    (save-excursion
+      (setq b (re-search-backward "^[ \t]*$" nil t))
+      (if b (progn
+              (forward-line)
+              (setq b (line-beginning-position))
+              )
+        (setq b 1)
+        )
+      )
+    (save-excursion
+      (setq e (re-search-forward "^[ \t]*$" nil t))
+      (if e (progn
+              (forward-line -1)
+              (setq e (line-end-position))
+              )
+        (progn
+          (setq e (point-max))
+          (setq forward-search-done t)
+          )
+        )
+      )
+    ;; (message "b e: %d %d" b e)
+    (when (<= b e)
+      (evilnc--fix-buggy-major-modes)
+      (comment-or-uncomment-region b e)
+      )
+    (if forward-search-done nil e)
+    )
+  )
+
+
 ;; ==== below this line are public commands
+;;;###autoload
+(defun evilnc-comment-or-uncomment-paragraphs (&optional NUM)
+  "Comment or uncomment paragraph(s). A paragraph is a continuation non-empty lines.
+Paragraphs are separated by empty lines."
+  (interactive "p")
+  (let ((i 0)
+        rlt)
+    (catch 'break
+      (while (< i NUM)
+        (incf i)
+        (setq rlt (evilnc--comment-or-uncomment-one-paragraph))
+
+        ;; prepare for the next paragraph
+        (if (and rlt (< i NUM))
+            (progn
+              ;; rlt should be the end of last non-empty line
+              (goto-char rlt)
+
+              ;; (beginning-of-line)
+              ;; move to an empty line
+              (forward-line)
+              ;; record the empty line position for furture use
+              (setq rlt (line-beginning-position))
+
+              ;; move to next non-empty line
+              (re-search-forward "^[ \t]*[^ \t]" nil t)
+              (if (<= (line-beginning-position) rlt) (throw 'break i))
+              )
+          (throw 'break i)
+          )
+        )))
+  )
+
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-to-the-line (&optional LINENUM)
   "Comment or uncomment from the current line to the LINENUM line"
@@ -184,11 +251,13 @@
   (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
   (global-set-key (kbd "M-:") 'evilnc-comment-or-uncomment-to-the-line)
   (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
+  (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
   (eval-after-load 'evil
     '(progn
        (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
        (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
        (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
+       (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
        ))
   )
 
