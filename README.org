@@ -1,9 +1,9 @@
-* evil-nerd-commenter (current version 0.0.9)
+* evil-nerd-commenter (current version 0.0.10)
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
 
-That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 0.0.9.
+That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 0.0.10.
 
 Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]].
 
@@ -41,15 +41,16 @@ Further explanation, the content of evilnc-default-hotkeys is:
   (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
   (global-set-key (kbd "M-:") 'evilnc-comment-or-uncomment-to-the-line)
   (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
+  (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
   (eval-after-load 'evil
     '(progn
        (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
        (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
        (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
+       (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
        ))
   )
 #+END_SRC
-
 
 As you can see, the default hot key for commenting lines is "M-;" when you don't use [[http://emacswiki.org/emacs/Evil][evil-mode]].
 The advantage of use "M-;" is you can set mark on the first line and scroll several pages down and comment all the lines in that region by "M-;". The key point here is you save the extra two key strikes to make marked region wrap the whole content of first and second line.
@@ -62,12 +63,14 @@ Here is my configuration for evil-mode (*OPTIONAL!* some people don't use evil-m
 (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
 (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
 (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
+(define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
 #+END_SRC
 * Usage
 Here are available commands:
 - evilnc-comment-or-uncomment-lines :: comment/uncomment lines.
 - evilnc-comment-or-uncomment-to-the-line :: comment/uncomment from current line to the specified line.
 - evilnc-copy-and-comment-lines :: copy and paste lines, then comment out original lines
+- evilnc-comment-or-uncomment-paragraphs :: comment/uncomment paragraphs which separated by empty lines
 - evilnc-toggle-comment-empty-lines :: toggle the flag to comment/uncomment empty lines
 
 Example 1:
@@ -84,5 +87,9 @@ Example 4:
 
 Example 5:
 "C-u 2 M-x evilnc-copy-and-comment-lines", copy 2 lines and paste them below the original line. Then comment out original lines. The focus will be moved to the new lines.
+
+Example 6:
+"C-u 2 M-x evilnc-comment-or-uncomment-paragraphs", comment out two paragraphs.
+
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
