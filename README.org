@@ -53,7 +53,7 @@ Further explanation, the content of evilnc-default-hotkeys is:
 #+END_SRC
 
 As you can see, the default hot key for commenting lines is "M-;" when you don't use [[http://emacswiki.org/emacs/Evil][evil-mode]].
-The advantage of use "M-;" is you can set mark on the first line and scroll several pages down and comment all the lines in that region by "M-;". The key point here is you save the extra two key strikes to make marked region wrap the whole content of first and second line.
+The advantage of use "M-;" is you can set mark on the first line and scroll several pages down and comment all the lines in that region by "M-;". The key point here is you save the extra two key strikes to make marked region wrap the whole content of first and last line.
 
 I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]].
 
@@ -97,7 +97,6 @@ var myJson={
   "key3":"v3"
 }
 #+END_SRC
-
 
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
