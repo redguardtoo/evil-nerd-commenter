@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 0.0.10
+;; Version: 1.0.0
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -110,8 +110,8 @@
   )
 
 
-(defun evilnc--comment-or-uncomment-one-paragraph ()
-  (let (b e (forward-search-done nil))
+(defun evilnc--get-one-paragraph-region ()
+  (let (b e)
     (save-excursion
       (setq b (re-search-backward "^[ \t]*$" nil t))
       (if b (progn
@@ -122,23 +122,16 @@
         )
       )
     (save-excursion
+
       (setq e (re-search-forward "^[ \t]*$" nil t))
       (if e (progn
               (forward-line -1)
               (setq e (line-end-position))
               )
-        (progn
-          (setq e (point-max))
-          (setq forward-search-done t)
-          )
+        (setq e (point-max))
         )
       )
-    ;; (message "b e: %d %d" b e)
-    (when (<= b e)
-      (evilnc--fix-buggy-major-modes)
-      (comment-or-uncomment-region b e)
-      )
-    (if forward-search-done nil e)
+    (list b e)
     )
   )
 
@@ -150,31 +143,47 @@
 Paragraphs are separated by empty lines."
   (interactive "p")
   (let ((i 0)
-        rlt)
+        rlt
+        (b (point-max))
+        (e 0)
+        )
     (catch 'break
       (while (< i NUM)
         (incf i)
-        (setq rlt (evilnc--comment-or-uncomment-one-paragraph))
+        (setq rlt (evilnc--get-one-paragraph-region))
+        (setq b (if (< (nth 0 rlt) b) (nth 0 rlt) b))
+        (setq e (if (> (nth 1 rlt) e) (nth 1 rlt) e))
 
         ;; prepare for the next paragraph
         (if (and rlt (< i NUM))
             (progn
-              ;; rlt should be the end of last non-empty line
-              (goto-char rlt)
+              ;; e should be the end of last non-empty line
+              (goto-char e)
 
-              ;; (beginning-of-line)
               ;; move to an empty line
               (forward-line)
-              ;; record the empty line position for furture use
-              (setq rlt (line-beginning-position))
 
               ;; move to next non-empty line
               (re-search-forward "^[ \t]*[^ \t]" nil t)
-              (if (<= (line-beginning-position) rlt) (throw 'break i))
+
+              (if (<= (line-beginning-position) e)
+                  (progn
+                    (throw 'break i)
+                    )
+                )
               )
-          (throw 'break i)
+          (progn
+            (throw 'break i)
+            )
           )
-        )))
+        ))
+    (when (<= b e)
+      (save-excursion
+        (evilnc--fix-buggy-major-modes)
+        (comment-or-uncomment-region b e)
+        )
+      )
+    )
   )
 
 ;;;###autoload

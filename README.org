@@ -1,9 +1,9 @@
-* evil-nerd-commenter (current version 0.0.10)
+* evil-nerd-commenter (current version 1.0.0)
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
 
-That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 0.0.10.
+That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 1.0.0.
 
 Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]].
 
@@ -89,7 +89,15 @@ Example 5:
 "C-u 2 M-x evilnc-copy-and-comment-lines", copy 2 lines and paste them below the original line. Then comment out original lines. The focus will be moved to the new lines.
 
 Example 6:
-"C-u 2 M-x evilnc-comment-or-uncomment-paragraphs", comment out two paragraphs.
+"C-u 2 M-x evilnc-comment-or-uncomment-paragraphs", comment out two paragraphs. This is useful if you have large hunk of data to be commented out:
+#+BEGIN_SRC javascript
+var myJson={
+  "key1":"v1",
+  "key2":"v2",
+  "key3":"v3"
+}
+#+END_SRC
+
 
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
