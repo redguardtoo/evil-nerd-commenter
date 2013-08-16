@@ -63,7 +63,8 @@ Here are available commands:
 - evilnc-copy-and-comment-lines :: copy and paste lines, then comment out original lines
 - evilnc-comment-or-uncomment-paragraphs :: comment/uncomment paragraphs which separated by empty lines
 - evilnc-toggle-comment-empty-lines :: toggle the flag to comment/uncomment empty lines
-- evilnc-comment-operator :: in evil mode, acts much like the delete/change operator.  Takes a motion or text object and comments it out.  Use twice to comment out line.
+- evilnc-comment-operator :: in evil mode, acts much like the delete/change operator.  Takes a motion or text object and comments it out, yanking its content in the process.  Use twice to comment out line.
+
 Example 1:
 "C-u NUM M-x evilnc-comment-or-uncomment-lines", comment/uncomment next NUM lines.
 
