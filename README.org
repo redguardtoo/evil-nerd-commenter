@@ -102,5 +102,7 @@ Example 3: ",a(" to comment out the current s-expression, or ",i(" to only comme
 
 Example 4: ",ao" to comment out the current symbol, or ",aW" to comment out the current WORD.  Could be useful when commenting out function parameters, for instance.
 
+Example 5: ",w" comments to the beginning of the next word, ",e" to the end of the next word, ",b" to the beginning of the previous word.
+
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
