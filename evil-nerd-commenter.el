@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.0.0
+;; Version: 1.1.0
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -267,6 +267,7 @@ Paragraphs are separated by empty lines."
        (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
        (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
        (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
+       (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
        ))
   )
 

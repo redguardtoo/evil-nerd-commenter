@@ -1,9 +1,9 @@
-* evil-nerd-commenter (current version 1.0.0)
+* evil-nerd-commenter (current version 1.1.0)
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
 
-That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 1.0.0.
+That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 1.1.0.
 
 Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]].
 
@@ -48,6 +48,7 @@ Further explanation, the content of evilnc-default-hotkeys is:
        (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
        (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
        (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
+       (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
        ))
   )
 #+END_SRC
