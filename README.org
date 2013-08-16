@@ -44,7 +44,8 @@ Further explanation, the content of evilnc-default-hotkeys is:
   (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
   (eval-after-load 'evil
     '(when (fboundp 'evilnc-comment-operator)
-       (define-key evil-normal-state-map "," 'evilnc-comment-operator))))
+       (define-key evil-normal-state-map "," 'evilnc-comment-operator)
+       (define-key evil-visual-state-map "," 'evilnc-comment-operator))))
 #+END_SRC
 
 As you can see, the default hot key for commenting lines is "M-;" when you don't use [[http://emacswiki.org/emacs/Evil][evil-mode]].
