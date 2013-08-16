@@ -262,13 +262,7 @@ Paragraphs are separated by empty lines."
   (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
   (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
   (eval-after-load 'evil
-    '(progn
-       (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
-       (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
-       (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
-       (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
-       (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
-       ))
+    '(define-key evil-normal-state-map "," 'evilnc-comment-operator))
   )
 
 (evil-define-operator evilnc-comment-operator (beg end type register yank-handler)
@@ -297,6 +291,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
   (when (and (evil-called-interactively-p)
              (eq type 'line))
     (evil-first-non-blank)))
+
 
 (provide 'evil-nerd-commenter)
 
