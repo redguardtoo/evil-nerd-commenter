@@ -98,11 +98,13 @@ Example 1: ",," to comment out the current line.
 
 Example 2: ",9j" to comment out the next 9 lines.
 
-Example 3: ",a(" to comment out the current s-expression, or ",i(" to only comment out the s-expression's content.  Similarly for blocks ",a{", etc.
+Example 3: ",99G" to comment from the current line to line 99.
 
-Example 4: ",ao" to comment out the current symbol, or ",aW" to comment out the current WORD.  Could be useful when commenting out function parameters, for instance.
+Example 4: ",a(" to comment out the current s-expression, or ",i(" to only comment out the s-expression's content.  Similarly for blocks ",a{", etc.
 
-Example 5: ",w" comments to the beginning of the next word, ",e" to the end of the next word, ",b" to the beginning of the previous word.
+Example 5: ",ao" to comment out the current symbol, or ",aW" to comment out the current WORD.  Could be useful when commenting out function parameters, for instance.
+
+Example 6: ",w" comments to the beginning of the next word, ",e" to the end of the next word, ",b" to the beginning of the previous word.
 
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
