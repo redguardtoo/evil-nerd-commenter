@@ -89,7 +89,7 @@ var myJson={
 * Evil Usage
 If you use [[http://emacswiki.org/emacs/Evil][evil-mode]], you come with an operator that works with all the usual text objects and motions:
 
-- evilnc-comment-operator :: in evil mode, acts much like the delete/change operator.  Takes a motion or text object and comments it out, yanking its content in the process.  Use twice to comment out line.
+- evilnc-comment-operator :: in evil mode, acts much like the delete/change operator.  Takes a motion or text object and comments it out, yanking its content in the process.  
 
 Example 1: ",," to comment out the current line.
 
