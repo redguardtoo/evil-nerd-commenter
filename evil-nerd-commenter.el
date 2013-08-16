@@ -262,8 +262,7 @@ Paragraphs are separated by empty lines."
   (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
   (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
   (eval-after-load 'evil
-    '(define-key evil-normal-state-map "," 'evilnc-comment-operator))
-  )
+    '(define-key evil-normal-state-map "," 'evilnc-comment-operator)))
 
 (when (fboundp 'evil-define-operator)
   (evil-define-operator evilnc-comment-operator (beg end type register yank-handler)
