@@ -57,6 +57,7 @@ Here is my configuration for evil-mode (*OPTIONAL!* some people don't use evil-m
 #+BEGIN_SRC lisp
 (require 'evil)
 (define-key evil-normal-state-map "," 'evilnc-comment-operator)
+(define-key evil-visual-state-map "," 'evilnc-comment-operator)
 #+END_SRC
 * Usage
 Here are available commands:
