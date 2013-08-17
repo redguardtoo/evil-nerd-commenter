@@ -262,14 +262,47 @@ Paragraphs are separated by empty lines."
   (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
   (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
   (eval-after-load 'evil
-    '(progn
-       (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
-       (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
-       (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
-       (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
-       (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
-       ))
-  )
+    '(progn (evilnc-define-comment-operator)
+            (define-key evil-normal-state-map "," 'evilnc-comment-operator)
+            (define-key evil-visual-state-map "," 'evilnc-comment-operator))))
+
+(defun evilnc-define-comment-operator ()
+  "Attempts to define the comment operator evilnc-comment-operator.  
+
+Will only work if 'evil-define-operator is defined and 'evilnc-comment-operator is not."
+  (interactive)
+  (when (and (fboundp 'evil-define-operator)
+             (not (fboundp 'evilnc-comment-operator)))
+    (evil-define-operator evilnc-comment-operator (beg end type register yank-handler)
+      "Comments text from BEG to END with TYPE.
+Save in REGISTER or in the kill-ring with YANK-HANDLER."
+      (interactive "<R><x><y>")
+      (unless register
+        (let ((text (filter-buffer-substring beg end)))
+          (unless (string-match-p "\n" text)
+            ;; set the small delete register
+            (evil-set-register ?- text))))
+      (evil-yank beg end type register yank-handler)
+      (cond
+       ((eq type 'block)
+        (evil-apply-on-block #'comment-or-uncomment-region beg end nil))
+       ((and (eq type 'line)
+             (= end (point-max))
+             (or (= beg end)
+                 (/= (char-before end) ?\n))
+             (/= beg (point-min))
+             (=  (char-before beg) ?\n))
+        (comment-or-uncomment-region (1- beg) end))
+       (t
+        (comment-or-uncomment-region beg end)))
+      ;; place cursor on beginning of line
+      (when (and (evil-called-interactively-p)
+                 (eq type 'line))
+        (evil-first-non-blank)))))
+
+;; Attemps to define the operator on first load.
+;; Will only work if evil has been loaded
+(evilnc-define-comment-operator)
 
 (provide 'evil-nerd-commenter)
 
