@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.1.0
+;; Version: 1.2.0
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -135,6 +135,45 @@
     )
   )
 
+(defun evilnc--in-comment-p (pos)
+  (interactive)
+  (let ((fontface (get-text-property pos 'face)))
+    ;; learn this trick from flyspell
+    (or (string= fontface 'font-lock-comment-face)
+        (string= fontface 'font-lock-comment-delimiter-face)
+        )
+    ))
+
+;; @return (list beg end)
+(defun evilnc--extend-to-whole-comment (beg end)
+  (interactive)
+  (if (evilnc--in-comment-p beg)
+      (save-excursion
+        (let ((newbeg beg)
+              (newend end))
+
+          ;; extend the beginning
+          (goto-char newbeg)
+          (while (and (>= newbeg (line-beginning-position)) (evilnc--in-comment-p newbeg))
+            (decf newbeg)
+            )
+          ;; make sure newbeg is at the beginning of the comment
+          (if (< newbeg beg) (incf newbeg))
+
+          ;; extend the end
+          (goto-char newend)
+          (while (and (<= newend (line-end-position)) (evilnc--in-comment-p newend))
+            (incf newend)
+            )
+          ;; make sure newend is at the end of the comment
+          (if (> newend end) (decf newend))
+
+          (list newbeg newend)
+          )
+        )
+    (list beg end)
+    ))
+
 
 ;; ==== below this line are public commands
 ;;;###autoload
@@ -262,12 +301,24 @@ Paragraphs are separated by empty lines."
   (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
   (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
   (eval-after-load 'evil
-    '(progn (evilnc-define-comment-operator)
-            (define-key evil-normal-state-map "," 'evilnc-comment-operator)
-            (define-key evil-visual-state-map "," 'evilnc-comment-operator))))
+    '(progn
+       (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
+       (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
+       (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
+       (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
+       (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
+       ;; Please note evilnc-comment-operator require evil-mode
+       ;; press key ",," which is default value evilnc-operator-to-comment-text-object
+       ;; example, presss ",,a{" will change C code:
+       ;;  {printf("hello");} to /* {printf("hello");}*/
+       ;; google "vim text object for more syntax"
+       (define-key evil-normal-state-map ",," 'evilnc-comment-operator)
+       (define-key evil-visual-state-map ",," 'evilnc-comment-operator)
+       )))
 
+;;;###autoload
 (defun evilnc-define-comment-operator ()
-  "Attempts to define the comment operator evilnc-comment-operator.  
+  "Attempts to define the comment operator evilnc-comment-operator.
 
 Will only work if 'evil-define-operator is defined and 'evilnc-comment-operator is not."
   (interactive)
@@ -285,7 +336,10 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
       (evil-yank beg end type register yank-handler)
       (cond
        ((eq type 'block)
-        (evil-apply-on-block #'comment-or-uncomment-region beg end nil))
+        (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
+          (evil-apply-on-block #'comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos) nil)
+          )
+        )
        ((and (eq type 'line)
              (= end (point-max))
              (or (= beg end)
@@ -294,15 +348,21 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
              (=  (char-before beg) ?\n))
         (comment-or-uncomment-region (1- beg) end))
        (t
-        (comment-or-uncomment-region beg end)))
+        (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
+          (comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos))
+          )
+        ))
       ;; place cursor on beginning of line
       (when (and (evil-called-interactively-p)
                  (eq type 'line))
         (evil-first-non-blank)))))
 
-;; Attemps to define the operator on first load.
+;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded
-(evilnc-define-comment-operator)
+(eval-after-load 'evil
+  '(progn
+     (evilnc-define-comment-operator)
+     ))
 
 (provide 'evil-nerd-commenter)
 

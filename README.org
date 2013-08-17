@@ -1,17 +1,17 @@
-* evil-nerd-commenter (current version 1.1.0)
+* evil-nerd-commenter (current version 1.2.0)
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
 
-That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 1.1.0.
+That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 1.2.0.
 
 Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]].
 
-Evil makes you take advantage of power of Vi to comment lines in shocking speed. For example, you can press key `,99j` to comment out 99 lines.
+Evil makes you take advantage of power of Vi to comment lines in shocking speed. For example, you can press key `,,99j` or `99,ci` to comment out 99 lines.
 
 * Why evil-nerd-commenter is better? 
 ** A simple use case on the efficiency
-Say you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", now you can press "M-9 M-;" or ",9j".
+Say you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", now you can press "M-9 M-;" or ",,9j" or "9,ci".
 
 The key point is you need *NOT* mark any text to comment line(s)!
 
@@ -43,22 +43,23 @@ Further explanation, the content of evilnc-default-hotkeys is:
   (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
   (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
   (eval-after-load 'evil
-    '(when (fboundp 'evilnc-comment-operator)
-       (define-key evil-normal-state-map "," 'evilnc-comment-operator)
-       (define-key evil-visual-state-map "," 'evilnc-comment-operator))))
+       (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
+       (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
+       (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
+       (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
+       (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
+       (define-key evil-normal-state-map ",," 'evilnc-comment-operator)
+       (define-key evil-visual-state-map ",," 'evilnc-comment-operator)
+       ))
 #+END_SRC
 
 As you can see, the default hot key for commenting lines is "M-;" when you don't use [[http://emacswiki.org/emacs/Evil][evil-mode]].
 The advantage of use "M-;" is you can set mark on the first line and scroll several pages down and comment all the lines in that region by "M-;". The key point here is you save the extra two key strikes to make marked region wrap the whole content of first and last line.
 
-I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]].
+I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]]. Evil-mode is only *optional*! Some people dont use it because they prefer emacs native key binding.
 
-Here is my configuration for evil-mode (*OPTIONAL!* some people don't use evil-mode at all because they don't like vi key bindings):
-#+BEGIN_SRC lisp
-(require 'evil)
-(define-key evil-normal-state-map "," 'evilnc-comment-operator)
-(define-key evil-visual-state-map "," 'evilnc-comment-operator)
-#+END_SRC
+Feel free to copy the content of evilnc-default-hotkeys into your .emacs instead calling it directly. So you can define your own hotkeys.
+
 * Usage
 Here are available commands:
 - evilnc-comment-or-uncomment-lines :: comment/uncomment lines.
@@ -90,21 +91,23 @@ var myJson={
 #+END_SRC
 
 * Evil Usage
-If you use [[http://emacswiki.org/emacs/Evil][evil-mode]], you get an operator that works with all the usual text objects and motions:
+If you use [[http://emacswiki.org/emacs/Evil][evil-mode]], you get an operator that works with all the usual [[http://vimdoc.sourceforge.net/htmldoc/motion.html#text-objects][text objects and motions]]:
 
 - evilnc-comment-operator :: acts much like the delete/change operator.  Takes a motion or text object and comments it out, yanking its content in the process.  
 
-Example 1: ",," to comment out the current line.
+By default we assign the hot key ",," to evilnc-comment-operator.
 
-Example 2: ",9j" to comment out the next 9 lines.
+Example 1: ",,," to comment out the current line.
 
-Example 3: ",99G" to comment from the current line to line 99.
+Example 2: ",,9j" to comment out the next 9 lines.
 
-Example 4: ",a(" to comment out the current s-expression, or ",i(" to only comment out the s-expression's content.  Similarly for blocks ",a{", etc.
+Example 3: ",,99G" to comment from the current line to line 99.
 
-Example 5: ",ao" to comment out the current symbol, or ",aW" to comment out the current WORD.  Could be useful when commenting out function parameters, for instance.
+Example 4: ",,a(" to comment out the current s-expression, or ",,i(" to only comment out the s-expression's content.  Similarly for blocks ",,a{", etc.
 
-Example 6: ",w" comments to the beginning of the next word, ",e" to the end of the next word, ",b" to the beginning of the previous word.
+Example 5: ",,ao" to comment out the current symbol, or ",,aW" to comment out the current WORD.  Could be useful when commenting out function parameters, for instance.
+
+Example 6: ",,w" comments to the beginning of the next word, ",,e" to the end of the next word, ",,b" to the beginning of the previous word.
 
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
