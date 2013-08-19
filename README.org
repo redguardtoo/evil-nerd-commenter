@@ -1,11 +1,14 @@
 * evil-nerd-commenter (current version 1.2.0)
+
+*Please note this program could be used independently without evil-mode!*
+
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
 As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
 
-That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, I added a command to comment *AND* copy lines in version 1.2.0.
+That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, a command to comment&copy lines is added recently.
 
-Though this program could be used *independently*, I highly recommend you use it with [[http://gitorious.org/evil][evil]].
+I highly recommend you use it with [[http://gitorious.org/evil][evil]].
 
 Evil makes you take advantage of power of Vi to comment lines in shocking speed. For example, you can press key `,,99j` or `99,ci` to comment out 99 lines.
 
