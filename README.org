@@ -1,4 +1,4 @@
-* evil-nerd-commenter (current version 1.2.0)
+* evil-nerd-commenter (current version 1.2.1)
 
 *Please note this program could be used independently without evil-mode!*
 
@@ -42,7 +42,7 @@ Further explanation, the content of evilnc-default-hotkeys is:
   "Set the hotkeys of evil-nerd-comment"
   (interactive)
   (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
-  (global-set-key (kbd "M-:") 'evilnc-comment-or-uncomment-to-the-line)
+  (global-set-key (kbd "C-c l") 'evilnc-comment-or-uncomment-to-the-line)
   (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
   (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
   (eval-after-load 'evil

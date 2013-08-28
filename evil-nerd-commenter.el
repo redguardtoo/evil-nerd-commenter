@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.2.0
+;; Version: 1.2.1
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -31,7 +31,7 @@
 ;; This program emulates nerd-commenter.vim by Marty Grenfell.
 ;; It help you comment/uncomment multiple lines without selecting them.
 ;;
-;; `M-x evilnc-default-hotkeys` assigns hotkey `M-;` to `evilnc-comment-or-uncomment-lines'
+;; `M-x evilnc-default-hotkeys` assigns hotkey `M-;` to `evilnc-comment-or-uncomment-lines`
 ;; `M-x evilnc-comment-or-uncomment-lines` comment or uncomment lines.
 ;; `M-x evilnc-comment-or-uncomment-to-the-line` will comment/uncomment from current line to
 ;; the specified line number. The line number is passed as parameter of the command.
@@ -297,7 +297,7 @@ Paragraphs are separated by empty lines."
   "Set the hotkeys of evil-nerd-comment"
   (interactive)
   (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
-  (global-set-key (kbd "M-:") 'evilnc-comment-or-uncomment-to-the-line)
+  (global-set-key (kbd "C-c l") 'evilnc-comment-or-uncomment-to-the-line)
   (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
   (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
   (eval-after-load 'evil
