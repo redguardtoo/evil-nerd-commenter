@@ -1,4 +1,4 @@
-* evil-nerd-commenter (current version 1.2.1)
+* evil-nerd-commenter (current version 1.2.2)
 
 *Please note this program could be used independently without evil-mode!*
 
@@ -51,8 +51,6 @@ Further explanation, the content of evilnc-default-hotkeys is:
        (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
        (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
        (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
-       (define-key evil-normal-state-map ",," 'evilnc-comment-operator)
-       (define-key evil-visual-state-map ",," 'evilnc-comment-operator)
        ))
 #+END_SRC
 

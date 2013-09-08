@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.2.1
+;; Version: 1.2.2
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -46,6 +46,13 @@
 
 
 ;;; Code:
+
+;; Example, presss ",,a{" will change C code:
+;;   {printf("hello");} => /* {printf("hello");}*/
+;; google "vim text object for more syntax"
+(defcustom evilnc-hotkey-comment-operator ",," "The hot key for evilnc-comment-operator to (un)comment text object"
+  :type 'string
+  :group 'evil-nerd-commenter)
 
 ;; shamelessly copied from goto-line
 (defun evilnc--goto-line (line)
@@ -307,13 +314,6 @@ Paragraphs are separated by empty lines."
        (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
        (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
        (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
-       ;; Please note evilnc-comment-operator require evil-mode
-       ;; press key ",," which is default value evilnc-operator-to-comment-text-object
-       ;; example, presss ",,a{" will change C code:
-       ;;  {printf("hello");} to /* {printf("hello");}*/
-       ;; google "vim text object for more syntax"
-       (define-key evil-normal-state-map ",," 'evilnc-comment-operator)
-       (define-key evil-visual-state-map ",," 'evilnc-comment-operator)
        )))
 
 ;;;###autoload
@@ -362,6 +362,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
 (eval-after-load 'evil
   '(progn
      (evilnc-define-comment-operator)
+     (define-key evil-normal-state-map evilnc-hotkey-comment-operator 'evilnc-comment-operator)
+     (define-key evil-visual-state-map evilnc-hotkey-comment-operator 'evilnc-comment-operator)
      ))
 
 (provide 'evil-nerd-commenter)
