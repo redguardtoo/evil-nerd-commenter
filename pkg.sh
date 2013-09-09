@@ -1,5 +1,5 @@
 #!/bin/bash
-pkg=evil-nerd-commenter-1.2.2
+pkg=evil-nerd-commenter-1.2.3
 mkdir $pkg
 cp README.org $pkg
 cp *.el $pkg

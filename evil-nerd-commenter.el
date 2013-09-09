@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.2.2
+;; Version: 1.2.3
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -316,52 +316,42 @@ Paragraphs are separated by empty lines."
        (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
        )))
 
-;;;###autoload
-(defun evilnc-define-comment-operator ()
-  "Attempts to define the comment operator evilnc-comment-operator.
-
-Will only work if 'evil-define-operator is defined and 'evilnc-comment-operator is not."
-  (interactive)
-  (when (and (fboundp 'evil-define-operator)
-             (not (fboundp 'evilnc-comment-operator)))
-    (evil-define-operator evilnc-comment-operator (beg end type register yank-handler)
-      "Comments text from BEG to END with TYPE.
-Save in REGISTER or in the kill-ring with YANK-HANDLER."
-      (interactive "<R><x><y>")
-      (unless register
-        (let ((text (filter-buffer-substring beg end)))
-          (unless (string-match-p "\n" text)
-            ;; set the small delete register
-            (evil-set-register ?- text))))
-      (evil-yank beg end type register yank-handler)
-      (cond
-       ((eq type 'block)
-        (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
-          (evil-apply-on-block #'comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos) nil)
-          )
-        )
-       ((and (eq type 'line)
-             (= end (point-max))
-             (or (= beg end)
-                 (/= (char-before end) ?\n))
-             (/= beg (point-min))
-             (=  (char-before beg) ?\n))
-        (comment-or-uncomment-region (1- beg) end))
-       (t
-        (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
-          (comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos))
-          )
-        ))
-      ;; place cursor on beginning of line
-      (when (and (evil-called-interactively-p)
-                 (eq type 'line))
-        (evil-first-non-blank)))))
-
 ;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded
 (eval-after-load 'evil
   '(progn
-     (evilnc-define-comment-operator)
+     (evil-define-operator evilnc-comment-operator (beg end type register yank-handler)
+       "Comments text from BEG to END with TYPE.
+Save in REGISTER or in the kill-ring with YANK-HANDLER."
+       (interactive "<R><x><y>")
+       (unless register
+         (let ((text (filter-buffer-substring beg end)))
+           (unless (string-match-p "\n" text)
+             ;; set the small delete register
+             (evil-set-register ?- text))))
+       (evil-yank beg end type register yank-handler)
+       (cond
+        ((eq type 'block)
+         (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
+           (evil-apply-on-block #'comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos) nil)
+           )
+         )
+        ((and (eq type 'line)
+              (= end (point-max))
+              (or (= beg end)
+                  (/= (char-before end) ?\n))
+              (/= beg (point-min))
+              (=  (char-before beg) ?\n))
+         (comment-or-uncomment-region (1- beg) end))
+        (t
+         (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
+           (comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos))
+           )
+         ))
+       ;; place cursor on beginning of line
+       (when (and (evil-called-interactively-p)
+                  (eq type 'line))
+         (evil-first-non-blank)))
      (define-key evil-normal-state-map evilnc-hotkey-comment-operator 'evilnc-comment-operator)
      (define-key evil-visual-state-map evilnc-hotkey-comment-operator 'evilnc-comment-operator)
      ))
