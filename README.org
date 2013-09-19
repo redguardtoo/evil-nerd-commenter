@@ -62,7 +62,7 @@ I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mod
 Feel free to copy the content of evilnc-default-hotkeys into your .emacs instead calling it directly. So you can define your own hotkeys.
 
 * Usage
-Here are available commands:
+Here are available commands. They are not dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]:
 - evilnc-comment-or-uncomment-lines :: comment/uncomment lines.
 - evilnc-comment-or-uncomment-to-the-line :: comment/uncomment from current line to the specified line.
 - evilnc-copy-and-comment-lines :: copy and paste lines, then comment out original lines
@@ -92,11 +92,19 @@ var myJson={
 #+END_SRC
 
 * Evil Usage
-If you use [[http://emacswiki.org/emacs/Evil][evil-mode]], you get an operator that works with all the usual [[http://vimdoc.sourceforge.net/htmldoc/motion.html#text-objects][text objects and motions]]:
+If you use [[http://emacswiki.org/emacs/Evil][evil-mode]], you get an operator that works with all the usual [[http://vimdoc.sourceforge.net/htmldoc/motion.html#text-objects][text objects and motions]].
 
-- evilnc-comment-operator :: acts much like the delete/change operator.  Takes a motion or text object and comments it out, yanking its content in the process.  
+Please note all the features listed here are dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]. So if you want to use these features you need install evil.
 
-By default we assign the hot key ",," to evilnc-comment-operator.
+- evilnc-hotkey-comment-operator :: acts much like the delete/change operator.  Takes a motion or text object and comments it out, yanking its content in the process.  
+
+By default we assign the hot key ",," to evilnc-hotkey-comment-operator.
+
+Here is sample elisp code:
+#+BEGIN_SRC elisp
+(setq evilnc-hotkey-comment-operator ",,")
+#+END_SRC
+
 
 Example 1: ",,," to comment out the current line.
 
