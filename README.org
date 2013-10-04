@@ -1,4 +1,4 @@
-* evil-nerd-commenter (current version 1.2.3)
+* evil-nerd-commenter (current version 1.2.4)
 
 *Please note this program could be used independently without evil-mode!*
 
@@ -27,7 +27,8 @@ I'll provide long-term support for this plugin for *ANY language* in the future.
 * Install
 evil-nerd-commenter is already uploaded to [[http://marmalade-repo.org/]]. So the best way to install it is using Emacs' package manager.
 * Set up
-Nothing to set up.
+** The easy way (recommended)
+Nothing to set up if install it in the way as I suggested.
 
 You may add one line of emacs lisp code into ~/.emacs to let evil-nerd-commenter assign hot keys for you:
 #+BEGIN_SRC lisp
@@ -60,6 +61,29 @@ The advantage of use "M-;" is you can set mark on the first line and scroll seve
 I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]]. Evil-mode is only *optional*! Some people dont use it because they prefer emacs native key binding.
 
 Feel free to copy the content of evilnc-default-hotkeys into your .emacs instead calling it directly. So you can define your own hotkeys.
+
+** The unnecessary hard way
+If you don't use emacs package manager (Why?) to install evil-nerd-commenter then please insert below content into your ~/.emacs:
+#+BEGIN_SRC lisp
+;; I suppose you know how to install evil.
+;; If NOT, check http://www.emacswiki.org/emacs/Evil
+(require 'evil)
+(evil-mode 1)
+
+;; You need download ONLY evil-nerd-commenter.el and place it somewhere,
+;; say "somewhere"" is actually "~/.emacs.d/my-dot-el-directory".
+;; Now notify Emacs where to find evil-nerd-commenter.el
+(add-to-list 'load-path "~/.emacs.d/my-dot-el-directory")
+
+;; ",," is the default value of evilnc-hotkey-comment-operator,
+;; so below line is NOT needed.
+;;
+;; Please put it *ABOVE* the (require 'evil-nerd-commenter)!!!
+;;
+(setq evilnc-hotkey-comment-operator ",,")
+(require 'evil-nerd-commenter)
+(evilnc-default-hotkeys)
+#+END_SRC
 
 * Usage
 Here are available commands. They are not dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]:
