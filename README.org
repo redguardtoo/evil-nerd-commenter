@@ -115,7 +115,7 @@ var myJson={
 }
 #+END_SRC
 
-* Evil Usage
+* Evil usage
 If you use [[http://emacswiki.org/emacs/Evil][evil-mode]], you get an operator that works with all the usual [[http://vimdoc.sourceforge.net/htmldoc/motion.html#text-objects][text objects and motions]].
 
 Please note all the features listed here are dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]. So if you want to use these features you need install evil.
@@ -141,6 +141,9 @@ Example 4: ",,a(" to comment out the current s-expression, or ",,i(" to only com
 Example 5: ",,ao" to comment out the current symbol, or ",,aW" to comment out the current WORD.  Could be useful when commenting out function parameters, for instance.
 
 Example 6: ",,w" comments to the beginning of the next word, ",,e" to the end of the next word, ",,b" to the beginning of the previous word.
+
+* Advanced evil tips
+You can yank to line 99 using hot key "y99G" or "y99gg". That's some awesome feature in evil-mode. Please read the vim manual on "text objects and motions". You will find more useful tips.
 
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
