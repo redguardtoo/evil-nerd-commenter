@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.2.4
+;; Version: 1.2.5
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -298,6 +298,45 @@ Paragraphs are separated by empty lines."
         ))
    NUM)
   )
+
+;; {{ for non-evil user only
+;;;###autoload
+(defun evilnc-copy-to-line (&optional LINENUM)
+  "Copy from the current line to the LINENUM line, for non-evil user only"
+  (interactive "p")
+  (if (not (region-active-p))
+      (let ((b (line-beginning-position))
+            (e (line-end-position)))
+        (save-excursion
+          (evilnc--goto-line LINENUM)
+          (if (< (line-beginning-position) b)
+              (setq b (line-beginning-position)))
+          (if (> (line-end-position) e)
+              (setq e (line-end-position)))
+          (kill-new (buffer-substring-no-properties b e))
+          )
+        )
+    ))
+
+;;;###autoload
+(defun evilnc-kill-to-line (&optional LINENUM)
+  "Kill from the current line to the LINENUM line, for non-evil user only"
+  (interactive "p")
+  (if (not (region-active-p))
+      (let ((b (line-beginning-position))
+            (e (line-end-position)))
+        (save-excursio;; n
+          (evilnc--goto-line LINENUM)
+          (if (< (line-beginning-position) b)
+              (setq b (line-beginning-position)))
+          (if (> (line-end-position) e)
+              (setq e (line-end-position)))
+          (kill-region b (+ 1 e)) ; +1 because we need remove the CR
+          )
+        )
+    ))
+
+;; }}
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()

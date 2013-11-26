@@ -1,4 +1,4 @@
-* evil-nerd-commenter (current version 1.2.4)
+* evil-nerd-commenter (current version 1.2.5)
 
 *Please note this program could be used independently without evil-mode!*
 
@@ -92,6 +92,8 @@ Here are available commands. They are not dependent on [[http://emacswiki.org/em
 - evilnc-copy-and-comment-lines :: copy and paste lines, then comment out original lines
 - evilnc-comment-or-uncomment-paragraphs :: comment/uncomment paragraphs which separated by empty lines
 - evilnc-toggle-comment-empty-lines :: toggle the flag to comment/uncomment empty lines
+- evilnc-copy-to-line :: Copy from the current line to the user specified line, *for non-evil user only, you need set hot key for it*
+- evilnc-kill-to-line :: Kill from the current line to the user specified line, *for non-evil user only, you need set hot key for it*
 
 Example 1:
 "C-u NUM M-x evilnc-comment-or-uncomment-lines", comment/uncomment next NUM lines.
@@ -106,7 +108,7 @@ Example 4:
 "C-u 2 M-x evilnc-copy-and-comment-lines", copy 2 lines and paste them below the original line. Then comment out original lines. The focus will be moved to the new lines.
 
 Example 5:
-"C-u 2 M-x evilnc-comment-or-uncomment-paragraphs", comment out two paragraphs. This is useful if you have large hunk of data to be commented out:
+"C-u 2 M-x evilnc-comment-or-uncomment-paragraphs", comment out two paragraphs. This is useful if you have large hunk of data to be commented out as below:
 #+BEGIN_SRC javascript
 var myJson={
   "key1":"v1",
