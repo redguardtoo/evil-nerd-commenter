@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.2.5
+;; Version: 1.2.6
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -265,28 +265,40 @@ Paragraphs are separated by empty lines."
 
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-lines (&optional NUM)
-  "Comment or uncomment lines.
+  "Comment or uncomment NUM lines. NUM could be negative.
    Case 1: If no region selected, comment/uncomment on current line. if NUM>1, comment/uncomment
    extra N-1 lines from next line
    Case 2: If a region selected, the region is expand to make sure the region contain
    whole lines. Then we comment/uncomment the expanded region. NUM is ignored."
   (interactive "p")
-  (evilnc--operation-on-lines-or-region '(lambda (b e)
-                                           (evilnc--fix-buggy-major-modes)
-                                           (comment-or-uncomment-region b e)
-                                           )
-                                        NUM)
-  )
+  ;; donot move the cursor
+  (save-excursion
+    ;; support negative number
+    (when (< NUM 0)
+      (forward-line (1+ NUM))
+      (setq NUM (- 0 NUM)))
+
+    (evilnc--operation-on-lines-or-region '(lambda (b e)
+                                             (evilnc--fix-buggy-major-modes)
+                                             (comment-or-uncomment-region b e)
+                                             )
+                                          NUM)))
 
 ;;;###autoload
 (defun evilnc-copy-and-comment-lines (&optional NUM)
-  "Copy and paste lines. Then comment original lines.
+  "Copy and paste NUM lines. Then comment the original lines. NUM could be negative.
    Case 1: If no region selected, operate on current line. if NUM>1, comment/uncomment
    extra N-1 lines from next line
    Case 2: If a region selected, the region is expand to make sure the region contain
    whole lines. Then we operate the expanded region. NUM is ignored.
 "
   (interactive "p")
+
+  ;; support negative number
+  (when (< NUM 0)
+    (forward-line (1+ NUM))
+    (setq NUM (- 0 NUM)))
+
   (evilnc--operation-on-lines-or-region
    '(lambda (beg end)
       (evilnc--fix-buggy-major-modes)
@@ -296,8 +308,7 @@ Paragraphs are separated by empty lines."
         (insert-before-markers str)
         (comment-region beg end)
         ))
-   NUM)
-  )
+   NUM))
 
 ;; {{ for non-evil user only
 ;;;###autoload
