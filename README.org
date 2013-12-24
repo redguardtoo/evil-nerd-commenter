@@ -93,6 +93,7 @@ Here are available commands. They are not dependent on [[http://emacswiki.org/em
 - evilnc-comment-or-uncomment-paragraphs :: comment/uncomment paragraphs which separated by empty lines
 - evilnc-toggle-comment-empty-lines :: toggle the flag to comment/uncomment empty lines
 - evilnc-copy-to-line :: Copy from the current line to the user specified line, *for non-evil user only, you need set hot key for it*
+- evilnc-toggle-invert-comment-line-by-line :: toggle flag evilnc-invert-comment-line-by-line. When this flag is true, the command "evilnc-comment-or-uncomment-lines", "evilnc-comment-or-uncomment-to-the-line", and "evilnc-comment-or-uncomment-paragraphs" will invert each line's comment status.
 - evilnc-kill-to-line :: Kill from the current line to the user specified line, *for non-evil user only, you need set hot key for it*
 
 Example 1:

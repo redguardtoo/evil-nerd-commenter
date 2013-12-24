@@ -54,6 +54,8 @@
   :type 'string
   :group 'evil-nerd-commenter)
 
+(defvar evilnc-invert-comment-line-by-line nil "if t then invert region comment status line by line")
+
 ;; shamelessly copied from goto-line
 (defun evilnc--goto-line (line)
   (save-restriction
@@ -181,6 +183,32 @@
     (list beg end)
     ))
 
+(defun evilnc--invert-comment (beg end)
+  "scan the region line by line, invert its comment status"
+  (let (done b e)
+    (save-excursion
+      (goto-char end)
+      ;; comment (line-beginning-position line-end-position)
+      ;; (setq old-b (line-beginning-position)
+      ;; (forward-line -1)
+      ;; (if (= old-b (line-beginning-position)) we did't move, out of loop
+      ;; (if (<= (line-end-position) beg)), out of region, out of loop
+      (while (not done)
+        (setq b (line-beginning-position))
+        (setq e (line-end-position))
+        (funcall (if (comment-only-p b e)
+                     'uncomment-region 'comment-region)
+                 b e)
+        (forward-line -1)
+        (when (or (= (line-beginning-position) b) (< (line-end-position) beg))
+          (setq done t))
+        ))))
+
+(defun evilnc--comment-or-uncomment-region (beg end)
+  (if evilnc-invert-comment-line-by-line
+      (evilnc--invert-comment beg end)
+    (comment-or-uncomment-region beg end)
+      ))
 
 ;; ==== below this line are public commands
 ;;;###autoload
@@ -226,11 +254,8 @@ Paragraphs are separated by empty lines."
     (when (<= b e)
       (save-excursion
         (evilnc--fix-buggy-major-modes)
-        (comment-or-uncomment-region b e)
-        )
-      )
-    )
-  )
+        (evilnc--comment-or-uncomment-region b e)
+        ))))
 
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-to-the-line (&optional LINENUM)
@@ -246,10 +271,19 @@ Paragraphs are separated by empty lines."
           (if (> (line-end-position) e)
               (setq e (line-end-position)))
           (evilnc--fix-buggy-major-modes)
-          (comment-or-uncomment-region b e)
-          )
-        )
-    ))
+          (evilnc--comment-or-uncomment-region b e)
+          ))))
+
+;;;###autoload
+(defun evilnc-toggle-invert-comment-line-by-line ()
+  (interactive)
+  (if evilnc-invert-comment-line-by-line
+      (setq evilnc-invert-comment-line-by-line nil)
+    (setq evilnc-invert-comment-line-by-line t)
+    )
+  (message (if evilnc-invert-comment-line-by-line
+               "Each line's comment status will be inverted"
+             "Each line's comment status will NOT be inverted")))
 
 ;;;###autoload
 (defun evilnc-toggle-comment-empty-lines ()
@@ -260,8 +294,7 @@ Paragraphs are separated by empty lines."
     )
   (message (if comment-empty-lines
                "Empty line(s) will be commented"
-             "Empty line(s) will NOT be commented"))
-  )
+             "Empty line(s) will NOT be commented")))
 
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-lines (&optional NUM)
@@ -280,7 +313,7 @@ Paragraphs are separated by empty lines."
 
     (evilnc--operation-on-lines-or-region '(lambda (b e)
                                              (evilnc--fix-buggy-major-modes)
-                                             (comment-or-uncomment-region b e)
+                                             (evilnc--comment-or-uncomment-region b e)
                                              )
                                           NUM)))
 
@@ -364,7 +397,7 @@ Paragraphs are separated by empty lines."
        (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
        (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
        (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
-       )))
+       (define-key evil-normal-state-map ",cv" 'evilnc-toggle-invert-comment-line-by-line))))
 
 ;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded
