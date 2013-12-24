@@ -241,15 +241,8 @@ Paragraphs are separated by empty lines."
               (re-search-forward "^[ \t]*[^ \t]" nil t)
 
               (if (<= (line-beginning-position) e)
-                  (progn
-                    (throw 'break i)
-                    )
-                )
-              )
-          (progn
-            (throw 'break i)
-            )
-          )
+                    (throw 'break i)))
+            (throw 'break i))
         ))
     (when (<= b e)
       (save-excursion
@@ -358,9 +351,7 @@ Paragraphs are separated by empty lines."
           (if (> (line-end-position) e)
               (setq e (line-end-position)))
           (kill-new (buffer-substring-no-properties b e))
-          )
-        )
-    ))
+          ))))
 
 ;;;###autoload
 (defun evilnc-kill-to-line (&optional LINENUM)
@@ -376,11 +367,7 @@ Paragraphs are separated by empty lines."
           (if (> (line-end-position) e)
               (setq e (line-end-position)))
           (kill-region b (+ 1 e)) ; +1 because we need remove the CR
-          )
-        )
-    ))
-
-;; }}
+          ))))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()
