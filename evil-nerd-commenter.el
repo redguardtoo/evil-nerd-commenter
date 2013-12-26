@@ -360,7 +360,7 @@ Paragraphs are separated by empty lines."
   (if (not (region-active-p))
       (let ((b (line-beginning-position))
             (e (line-end-position)))
-        (save-excursio;; n
+        (save-excursion
           (evilnc--goto-line LINENUM)
           (if (< (line-beginning-position) b)
               (setq b (line-beginning-position)))
