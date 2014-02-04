@@ -146,12 +146,15 @@
 
 (defun evilnc--in-comment-p (pos)
   (interactive)
-  (let ((fontface (get-text-property pos 'face)))
-    ;; learn this trick from flyspell
-    (or (string= fontface 'font-lock-comment-face)
-        (string= fontface 'font-lock-comment-delimiter-face)
-        )
-    ))
+  (let ((fontfaces (get-text-property pos 'face)))
+    (when (not (listp fontfaces))
+      (setf fontfaces (list fontfaces)))
+    (delq nil
+          (mapcar #'(lambda (f)
+                      ;; learn this trick from flyspell
+                      (or (string= f 'font-lock-comment-face)
+                          (string= f 'font-lock-comment-delimiter-face)))
+                  fontfaces))))
 
 ;; @return (list beg end)
 (defun evilnc--extend-to-whole-comment (beg end)
