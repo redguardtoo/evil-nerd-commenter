@@ -123,7 +123,6 @@ For example:
 (global-set-key (kbd "C-c C-t C-l") 'evilnc-copy-to-line)
 #+END_SRC
 
-
 *** evilnc-toggle-invert-comment-line-by-line
 Toggle flag evilnc-invert-comment-line-by-line. When this flag is true, the command "evilnc-comment-or-uncomment-lines", "evilnc-comment-or-uncomment-to-the-line", and "evilnc-comment-or-uncomment-paragraphs" will be influenced.
 
@@ -201,8 +200,21 @@ Example 5: ",,ao" to comment out the current symbol, or ",,aW" to comment out th
 
 Example 6: ",,w" comments to the beginning of the next word, ",,e" to the end of the next word, ",,b" to the beginning of the previous word.
 
-* Advanced evil tips
-You can yank to line 99 using hot key "y99G" or "y99gg". That's some awesome feature in evil-mode. Please read the vim manual on "text objects and motions". You will find more useful tips.
+* Tips
+** Tip 1, Yank in evil-mode
+You can yank to line 99 using hot key "y99G" or "y99gg". That's the awesome feature from evil-mode. Please read vim manual on "text objects and motions" for more details.
+** Tip 2, change comment style
+For example, use double slashes (//) instead of slash-stars (/* ... */) in c-mode.
 
+Insert below code into your ~/.emacs:
+#+BEGIN_SRC elisp
+(add-hook 'c-mode-common-hook
+  (lambda ()
+    ;; Preferred comment style
+    (setq comment-start "// "
+          comment-end "")))
+#+END_SRC
+
+Thanks for Andrew Pennebaker (aka mcandre) providing this tip.
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
