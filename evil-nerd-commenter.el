@@ -416,6 +416,8 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
               (/= beg (point-min))
               (=  (char-before beg) ?\n))
          (comment-or-uncomment-region (1- beg) end))
+        ((eq type 'line)
+           (comment-or-uncomment-region beg end)) 
         (t
          (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
            (comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos))
