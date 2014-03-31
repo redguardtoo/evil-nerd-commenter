@@ -1,4 +1,4 @@
-* evil-nerd-commenter (version 1.2.8)
+* evil-nerd-commenter (version 1.2.9)
 
 *Please note this program could be used independently without evil-mode!*
 
@@ -198,7 +198,9 @@ Example 4: ",,a(" to comment out the current s-expression, or ",,i(" to only com
 
 Example 5: ",,ao" to comment out the current symbol, or ",,aW" to comment out the current WORD.  Could be useful when commenting out function parameters, for instance.
 
-Example 6: ",,w" comments to the beginning of the next word, ",,e" to the end of the next word, ",,b" to the beginning of the previous word.
+Example 6: ",,w" comment to the beginning of the next word, ",,e" to the end of the next word, ",,b" to the beginning of the previous word.
+
+Example 7: ",,it", comment the region inside html tags (all html major modes are supported except web-mode)
 
 * Tips
 ** Tip 1, Yank in evil-mode

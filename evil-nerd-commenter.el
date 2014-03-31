@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.2.8
+;; Version: 1.2.9
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -417,7 +417,7 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
               (=  (char-before beg) ?\n))
          (comment-or-uncomment-region (1- beg) end))
         ((eq type 'line)
-           (comment-or-uncomment-region beg end)) 
+           (comment-or-uncomment-region beg end))
         (t
          (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
            (comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos))
