@@ -1,6 +1,6 @@
-* evil-nerd-commenter (version 1.3.0)
+* evil-nerd-commenter (v1.3.0)
 
-*Please note this program could be used independently without evil-mode!*
+*Please note this program could be used independently WITHOUT evil-mode!*
 
 As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
 
