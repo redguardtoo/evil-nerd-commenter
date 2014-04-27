@@ -1,2 +1,2 @@
-(define-package "evil-nerd-commenter" "1.2.9"
+(define-package "evil-nerd-commenter" "1.3.0"
                 "Comment/uncomment lines efficiently. Like Nerd Commenter in Vim")

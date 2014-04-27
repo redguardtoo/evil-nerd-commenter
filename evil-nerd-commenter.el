@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.2.9
+;; Version: 1.3.0
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -194,7 +194,7 @@
       ;; comment (line-beginning-position line-end-position)
       ;; (setq old-b (line-beginning-position)
       ;; (forward-line -1)
-      ;; (if (= old-b (line-beginning-position)) we did't move, out of loop
+      ;; (if (= old-b (line-beginning-position)) we did not move, out of loop
       ;; (if (<= (line-end-position) beg)), out of region, out of loop
       (while (not done)
         (setq b (line-beginning-position))
@@ -202,16 +202,43 @@
         (funcall (if (comment-only-p b e)
                      'uncomment-region 'comment-region)
                  b e)
+
         (forward-line -1)
         (when (or (= (line-beginning-position) b) (< (line-end-position) beg))
           (setq done t))
         ))))
 
+(defun evilnc--working-on-region (beg end fn)
+  (let ((info (org-edit-src-find-region-and-lang))
+        lang
+        lang-f
+        old-flag)
+
+    (when info
+      (setq lang (or (cdr (assoc (nth 2 info) org-src-lang-modes))
+                     (nth 2 info)))
+      (setq lang (if (symbolp lang) (symbol-name lang) lang))
+      (setq lang-f (intern (concat lang "-mode")))
+      )
+
+    ;; turn on 3rd party language's major-mode temporarily
+    (if lang-f (funcall lang-f))
+
+    (if evilnc-invert-comment-line-by-line
+        (evilnc--invert-comment beg end)
+      (funcall fn beg end))
+
+    ;; turn off  3rd party language's major-mode temporarily and clean the shit
+    (when lang-f
+      (setq old-flag org-inhibit-startup-visibility-stuff)
+      ;; avoid org file automatically collapsed
+      (setq org-inhibit-startup-visibility-stuff t)
+      (org-mode)
+      (setq org-inhibit-startup-visibility-stuff old-flag))
+    ))
+
 (defun evilnc--comment-or-uncomment-region (beg end)
-  (if evilnc-invert-comment-line-by-line
-      (evilnc--invert-comment beg end)
-    (comment-or-uncomment-region beg end)
-      ))
+  (evilnc--working-on-region beg end 'comment-or-uncomment-region))
 
 ;; ==== below this line are public commands
 ;;;###autoload
@@ -244,14 +271,15 @@ Paragraphs are separated by empty lines."
               (re-search-forward "^[ \t]*[^ \t]" nil t)
 
               (if (<= (line-beginning-position) e)
-                    (throw 'break i)))
-            (throw 'break i))
+                  (throw 'break i)))
+          (throw 'break i))
         ))
     (when (<= b e)
       (save-excursion
         (evilnc--fix-buggy-major-modes)
         (evilnc--comment-or-uncomment-region b e)
-        ))))
+        ))
+    ))
 
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-to-the-line (&optional LINENUM)
@@ -415,12 +443,12 @@ Save in REGISTER or in the kill-ring with YANK-HANDLER."
                   (/= (char-before end) ?\n))
               (/= beg (point-min))
               (=  (char-before beg) ?\n))
-         (comment-or-uncomment-region (1- beg) end))
+         (evilnc--comment-or-uncomment-region (1- beg) end))
         ((eq type 'line)
-           (comment-or-uncomment-region beg end))
+           (evilnc--comment-or-uncomment-region beg end))
         (t
          (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
-           (comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos))
+           (evilnc--comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos))
            )
          ))
        ;; place cursor on beginning of line

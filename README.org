@@ -1,4 +1,4 @@
-* evil-nerd-commenter (version 1.2.9)
+* evil-nerd-commenter (version 1.3.0)
 
 *Please note this program could be used independently without evil-mode!*
 
@@ -26,6 +26,9 @@ Here is the live demo:
 I'll provide long-term support for this plugin for *ANY language* in the future. Here is a example how I work around [[https://github.com/redguardtoo/evil-nerd-commenter/issues/3][a bug in autoconf.el]].
 * Install
 evil-nerd-commenter is already uploaded to [[http://marmalade-repo.org/]]. So the best way to install it is using Emacs' package manager.
+
+** Perfect integration with org-mode
+The programming language embedded in org file will automatically be detected and *correct* comment syntax will be used!
 * Set up
 ** The easy way (RECOMMENDED)
 Nothing to set up if install it in the way as I suggested.
@@ -124,9 +127,9 @@ For example:
 #+END_SRC
 
 *** evilnc-toggle-invert-comment-line-by-line
-Toggle flag evilnc-invert-comment-line-by-line. When this flag is true, the command "evilnc-comment-or-uncomment-lines", "evilnc-comment-or-uncomment-to-the-line", and "evilnc-comment-or-uncomment-paragraphs" will be influenced.
+Toggle flag evilnc-invert-comment-line-by-line.
 
-These commands will *invert* each line's comment status instead comment the whole thing.
+When the flag is true, the command "evilnc-comment-or-uncomment-lines", "evilnc-comment-or-uncomment-to-the-line", and "evilnc-comment-or-uncomment-paragraphs" will be influenced. They will *invert* each line's comment status instead comment the whole thing.
 
 *** evilnc-kill-to-line
 Kill from the current line to the user-specified line.
