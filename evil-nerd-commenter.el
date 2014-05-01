@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.3.0
+;; Version: 1.3.1
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -209,10 +209,13 @@
         ))))
 
 (defun evilnc--working-on-region (beg end fn)
-  (let ((info (org-edit-src-find-region-and-lang))
+  (let (info
         lang
         lang-f
         old-flag)
+    (when (and (string= major-mode "org-mode")
+               (fboundp 'org-edit-src-find-region-and-lang))
+      (setq info (org-edit-src-find-region-and-lang)))
 
     (when info
       (setq lang (or (cdr (assoc (nth 2 info) org-src-lang-modes))
