@@ -58,7 +58,7 @@
 
 ;; shamelessly copied from goto-line
 (defun evilnc--goto-line (line)
-  (save-excursion
+  (save-restriction
     (widen)
     (goto-char (point-min))
     (if (eq selective-display t)
