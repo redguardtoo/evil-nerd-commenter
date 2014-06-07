@@ -23,7 +23,7 @@ Here is the live demo:
 ** It will even fix Emacs bug for you
 I'll provide long-term support for this plugin for *ANY language* in the future. Here is a example how I work around [[https://github.com/redguardtoo/evil-nerd-commenter/issues/3][a bug in autoconf.el]].
 * Install
-evil-nerd-commenter is already uploaded to [[http://marmalade-repo.org/]]. So the best way to install it is using Emacs' package manager.
+evil-nerd-commenter is already uploaded to [[http://melpa.milkbox.net/]]. So the best way to install it is using Emacs' package manager.
 
 ** Perfect integration with org-mode
 The programming language embedded in org file will automatically be detected and *correct* comment syntax will be used!
@@ -63,8 +63,8 @@ I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mod
 
 Feel free to copy the content of evilnc-default-hotkeys into your .emacs instead calling it directly. So you can define your own hotkeys.
 
-** The unnecessary hard way
-If you don't use emacs package manager (Why?) to install evil-nerd-commenter then please insert below content into your ~/.emacs:
+** The hard way
+If you don't use emacs package manager (Why?) to evil-nerd-commenter please insert below content into your ~/.emacs:
 #+BEGIN_SRC lisp
 ;; I suppose you know how to install evil.
 ;; If NOT, check http://www.emacswiki.org/emacs/Evil
