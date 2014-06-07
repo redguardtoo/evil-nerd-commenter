@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.3.1
+;; Version: 1.4.0
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -29,14 +29,20 @@
 ;;; Commentary:
 ;;
 ;; This program emulates nerd-commenter.vim by Marty Grenfell.
+;;
 ;; It help you comment/uncomment multiple lines without selecting them.
 ;;
 ;; `M-x evilnc-default-hotkeys` assigns hotkey `M-;` to `evilnc-comment-or-uncomment-lines`
+;;
 ;; `M-x evilnc-comment-or-uncomment-lines` comment or uncomment lines.
-;; `M-x evilnc-comment-or-uncomment-to-the-line` will comment/uncomment from current line to
-;; the specified line number. The line number is passed as parameter of the command.
-;; For example, `C-u 99 evilnc-comment-or-uncomment-to-the-line` will comment code from
-;; current line to line 99.
+;;
+;; `M-x evilnc-quick-comment-or-uncomment-to-the-line` will comment/uncomment from current line to
+;; the specified line number. The last digit(s) of line number is parameter of the command.
+;;
+;; For example, `C-u 9 evilnc-quick-comment-or-uncomment-to-the-line` will comment code from
+;; current line to line 99 if you current line is 91.
+;;
+;; Check README for more use cases.
 ;;
 ;; Though this program could be used *independently*, I highly recommend you use it with
 ;; evil (http://gitorious.org/evil)
@@ -47,7 +53,7 @@
 
 ;;; Code:
 
-;; Example, presss ",,a{" will change C code:
+;; Example, press ",,a{" will change C code:
 ;;   {printf("hello");} => /* {printf("hello");}*/
 ;; google "vim text object for more syntax"
 (defcustom evilnc-hotkey-comment-operator ",," "The hot key for evilnc-comment-operator to (un)comment text object"
@@ -319,7 +325,9 @@ Paragraphs are separated by empty lines."
 
 ;;;###autoload
 (defun evilnc-quick-comment-or-uncomment-to-the-line (&optional UNITS)
-  "Comment or uncomment to line number with its units is UNITS."
+  "Comment or uncomment to line number by specifying its last digit(s)
+For exmaple, you can use 'C-u 53 M-x evilnc-quick-comment-or-uncomment-to-the-line'
+or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the line 6453"
   (interactive "p")
   (let ((dst-line-num (evilnc--find-dst-line-num UNITS)))
     (evilnc-comment-or-uncomment-to-the-line dst-line-num)
@@ -439,7 +447,7 @@ Paragraphs are separated by empty lines."
   (eval-after-load 'evil
     '(progn
        (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
-       (define-key evil-normal-state-map ",cl" 'evilnc-comment-or-uncomment-to-the-line)
+       (define-key evil-normal-state-map ",cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
        (define-key evil-normal-state-map ",ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
        (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
        (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
