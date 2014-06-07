@@ -224,5 +224,10 @@ Insert below code into your ~/.emacs:
 #+END_SRC
 
 Thanks for Andrew Pennebaker (aka mcandre) providing this tip.
+** Tip 3, comment code snippet
+Please check my project [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]. You can press ",si" to select a region between tags and press "M-/" to comment the region.
+
+All the popular programming languages are supported;
+
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]]. My email is <chenbin.sh@gmail.com>.
