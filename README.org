@@ -1,16 +1,14 @@
 * evil-nerd-commenter (v1.3.1)
 
-*Please note this program could be used independently WITHOUT evil-mode!*
+*This program could be used independently WITHOUT evil-mode!*
 
-As a developer, I often need comment/uncomment lines for debugging or adding some short comment in the code block.
+This program is [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] simulator which help you comment lines efficiently.
 
-As I know, the [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] for Vim is the most efficient way to doing this thing. Unfortunately, there is no similar plugin in Emacs.
+Other useful utilities are added to make it better than the original VIM plugin. For example, you can copy and comment lines in one step
 
-That's why I develop this Nerd Commenter simulator for Emacs people. Besides, I'm also adding my own utilities into this plugin. For example, a command to comment&copy lines is added recently.
+I recommend you use it with [[http://gitorious.org/evil][evil]] though evil is optional.
 
-I highly recommend you use it with [[http://gitorious.org/evil][evil]].
-
-Evil makes you take advantage of power of Vi to comment lines in shocking speed. For example, you can press key `,,99j` or `99,ci` to comment out 99 lines.
+Evil is a Vim simulator which makes text manipulation very efficient. For example, you can press key `,,99j` or `99,ci` to comment out 99 lines.
 
 * Why evil-nerd-commenter is better?
 ** A simple use case on the efficiency
@@ -61,7 +59,7 @@ Further explanation, the content of evilnc-default-hotkeys is:
 As you can see, the default hot key for commenting lines is "M-;" when you don't use [[http://emacswiki.org/emacs/Evil][evil-mode]].
 The advantage of use "M-;" is you can set mark on the first line and scroll several pages down and comment all the lines in that region by "M-;". The key point here is you save the extra two key strikes to make marked region wrap the whole content of first and last line.
 
-I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]]. Evil-mode is only *optional*! Some people dont use it because they prefer emacs native key binding.
+I prefer vi key binds. So I also use [[http://emacswiki.org/emacs/Evil][evil-mode]]. Evil-mode is only *optional*! Some people don't use it because they prefer emacs native key binding.
 
 Feel free to copy the content of evilnc-default-hotkeys into your .emacs instead calling it directly. So you can define your own hotkeys.
 
@@ -91,29 +89,31 @@ If you don't use emacs package manager (Why?) to install evil-nerd-commenter the
 * Usage
 ** Available commands and hot keys
 Here are available commands. They are not dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]:
-*** evilnc-comment-or-uncomment-lines (HIGHLY RECOMMENDED)
+*** evilnc-comment-or-uncomment-lines (RECOMMENDED)
 comment/uncomment lines. This command supports negative arguments.
 
 The hotkey is ",ci" in evil-mode and "M-;" (M means Alt key) in emacs normal mode.
 
 *This may be the only command and hot key you need to learn!*
-*** evilnc-comment-or-uncomment-to-the-line  (RECOMMENDED)
-comment/uncomment from current line to the user-specified line.
+*** evilnc-quick-comment-or-uncomment-to-the-line  (RECOMMENDED)
+comment/uncomment from current line to the user-specified line. You can input the rightest digit(s) to specify the line number if you want to type less.
 
-The hotkey is ",cl" in evil-mode and "C-c l" (C means Ctrl key) in emacs normal mode.
+For example, say current line number is 497. "C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line" will comment to the line 503 beause the rightest digit of "503" is 3.
 
-*** evilnc-copy-and-comment-lines (RECOMMENDED)
+The hotkey is ",cl" or ",ll" in evil-mode and "C-c l" (C means Ctrl key) in emacs normal mode.
+
+*** evilnc-comment-or-uncomment-paragraphs (RECOMMENDED)
+comment/uncomment paragraphs which separated by empty lines
+
+*** evilnc-copy-and-comment-lines
 copy and paste lines, then comment out original lines. This command supports negative arguments.
 
-
 The hotkey is ",cc" in evil-mode and "C-c c" in emacs normal mode.
-
-*** evilnc-comment-or-uncomment-paragraphs (HIGHLY RECOMMENDED)
-comment/uncomment paragraphs which separated by empty lines
 
 *** evilnc-toggle-comment-empty-lines
 toggle the flag to comment/uncomment empty lines.
 
+The hotkey is ",cv" in evil-mode.
 *** evilnc-copy-to-line
 Copy from the current line to the user-specified line.
 
@@ -142,6 +142,9 @@ For example:
 #+BEGIN_SRC elisp
 (global-set-key (kbd "C-c C-t C-l") 'evilnc-kill-to-line)
 #+END_SRC
+
+*** evilnc-comment-or-uncomment-to-the-line
+Comment to the specified line. evilnc-quick-comment-or-uncomment-to-the-line may be better alternative.
 
 ** Examples
 *** Example 1
