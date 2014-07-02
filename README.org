@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v1.4.0)
+* evil-nerd-commenter (v1.5.0)
 
 *This program could be used independently WITHOUT evil-mode!*
 
@@ -206,7 +206,7 @@ Example 5: ",,ao" to comment out the current symbol, or ",,aW" to comment out th
 
 Example 6: ",,w" comment to the beginning of the next word, ",,e" to the end of the next word, ",,b" to the beginning of the previous word.
 
-Example 7: ",,it", comment the region inside html tags (all html major modes are supported except web-mode)
+Example 7: ",,it", comment the region inside html tags (all html major modes are supported , *including web-mode*)
 
 * Tips
 ** Tip 1, Yank in evil-mode
