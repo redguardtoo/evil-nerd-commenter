@@ -75,7 +75,7 @@
 (defun evilnc--fix-buggy-major-modes ()
   "fix major modes whose comment regex is buggy.
 @see http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html"
-  (when (string= major-mode "autoconf-mode")
+  (when (eq major-mode 'autoconf-mode)
     ;; since comment-use-syntax is nil in autoconf.el, the comment-start-skip need
     ;; make sure the its first parenthesized expression match the string exactly before
     ;; the "dnl", check the comment-start-skip in lisp-mode may give you some hint.
@@ -111,7 +111,7 @@
           ;; in evil-mode, if we use hot key V `M-x evil-visual-line` to select line
           ;; the (line-beginning-position) of the line which is after the last selected
           ;; line is always (region-end)! Don't know why.
-          (if (and (> e b) (= e (line-beginning-position)) (boundp 'evil-state) (string= evil-state 'visual))
+          (if (and (> e b) (= e (line-beginning-position)) (boundp 'evil-state) (eq evil-state 'visual))
               (setq e (1- e))
             )
           (goto-char b)
@@ -158,8 +158,8 @@
     (delq nil
           (mapcar #'(lambda (f)
                       ;; learn this trick from flyspell
-                      (or (string= f 'font-lock-comment-face)
-                          (string= f 'font-lock-comment-delimiter-face)))
+                      (or (eq f 'font-lock-comment-face)
+                          (eq f 'font-lock-comment-delimiter-face)))
                   fontfaces))))
 
 ;; @return (list beg end)
@@ -219,7 +219,7 @@
         lang
         lang-f
         old-flag)
-    (when (and (string= major-mode "org-mode")
+    (when (and (eq major-mode 'org-mode)
                (fboundp 'org-edit-src-find-region-and-lang))
       (setq info (org-edit-src-find-region-and-lang)))
 
@@ -248,7 +248,7 @@
 
 (defun evilnc--comment-or-uncomment-region (beg end)
   (cond
-   ((string= major-mode "web-mode")
+   ((eq major-mode 'web-mode)
     ;; web-mode comment only works when region selected
     ;; uncomment only works when region not selected
     ;; test three sample point, comment or uncomment
