@@ -228,6 +228,29 @@ Thanks for Andrew Pennebaker (aka mcandre) providing this tip.
 Please check my project [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]. You can press ",si" to select a region between tags and press "M-/" to comment the region.
 
 All the popular programming languages are supported;
+** Tip 4, use evil-leader if you prefer the "\" as the leader character in evil-mode
+- Install [[https://github.com/cofi/evil-leader][evil-leader according to its README]].
+- Remove line "(evilnc-default-hotkeys)" from your ~/.emacs.
+- Insert below code into you ~/.emacs,
+#+BEGIN_SRC elisp
+(global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
+(global-set-key (kbd "C-c l") 'evilnc-quick-comment-or-uncomment-to-the-line)
+(global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
+(global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
+
+(require 'evil-leader)
+(global-evil-leader-mode)
+(evil-leader/set-key
+  "ci" 'evilnc-comment-or-uncomment-lines
+  "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
+  "ll" 'evilnc-quick-comment-or-uncomment-to-the-line
+  "cc" 'evilnc-copy-and-comment-lines
+  "cp" 'evilnc-comment-or-uncomment-paragraphs
+  "cr" 'comment-or-uncomment-region
+  "cv" 'evilnc-toggle-invert-comment-line-by-line
+  )
+#+END_SRC
+
 
 * Contact me
 You can report bugs at [[https://github.com/redguardtoo/evil-nerd-commenter]].
