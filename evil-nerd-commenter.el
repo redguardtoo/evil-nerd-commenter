@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.5.0
+;; Version: 1.5.1
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -111,9 +111,11 @@
           ;; in evil-mode, if we use hot key V `M-x evil-visual-line` to select line
           ;; the (line-beginning-position) of the line which is after the last selected
           ;; line is always (region-end)! Don't know why.
-          (if (and (> e b) (= e (line-beginning-position)) (boundp 'evil-state) (eq evil-state 'visual))
-              (setq e (1- e))
-            )
+          (if (and (> e b)
+                     (save-excursion (goto-char e) (= e (line-beginning-position)))
+                     (boundp 'evil-state) (eq evil-state 'visual))
+              (setq e (1- e)))
+
           (goto-char b)
           (setq b (line-beginning-position))
           (goto-char e)
@@ -465,6 +467,11 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
               (setq e (line-end-position)))
           (kill-region b (+ 1 e)) ; +1 because we need remove the CR
           ))))
+
+;;;###autoload
+(defun evilnc-version ()
+  (interactive)
+  (message "1.5.1"))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()

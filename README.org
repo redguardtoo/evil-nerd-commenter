@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v1.5.0)
+* evil-nerd-commenter (v1.5.1)
 
 *This program could be used independently WITHOUT evil-mode!*
 
