@@ -85,6 +85,14 @@ If you don't use emacs package manager please insert below code into your ~/.ema
 (evilnc-default-hotkeys)
 #+END_SRC
 
+** some evil-mode users prefer "\" as the leader key
+Then you need set up hot keys by yourself. Remove line "(evilnc-default-hotkeys)" from your ~/.emacs.
+
+Besides, by default ",," is used for comment text object. So you need re-define that hot key. Insert below code into ~/.emacs:
+#+BEGIN_SRC elisp
+(setq evilnc-hotkey-comment-operator "\\")
+#+END_SRC
+
 * Usage
 ** Available commands and hot keys
 Here are available commands. They are not dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]:
