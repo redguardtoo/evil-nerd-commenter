@@ -85,8 +85,8 @@ If you don't use emacs package manager please insert below code into your ~/.ema
 (evilnc-default-hotkeys)
 #+END_SRC
 
-** some evil-mode users prefer "\" as the leader key
-Then you need set up hot keys by yourself. Remove line "(evilnc-default-hotkeys)" from your ~/.emacs.
+** Use back slash as the leader key in evil-mode
+Remove line "(evilnc-default-hotkeys)" from your ~/.emacs and re-assign hot key manually.
 
 Besides, by default ",," is used for comment text object. So you need re-define that hot key. Insert below code into ~/.emacs:
 #+BEGIN_SRC elisp
