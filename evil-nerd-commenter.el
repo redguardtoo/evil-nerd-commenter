@@ -341,7 +341,7 @@ Paragraphs are separated by empty lines."
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-to-the-line (&optional LINENUM)
   "Comment or uncomment from the current line to the LINENUM line"
-  (interactive "p")
+  (interactive "nLine: ")
   (if (not (region-active-p))
       (let ((b (line-beginning-position))
             (e (line-end-position)))
@@ -417,7 +417,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
    Case 2: If a region selected, the region is expand to make sure the region contain
    whole lines. Then we operate the expanded region. NUM is ignored.
 "
-  (interactive "p")
+  (interactive "NCopy and comment to line: ")
 
   ;; support negative number
   (when (< NUM 0)
@@ -439,7 +439,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
 ;;;###autoload
 (defun evilnc-copy-to-line (&optional LINENUM)
   "Copy from the current line to the LINENUM line, for non-evil user only"
-  (interactive "p")
+  (interactive "nCopy to line: ")
   (if (not (region-active-p))
       (let ((b (line-beginning-position))
             (e (line-end-position)))
@@ -455,7 +455,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
 ;;;###autoload
 (defun evilnc-kill-to-line (&optional LINENUM)
   "Kill from the current line to the LINENUM line, for non-evil user only"
-  (interactive "p")
+  (interactive "NKill to line: ")
   (if (not (region-active-p))
       (let ((b (line-beginning-position))
             (e (line-end-position)))
@@ -464,8 +464,8 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
           (if (< (line-beginning-position) b)
               (setq b (line-beginning-position)))
           (if (> (line-end-position) e)
-              (setq e (line-end-position)))
-          (kill-region b (+ 1 e)) ; +1 because we need remove the CR
+              (setq e (point-max)))
+          (kill-region b e)
           ))))
 
 ;;;###autoload
