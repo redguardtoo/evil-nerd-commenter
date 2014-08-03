@@ -415,10 +415,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
    Case 1: If no region selected, operate on current line. if NUM>1, comment/uncomment
    extra N-1 lines from next line
    Case 2: If a region selected, the region is expand to make sure the region contain
-   whole lines. Then we operate the expanded region. NUM is ignored.
-"
-  (interactive "NCopy and comment to line: ")
-
+   whole lines. Then we operate the expanded region. NUM is ignored."
   ;; support negative number
   (when (< NUM 0)
     (forward-line (1+ NUM))
@@ -464,7 +461,10 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
           (if (< (line-beginning-position) b)
               (setq b (line-beginning-position)))
           (if (> (line-end-position) e)
-              (setq e (point-max)))
+              (setq e (line-end-position)))
+          ;; +1 because we need remove the CR
+          (setq e (+ 1 e))
+          (if (> e (point-max)) (setq e (point-max)))
           (kill-region b e)
           ))))
 
