@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v1.5.1)
+* evil-nerd-commenter (v1.5.2)
 
 *This program could be used independently WITHOUT evil-mode!*
 
@@ -38,7 +38,7 @@ You may add one line of emacs lisp code into ~/.emacs to use default hot keys,
 (evilnc-default-hotkeys)
 #+END_SRC
 
-And *that's ALL*!
+*That's all you need to know* unless you want to modify default key bindings!
 
 The content of evilnc-default-hotkeys is:
 #+BEGIN_SRC lisp
@@ -58,11 +58,11 @@ The content of evilnc-default-hotkeys is:
        ))
 #+END_SRC
 
-As you can see, the default hot key for commenting lines is "M-;" when you don't use [[http://emacswiki.org/emacs/Evil][evil-mode]].
+As you can see, the default hot key for commenting lines is "M-;", if you don't use [[http://emacswiki.org/emacs/Evil][evil-mode]].
 
-You can set mark on the first line, scroll down, and comment *all the lines* instead of selected region by "M-;".
+You can mark at any column of the first line, scroll down, and comment *all the lines* instead of selected region by "M-;".
 
-You can copy the content of evilnc-default-hotkeys into .emacs instead calling it directly.
+You can copy the content of evilnc-default-hotkeys into .emacs instead of calling it directly, if you don't like the default key binding.
 
 ** The hard way
 If you don't use emacs package manager please insert below code into your ~/.emacs:
@@ -88,7 +88,7 @@ If you don't use emacs package manager please insert below code into your ~/.ema
 ** Use back slash as the leader key in evil-mode
 Remove line "(evilnc-default-hotkeys)" from your ~/.emacs and re-assign hot key manually.
 
-Besides, by default ",," is used for comment text object. So you need re-define that hot key. Insert below code into ~/.emacs:
+Besides, ",," is used for commenting text object. So you need re-define that hot key. Insert below code into ~/.emacs:
 #+BEGIN_SRC elisp
 (setq evilnc-hotkey-comment-operator "\\")
 #+END_SRC
@@ -232,9 +232,9 @@ Insert below code into your ~/.emacs:
 
 Thanks for Andrew Pennebaker (aka mcandre) providing this tip.
 ** Tip 3, comment code snippet
-Please check my project [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]. You can press ",si" to select a region between tags and press "M-/" to comment the region.
+Please check my project [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]. You can press "vi%" to select a region between tags and press "M-/" to comment the region.
 
-All the popular programming languages are supported;
+Most popular programming languages are supported;
 ** Tip 4, use evil-leader if you use the *backslash* as the leader key in evil-mode
 - Install [[https://github.com/cofi/evil-leader][evil-leader according to its README]].
 - Remove line "(evilnc-default-hotkeys)" from your ~/.emacs.
