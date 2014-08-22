@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.5.2
+;; Version: 1.5.3
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -397,17 +397,21 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
    whole lines. Then we comment/uncomment the expanded region. NUM is ignored."
   (interactive "p")
   ;; donot move the cursor
-  (save-excursion
-    ;; support negative number
-    (when (< NUM 0)
-      (forward-line (1+ NUM))
-      (setq NUM (- 0 NUM)))
-
-    (evilnc--operation-on-lines-or-region '(lambda (b e)
-                                             (evilnc--fix-buggy-major-modes)
-                                             (evilnc--comment-or-uncomment-region b e)
-                                             )
-                                          NUM)))
+  ;; support negative number
+  (cond
+   ((and (= 1 NUM) (string-match "^[ \t]*$" (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+    ;; comment on current empty line
+    (comment-dwim nil))
+   (t
+    (save-excursion
+      (when (< NUM 0)
+        (forward-line (1+ NUM))
+        (setq NUM (- 0 NUM)))
+      (evilnc--operation-on-lines-or-region '(lambda (b e)
+                                               (evilnc--fix-buggy-major-modes)
+                                               (evilnc--comment-or-uncomment-region b e))
+                                            NUM))
+    )))
 
 ;;;###autoload
 (defun evilnc-copy-and-comment-lines (&optional NUM)
@@ -471,7 +475,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
 ;;;###autoload
 (defun evilnc-version ()
   (interactive)
-  (message "1.5.2"))
+  (message "1.5.3"))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()
