@@ -420,6 +420,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
    extra N-1 lines from next line
    Case 2: If a region selected, the region is expand to make sure the region contain
    whole lines. Then we operate the expanded region. NUM is ignored."
+  (interactive "p")
   ;; support negative number
   (when (< NUM 0)
     (forward-line (1+ NUM))
