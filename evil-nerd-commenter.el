@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.5.3
+;; Version: 1.5.4
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -420,6 +420,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
    extra N-1 lines from next line
    Case 2: If a region selected, the region is expand to make sure the region contain
    whole lines. Then we operate the expanded region. NUM is ignored."
+  (interactive "p")
   ;; support negative number
   (when (< NUM 0)
     (forward-line (1+ NUM))
@@ -475,7 +476,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
 ;;;###autoload
 (defun evilnc-version ()
   (interactive)
-  (message "1.5.3"))
+  (message "1.5.4"))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()
