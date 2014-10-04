@@ -94,8 +94,7 @@
     (goto-char (point-min))
     (if (eq selective-display t)
       (re-search-forward "[\n\C-m]" nil 'end (1- line))
-      (forward-line (1- line))))
-  )
+      (forward-line (1- line)))))
 
 (defun evilnc--fix-buggy-major-modes ()
   "fix major modes whose comment regex is buggy.
@@ -107,25 +106,22 @@
     ;; See code in (defun comment-search-forward) from emacs 24.2.1:
     ;; (if (not comment-use-syntax)
     ;;     (if (re-search-forward comment-start-skip limit noerror)
-    ;;     (or (match-end 1) (match-beginning 0))
-    ;; My regex make sure (match-end 1) return the position of comment starter
+    ;;     (or (match-end 1) (match-beginning 0)))
+    ;;     (do-something))
+    ;; My regex makes sure (match-end 1) return the position of comment starter
     (when (and (boundp 'comment-use-syntax) (not comment-use-syntax))
         ;; Maybe autoconf.el will (setq comment-use-syntax t) in the future?
-        (setq comment-start-skip "^\\(\\s*\\)\\(dnl\\|#\\) +")
-      )
-    )
-  )
+        (setq comment-start-skip "^\\(\\s*\\)\\(dnl\\|#\\) +"))
+    ))
 
 (defun evilnc--operation-on-lines-or-region (fn &optional NUM)
   (if (not (region-active-p))
-      (let ((b (line-beginning-position))
-            e)
+      (let ((b (line-beginning-position)) e)
         (save-excursion
           (forward-line (- NUM 1))
           (setq e (line-end-position))
           )
-        (funcall fn b e)
-        )
+        (funcall fn b e))
     ;; expand selected region
     (progn
       (save-excursion
@@ -161,21 +157,18 @@
               (setq b (line-beginning-position))
               )
         (setq b 1)
-        )
-      )
+        ))
     (save-excursion
-
       (setq e (re-search-forward "^[ \t]*$" nil t))
       (if e (progn
               (forward-line -1)
               (setq e (line-end-position))
               )
         (setq e (point-max))
-        )
-      )
+        ))
+
     (list b e)
-    )
-  )
+    ))
 
 (defun evilnc--in-comment-p (pos)
   (interactive)
