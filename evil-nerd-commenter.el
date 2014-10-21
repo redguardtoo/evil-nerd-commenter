@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.5.6
+;; Version: 1.5.7
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -308,11 +308,16 @@
 
 (defun evilnc--find-dst-line-num (UNITS)
   (let ((cur-line-num (evilnc--current-line-num))
-        dst-line-num)
-    (if (>= (mod cur-line-num 10) UNITS)
-        (setq UNITS (+ UNITS 10))
+        dst-line-num
+        (r 1)
+        (l (length (number-to-string UNITS))))
+    (while (> l 0)
+      (setq r (* r 10))
+      (setq l (- l 1)))
+    (if (>= (mod cur-line-num r) UNITS)
+        (setq UNITS (+ UNITS r))
       )
-    (setq dst-line-num (+ cur-line-num (- UNITS (mod cur-line-num 10))))
+    (setq dst-line-num (+ cur-line-num (- UNITS (mod cur-line-num r))))
     ))
 
 ;; ==== below this line are public commands
@@ -494,7 +499,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
 ;;;###autoload
 (defun evilnc-version ()
   (interactive)
-  (message "1.5.6"))
+  (message "1.5.7"))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()
