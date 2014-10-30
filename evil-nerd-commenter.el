@@ -85,6 +85,9 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'evil nil :noerror))
+
 ;; Example, press ",,a{" will change C code:
 ;;   {printf("hello");} => /* {printf("hello");}*/
 ;; google "vim text object for more syntax"
