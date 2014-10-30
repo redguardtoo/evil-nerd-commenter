@@ -4,10 +4,15 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.5.8
+;; Version: 1.5.9
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
+
+;;; Credits:
+
+;; - Lally Oppenheimer (AKA lalopmak, https://github.com/lalopmak) added the support for text-object in Evil
+;; - Tom Willemse (AKA ryuslash, https://github.com/ryuslash) provided the fix to make Emacs 24.4 work
 
 ;;; License:
 
@@ -509,7 +514,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
 ;;;###autoload
 (defun evilnc-version ()
   (interactive)
-  (message "1.5.8"))
+  (message "1.5.9"))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()

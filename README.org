@@ -1,23 +1,14 @@
-* evil-nerd-commenter (v1.5.8)
+* evil-nerd-commenter (v1.5.9)
 
 *This program can be used independently WITHOUT [[http://www.emacswiki.org/Evil][Evil]]!*
 
 A [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] emulation, help you comment code efficiently. For example, you can press key `,,99j` or `99,ci` to comment out 99 lines.
 
-I recommend you using it with Evil though it's optional.
+I recommend using it with Evil though Evil is optional.
 
 Tested on Emacs 23.4, 24.3, 24.4
 
-* Emacs v24.4 issue workaround
-Emacs v24.4 has some issue if and only if you install evil-nerd-commenter from package manager (elpa/melpa/...).
-
-This can be *easily resolved* by running below command line in shell,
-#+begin_src sh
-find ~/.emacs.d -type f -iwholename '*/evil-nerd-commenter*.elc' | xargs rm
-#+end_src
-
-The root cause is Emacs v24.4 compile the code in `eval-after-load`, I'm still thinking the perfect solution. Please help me if you are Lisp expert!
-* Why evil-nerd-commenter is better?
+* Why?
 ** A simple use case on the efficiency
 If you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", now you can press "M-9 M-;" or ",,9j" or "9,ci".
 
@@ -34,7 +25,7 @@ I'll provide long-term support for *ANY language* in the future. Here is an exam
 The code snippet embedded in org file will automatically be detected and *correct* comment syntax will be used!
 
 * Install
-evil-nerd-commenter is already uploaded to [[http://melpa.milkbox.net/]]. The best way to install it is using Emacs' package manager.
+evil-nerd-commenter is already uploaded to [[http://melpa.org]]. The best way to install is Emacs package manager.
 
 * Set up
 ** The easy way (RECOMMENDED)
@@ -79,7 +70,7 @@ If you don't use package manager please insert below code into your ~/.emacs:
 
 ;; You need download ONLY evil-nerd-commenter.el and place it somewhere,
 ;; say "somewhere"" is actually "~/.emacs.d/my-dot-el-directory".
-;; Now notify Emacs where to find evil-nerd-commenter.el
+;; Now tell Emacs where to find evil-nerd-commenter.el
 (add-to-list 'load-path "~/.emacs.d/my-dot-el-directory")
 
 ;; ",," is the default value of evilnc-hotkey-comment-operator,
@@ -260,5 +251,16 @@ Most popular programming languages are supported;
 ** Tip 5, (un)comment Lisp code
 - Make sure Evil installed
 - Press ",,a("
+** Tip 6, work around Emacs 24.4 issue
+At first, latest version (after 2014-10-30) is OK.
+
+If you still got some problem, run below command in shell to fix,
+#+begin_src sh
+find ~/.emacs.d -type f -iwholename '*/evil-nerd-commenter*.elc' | xargs rm
+#+end_src
+
+* Credits
+- [[https://github.com/lalopmak][Lally Oppenheimer (AKA lalopmak)]] added the support for text-object in Evil
+- [[https://github.com/ryuslash][Tom Willemse (AKA ryuslash)]] provided the fix to make Emacs 24.4 work
 * Contact me
 Report bug at [[https://github.com/redguardtoo/evil-nerd-commenter]].
