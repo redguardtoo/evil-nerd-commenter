@@ -26,6 +26,13 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+;;; WARNING:
+
+;; Emacs v24.4 has some issue if and only if you install evil-nerd-commenter from package manager (elpa/melpa/...).
+;;
+;; This can be *easily resolved* by running below command line in shell,
+;; find ~/.emacs.d -type f -iwholename '*/evil-nerd-commenter*.elc' | xargs rm
+
 ;;; Commentary:
 ;;
 ;; This program emulates nerd-commenter.vim by Marty Grenfell.

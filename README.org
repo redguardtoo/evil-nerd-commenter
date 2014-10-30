@@ -8,6 +8,15 @@ I recommend you using it with Evil though it's optional.
 
 Tested on Emacs 23.4, 24.3, 24.4
 
+* Emacs v24.4 issue workaround
+Emacs v24.4 has some issue if and only if you install evil-nerd-commenter from package manager (elpa/melpa/...).
+
+This can be *easily resolved* by running below command line in shell,
+#+begin_src sh
+find ~/.emacs.d -type f -iwholename '*/evil-nerd-commenter*.elc' | xargs rm
+#+end_src
+
+The root cause is Emacs v24.4 compile the code in `eval-after-load`, I'm still thinking the perfect solution. Please help me if you are Lisp expert!
 * Why evil-nerd-commenter is better?
 ** A simple use case on the efficiency
 If you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", now you can press "M-9 M-;" or ",,9j" or "9,ci".
