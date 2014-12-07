@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v1.5.10)
+* evil-nerd-commenter (v1.5.11)
 
 *This program can be used independently WITHOUT [[http://www.emacswiki.org/Evil][Evil]]!*
 

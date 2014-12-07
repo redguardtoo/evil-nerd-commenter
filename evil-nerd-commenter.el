@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 1.5.10
+;; Version: 1.5.11
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -247,7 +247,8 @@
         ))))
 
 (defun evilnc--working-on-region (beg end fn)
-  (let (info
+  (let (pos
+        info
         lang
         lang-f
         old-flag)
@@ -271,11 +272,17 @@
 
     ;; turn off  3rd party language's major-mode temporarily and clean the shit
     (when lang-f
-      (setq old-flag org-inhibit-startup-visibility-stuff)
       ;; avoid org file automatically collapsed
-      (setq org-inhibit-startup-visibility-stuff t)
+      (setq pos (point))
       (org-mode)
-      (setq org-inhibit-startup-visibility-stuff old-flag))
+      ;; just goto the root element
+      (condition-case nil
+          (outline-up-heading 1)
+        (error
+       (message "in the beginning ...")))
+      ;; expand current node because by default (org-mode) will collapse all nodes
+      (org-show-subtree)
+      (goto-char pos))
     ))
 
 (defun evilnc--comment-or-uncomment-region (beg end)
@@ -511,7 +518,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
 ;;;###autoload
 (defun evilnc-version ()
   (interactive)
-  (message "1.5.10"))
+  (message "1.5.11"))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()
