@@ -295,11 +295,12 @@
      ((and (save-excursion
              (goto-char beg)
              (goto-char (line-end-position))
+             (re-search-backward "^\\|[^[:space:]]")
              (web-mode-is-comment))
            (web-mode-is-comment (/ (+ beg end) 2))
            (save-excursion
              (goto-char end)
-             (goto-char (line-beginning-position))
+             (back-to-indentation)
              (web-mode-is-comment))
            )
       ;; don't know why, but we need goto the middle of comment
