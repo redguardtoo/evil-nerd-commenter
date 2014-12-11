@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v1.5.11)
+* evil-nerd-commenter (v1.5.12)
 
 *This program can be used independently WITHOUT [[http://www.emacswiki.org/Evil][Evil]]!*
 
@@ -262,5 +262,6 @@ find ~/.emacs.d -type f -iwholename '*/evil-nerd-commenter*.elc' | xargs rm
 * Credits
 - [[https://github.com/lalopmak][Lally Oppenheimer (AKA lalopmak)]] added the support for text-object in Evil
 - [[https://github.com/ryuslash][Tom Willemse (AKA ryuslash)]] provided the fix to make Emacs 24.4 work
+- [[https://github.com/TheBB][Eivind Fonn (AKA TheBB)]] fixed the web-mode issue #45
 * Contact me
 Report bug at [[https://github.com/redguardtoo/evil-nerd-commenter]].
