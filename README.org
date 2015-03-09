@@ -26,7 +26,10 @@ The code snippet embedded in org file will automatically be detected and *correc
 
 * Install
 evil-nerd-commenter is already uploaded to [[http://melpa.org]]. The best way to install is Emacs package manager.
+** Correct comment syantx in HTML
+It will use "/**/" inside <script> and css tags in html files and "<!-- -->" elsewhere *automatically*!
 
+[[http://web-mode.org/][Web-mode]] is required for editing HTML file.
 * Set up
 ** The easy way (RECOMMENDED)
 You need add one liner into ~/.emacs to use default hotkeys,
