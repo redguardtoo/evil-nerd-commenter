@@ -1,6 +1,6 @@
-* evil-nerd-commenter (v1.5.12)
+* evil-nerd-commenter (v1.5.13)
 
-*This program can be used independently WITHOUT [[http://www.emacswiki.org/Evil][Evil]]!*
+This program can be used *independently WITHOUT [[http://www.emacswiki.org/Evil][Evil]]!*
 
 A [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] emulation, help you comment code efficiently. For example, you can press key `,,99j` or `99,ci` to comment out 99 lines.
 
@@ -89,7 +89,7 @@ If you don't use package manager please insert below code into your ~/.emacs:
 
 * Usage
 ** Available commands and hotkeys
-Here are available commands. They are not dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]:
+Here are available commands. They are NOT dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]:
 *** evilnc-comment-or-uncomment-lines (RECOMMENDED)
 comment/uncomment lines. This command supports negative arguments.
 
