@@ -6,7 +6,7 @@ A [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] emula
 
 I recommend using it with Evil though Evil is optional.
 
-Tested on Emacs 23.4, 24.3, 24.4
+Tested on Emacs 23.4, 24.3, 24.4, 24.5
 
 * Why?
 ** A simple use case on the efficiency
