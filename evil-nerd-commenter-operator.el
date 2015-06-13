@@ -34,10 +34,10 @@
 
 (require 'evil)
 
-(evil-define-operator evilnc-comment-operator (beg end type register yank-handler)
+(evil-define-operator evilnc-comment-operator (beg end type)
   "Comments text from BEG to END with TYPE.
 Save in REGISTER or in the kill-ring with YANK-HANDLER."
-  (interactive "<R><x><y>")
+  (interactive "<R>")
   (unless register
     (let ((text (filter-buffer-substring beg end)))
       (unless (string-match-p "\n" text)
