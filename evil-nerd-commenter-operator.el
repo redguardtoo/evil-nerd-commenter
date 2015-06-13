@@ -38,12 +38,6 @@
   "Comments text from BEG to END with TYPE.
 Save in REGISTER or in the kill-ring with YANK-HANDLER."
   (interactive "<R>")
-  (unless register
-    (let ((text (filter-buffer-substring beg end)))
-      (unless (string-match-p "\n" text)
-        ;; set the small delete register
-        (evil-set-register ?- text))))
-  (evil-yank beg end type register yank-handler)
   (cond
    ((eq type 'block)
     (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
