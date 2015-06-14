@@ -35,8 +35,7 @@
 (require 'evil)
 
 (evil-define-operator evilnc-comment-operator (beg end type)
-  "Comments text from BEG to END with TYPE.
-Save in REGISTER or in the kill-ring with YANK-HANDLER."
+  "Comments text from BEG to END with TYPE."
   (interactive "<R>")
   (cond
    ((eq type 'block)
