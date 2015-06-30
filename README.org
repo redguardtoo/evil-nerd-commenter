@@ -95,6 +95,7 @@ The hotkey is ",cc" in evil-mode and "C-c c" in emacs normal mode.
 toggle the flag to comment/uncomment empty lines.
 
 The hotkey is ",cv" in evil-mode.
+
 *** evilnc-copy-to-line
 Copy from the current line to the user-specified line.
 
@@ -112,6 +113,7 @@ Toggle flag evilnc-invert-comment-line-by-line.
 
 When the flag is true, the command "evilnc-comment-or-uncomment-lines", "evilnc-comment-or-uncomment-to-the-line", and "evilnc-comment-or-uncomment-paragraphs" will be influenced. They will *invert* each line's comment status instead comment the whole thing.
 
+Please note this command does NOT work on evil text object.
 *** evilnc-kill-to-line
 Kill from the current line to the user-specified line.
 
