@@ -436,7 +436,7 @@ or 'C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line' to comment to the l
 
 ;;;###autoload
 (defun evilnc-toggle-invert-comment-line-by-line ()
-  "Please note this command does NOT work on evil text objects"
+  "Please note this command may NOT work on complex evil text objects"
   (interactive)
   (if evilnc-invert-comment-line-by-line
       (setq evilnc-invert-comment-line-by-line nil)

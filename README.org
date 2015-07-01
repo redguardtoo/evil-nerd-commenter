@@ -113,7 +113,7 @@ Toggle flag evilnc-invert-comment-line-by-line.
 
 When the flag is true, the command "evilnc-comment-or-uncomment-lines", "evilnc-comment-or-uncomment-to-the-line", and "evilnc-comment-or-uncomment-paragraphs" will be influenced. They will *invert* each line's comment status instead comment the whole thing.
 
-Please note this command does NOT work on evil text object.
+Please note this command may NOT work on complex evil text object.
 *** evilnc-kill-to-line
 Kill from the current line to the user-specified line.
 
@@ -163,7 +163,7 @@ The first line is production code. The second line is your debug code. You want 
 All you need to is "M-x evilnc-toggle-invert-comment-line-by-line" then "C-u 2 evilnc-comment-or-uncomment-lines". The first command turn on some flag, so the behavior of (un)commenting is different.
 
 * Evil usage
-If you use [[http://emacswiki.org/emacs/Evil][Evil]], you can use [[http://vimdoc.sourceforge.net/htmldoc/motion.html#text-objects][text objects and motions]].
+If you use [[http://emacswiki.org/emacs/Evil][Evil]], you can use [[http://vimdoc.sourceforge.net/htmldoc/motion.html#text-objects][text objects and motions]]. But if you only *deals with lines*, I suggest *using evilnc-comment-or-uncomment-lines instead*.
 
 "evilnc-comment-operator" acts much like the delete/change operator. Takes a motion or text object and comments it out, yanking its content in the process.
 
