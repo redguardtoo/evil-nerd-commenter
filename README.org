@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v2.0)
+* evil-nerd-commenter (v2.1)
 
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 

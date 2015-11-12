@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 2.0
+;; Version: 2.1
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -238,18 +238,17 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
           ;; extend the beginning
           (goto-char newbeg)
           (while (and (>= newbeg (line-beginning-position)) (evilnc--in-comment-p newbeg))
-            (decf newbeg)
-            )
+            (setq newbeg (1- newbeg)))
+
           ;; make sure newbeg is at the beginning of the comment
-          (if (< newbeg beg) (incf newbeg))
+          (if (< newbeg beg) (setq newbeg (1+ newbeg)))
 
           ;; extend the end
           (goto-char newend)
           (while (and (<= newend (line-end-position)) (evilnc--in-comment-p newend))
-            (incf newend)
-            )
+            (setq newend (1+ newend)))
           ;; make sure newend is at the end of the comment
-          (if (> newend end) (decf newend))
+          (if (> newend end) (setq newend (1- newend)))
 
           (list newbeg newend)
           ))
@@ -393,7 +392,7 @@ Paragraphs are separated by empty lines."
         )
     (catch 'break
       (while (< i NUM)
-        (incf i)
+        (setq i (1+ i))
         (setq rlt (evilnc--get-one-paragraph-region))
         (setq b (if (< (nth 0 rlt) b) (nth 0 rlt) b))
         (setq e (if (> (nth 1 rlt) e) (nth 1 rlt) e))
@@ -573,7 +572,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "2.0"))
+  (message "2.1"))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()
