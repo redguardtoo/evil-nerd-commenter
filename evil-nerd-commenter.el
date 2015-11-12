@@ -84,6 +84,8 @@
 
 ;;; Code:
 
+(eval-when-compile (require 'cl))
+
 (defvar evilnc-invert-comment-line-by-line nil
   "If t then invert region comment status line by line.
 Please note it has NOT effect on evil text object!")
