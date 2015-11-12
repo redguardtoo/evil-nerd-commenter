@@ -1,4 +1,4 @@
-;;; evil-nerd-commenter-operator --- Provides an evil operator for evil-nerd-commenter
+;;; evil-nerd-commenter-operator.el --- Provides an evil operator for evil-nerd-commenter
 
 ;; Copyright (C) 2013-2015, Chen Bin
 

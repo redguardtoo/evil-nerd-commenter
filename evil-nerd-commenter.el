@@ -1,4 +1,4 @@
-;;; evil-nerd-commenter --- Comment/uncomment lines efficiently. Like Nerd Commenter in Vim
+;;; evil-nerd-commenter.el --- Comment/uncomment lines efficiently. Like Nerd Commenter in Vim
 
 ;; Copyright (C) 2013-2015, Chen Bin
 
