@@ -293,8 +293,7 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
       (setq lang (or (cdr (assoc (nth 2 info) org-src-lang-modes))
                      (nth 2 info)))
       (setq lang (if (symbolp lang) (symbol-name lang) lang))
-      (setq lang-f (intern (concat lang "-mode")))
-      )
+      (setq lang-f (intern (concat lang "-mode"))))
 
     ;; turn on 3rd party language's major-mode temporarily
     (if lang-f (funcall lang-f))
@@ -318,6 +317,15 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
       (goto-char pos))
     ))
 
+(defun evilnc--warn-on-web-mode (is-comment)
+  (let ((comment-operation (concat "web-mode-"
+                                   (if is-comment "comment-" "uncomment-")
+                                   web-mode-engine
+                                   "-block")))
+    (unless (intern-soft comment-operation)
+      (message "defun %s NOT implemented in web-mode! DIY or raise issue to its maintainer."
+               comment-operation))))
+
 (defun evilnc--comment-or-uncomment-region (beg end)
   "Comment or uncommment region from BEG to END."
   (cond
@@ -335,22 +343,22 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
            (save-excursion
              (goto-char end)
              (back-to-indentation)
-             (evilnc--web-mode-is-comment))
-           )
+             (evilnc--web-mode-is-comment)))
       ;; don't know why, but we need goto the middle of comment
       ;; in order to uncomment, or else trailing spaces will be appended
       (goto-char (/ (+ beg end) 2))
-      (web-mode-uncomment (/ (+ beg end) 2))
-      )
+      (evilnc--warn-on-web-mode nil)
+      (web-mode-uncomment (/ (+ beg end) 2)))
      (t
       (unless (region-active-p)
         (push-mark beg t t)
         (goto-char end))
+      (evilnc--warn-on-web-mode t)
       (web-mode-comment (/ (+ beg end) 2)))
      ))
-    (t
-     (evilnc--working-on-region beg end 'comment-or-uncomment-region))
-    ))
+   (t
+    (evilnc--working-on-region beg end 'comment-or-uncomment-region))
+   ))
 
 (defun evilnc--current-line-num ()
   "Get current line number."
