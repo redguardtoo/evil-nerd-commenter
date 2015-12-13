@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 2.1
+;; Version: 2.2
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -84,9 +84,21 @@
 
 ;;; Code:
 
+(autoload 'count-lines "simple")
+
 (defvar evilnc-invert-comment-line-by-line nil
   "If t then invert region comment status line by line.
 Please note it has NOT effect on evil text object!")
+
+(defun evilnc--count-lines (beg end)
+  "Assume BEG less than END."
+  (let (rlt)
+    (setq rlt (count-lines beg end))
+    (save-excursion
+      (goto-char beg)
+      (if (> beg (line-beginning-position))
+          (setq rlt (1+ rlt))))
+    rlt))
 
 (defun evilnc--goto-line (line-num)
   "Shamelessly copied from `goto-line'.  Goto line with LINE-NUM."
@@ -112,7 +124,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
     ;; since comment-use-syntax is nil in autoconf.el, the comment-start-skip need
     ;; make sure its first parenthesized expression match the string exactly before
     ;; the "dnl", check the comment-start-skip in lisp-mode for sample.
-    ;; See code in (defun comment-search-forward) from emacs 24.2.1:
+    ;; See code in (defun comment-search-forward) from emacs 24.2.2:
     ;; (if (not comment-use-syntax)
     ;;     (if (re-search-forward comment-start-skip limit noerror)
     ;;     (or (match-end 1) (match-beginning 0)))
@@ -324,41 +336,67 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
                                    "-block")))
     (unless (intern-soft comment-operation)
       (message "defun %s NOT implemented in web-mode! DIY or raise issue to its maintainer."
-               comment-operation))))
+               comment-operation))
+    is-comment))
+
+(defun evilnc--web-mode-is-region-comment (beg end)
+  (let (rlt)
+    (setq rlt (and (save-excursion
+                     (goto-char beg)
+                     (goto-char (line-end-position))
+                     (re-search-backward "^\\|[^[:space:]]")
+                     (evilnc--web-mode-is-comment))
+                   (evilnc--web-mode-is-comment (/ (+ beg end) 2))
+                   (save-excursion
+                     (goto-char end)
+                     (back-to-indentation)
+                     (evilnc--web-mode-is-comment))))
+    rlt))
+
+(defun evilnc--web-mode-do-current-line ()
+  "In web-mode, you have to select the whole before comment or uncomment it."
+  (let (line-mid-pos
+        (b (line-beginning-position))
+        (e (line-end-position)))
+
+    (save-excursion
+      (push-mark e t t)
+      (goto-char b)
+      (evilnc--warn-on-web-mode (evilnc--web-mode-is-region-comment b e))
+      (web-mode-comment-or-uncomment))))
+
+(defun evilnc--web-mode-comment-or-uncomment (beg end)
+  "Comment/uncomment line by line from BEG to END.
+DO-COMMENT decides we comment or uncomment."
+
+  ;; end will change when you comment line by line
+  (let (line-cnt tmp)
+    ;; switch beg end if needed
+    (when (> beg end)
+      (setq tmp beg)
+      (setq beg end)
+      (setq end tmp))
+
+    ;; start (un)comment
+    (save-excursion
+      (setq line-cnt (evilnc--count-lines beg end))
+      (goto-char beg)
+      (while (> line-cnt 0)
+        (evilnc--web-mode-do-current-line)
+        (forward-line)
+        (setq line-cnt (1- line-cnt))))))
 
 (defun evilnc--comment-or-uncomment-region (beg end)
   "Comment or uncommment region from BEG to END."
   (cond
    ((eq major-mode 'web-mode)
-    ;; web-mode comment only works when region selected
-    ;; uncomment only works when region not selected
-    ;; test three sample point, comment or uncomment
-    (cond
-     ((and (save-excursion
-             (goto-char beg)
-             (goto-char (line-end-position))
-             (re-search-backward "^\\|[^[:space:]]")
-             (evilnc--web-mode-is-comment))
-           (evilnc--web-mode-is-comment (/ (+ beg end) 2))
-           (save-excursion
-             (goto-char end)
-             (back-to-indentation)
-             (evilnc--web-mode-is-comment)))
-      ;; don't know why, but we need goto the middle of comment
-      ;; in order to uncomment, or else trailing spaces will be appended
-      (goto-char (/ (+ beg end) 2))
-      (evilnc--warn-on-web-mode nil)
-      (web-mode-uncomment (/ (+ beg end) 2)))
-     (t
-      (unless (region-active-p)
-        (push-mark beg t t)
-        (goto-char end))
-      (evilnc--warn-on-web-mode t)
-      (web-mode-comment (/ (+ beg end) 2)))
-     ))
+    ;; elixir is not supported in web-mode for now
+    (unless (fboundp 'web-mode-comment-elixir-block)
+      (defalias 'web-mode-comment-elixir-block 'web-mode-comment-erb-block)
+      (defalias 'web-mode-uncomment-elixir-block 'web-mode-uncomment-erb-block))
+    (evilnc--web-mode-comment-or-uncomment beg end))
    (t
-    (evilnc--working-on-region beg end 'comment-or-uncomment-region))
-   ))
+    (evilnc--working-on-region beg end 'comment-or-uncomment-region))))
 
 (defun evilnc--current-line-num ()
   "Get current line number."
@@ -421,11 +459,11 @@ Paragraphs are separated by empty lines."
                   (throw 'break i)))
           (throw 'break i))
         ))
+
     (when (<= b e)
       (save-excursion
         (evilnc--fix-buggy-major-modes)
-        (evilnc--comment-or-uncomment-region b e)
-        ))
+        (evilnc--comment-or-uncomment-region b e)))
     ))
 
 ;;;###autoload
@@ -580,7 +618,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "2.1"))
+  (message "2.2"))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()
