@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v2.2)
+* evil-nerd-commenter (v2.3)
 
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
@@ -93,6 +93,8 @@ copy and paste lines, then comment out original lines. This command supports neg
 
 The hotkey is ",cc" in evil-mode and "C-c c" in emacs normal mode.
 
+*** evilnc-comment-or-uncomment-to-the-line
+Comment to the specified line. evilnc-quick-comment-or-uncomment-to-the-line may be better alternative.
 *** evilnc-toggle-comment-empty-lines
 toggle the flag to comment/uncomment empty lines.
 
@@ -128,8 +130,10 @@ For example:
 (global-set-key (kbd "C-c C-t C-l") 'evilnc-kill-to-line)
 #+END_SRC
 
-*** evilnc-comment-or-uncomment-to-the-line
-Comment to the specified line. evilnc-quick-comment-or-uncomment-to-the-line may be better alternative.
+*** evilnc-comment-both-snippet-html
+If a line is snippet wrapped HTML tags in HTML template, only the HTML syntax is used to comment out the line by default.
+
+But if you `(setq evilnc-comment-both-snippet-html t)`, snippet will be commented out with its own syntax at first. Then the wrapped html tag will be comment out using HTML syntax. This flag has effect on all above commands.  [[http://web-mode.org/][Web-mode]] should be enabled to use this flag.
 
 ** Examples
 *** Comment lines
