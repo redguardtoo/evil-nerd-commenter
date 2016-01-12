@@ -303,6 +303,10 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
                 (< (line-end-position) beg))
             (setq done t))))))
 
+(defvar org-src-lang-modes)
+(declare-function org-show-subtree "org")
+(declare-function outline-up-heading "outline")
+
 (defun evilnc--working-on-region (beg end fn)
   "Region from BEG to END is applied with operation FN.
 Code snippets embedded in Org-mode is identified and right `major-mode' is used."
@@ -343,6 +347,9 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
       ;; expand current node because by default (org-mode) will collapse all nodes
       (org-show-subtree)
       (goto-char pos))))
+
+(declare-function web-mode-comment-or-uncomment "ext:web-mode")
+(defvar web-mode-engine)
 
 (defun evilnc--warn-on-web-mode (is-comment)
   (let* ((comment-operation (concat "web-mode-"
@@ -676,6 +683,10 @@ Then we operate the expanded region.  NUM is ignored."
   (interactive)
   (message "3.0.1"))
 
+(defvar evil-normal-state-map)
+(defvar evil-visual-state-map)
+(defvar evil-inner-text-objects-map)
+(defvar evil-outer-text-objects-map)
 ;;;###autoload
 (defun evilnc-default-hotkeys (&optional no-evil-keybindings)
   "Set up the key bindings of evil-nerd-comment.
