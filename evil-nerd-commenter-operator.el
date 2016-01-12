@@ -33,7 +33,7 @@
 
 ;;; Code:
 
-(require 'evil)
+(require 'evil nil 'noerror)
 
 (evil-define-operator evilnc-comment-operator (beg end type)
   "Comments text from BEG to END with TYPE."
@@ -66,3 +66,7 @@
 (provide 'evil-nerd-commenter-operator)
 
 ;;; evil-nerd-commenter-operator.el ends here
+
+;; Local Variables:
+;; byte-compile-warnings: (not free-vars unresolved)
+;; End:
