@@ -80,6 +80,14 @@
 ;;   "\\" 'evilnc-comment-operator
 ;;   )
 ;;
+;; Use case 3,
+;; For certain major modes, you need manual setup to override its original
+;; keybindings,
+;;
+;; (defun matlab-mode-hook-config ()
+;;   (local-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines))
+;; (add-hook 'matlab-mode-hook 'matlab-mode-hook-config)
+;;
 ;; See https://github.com/redguardtoo/evil-nerd-commenter for more use cases.
 
 ;;; Code:
