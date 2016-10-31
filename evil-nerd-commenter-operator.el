@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 2.3
+;; Version: 2.3.1
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.

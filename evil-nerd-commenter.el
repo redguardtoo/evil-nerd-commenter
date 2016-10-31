@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 2.3
+;; Version: 2.3.1
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -71,7 +71,7 @@
 ;;   "ci" 'evilnc-comment-or-uncomment-lines
 ;;   "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
 ;;   "ll" 'evilnc-quick-comment-or-uncomment-to-the-line
-;;   "cc" 'evilnc-copy-and-comment-lines
+;;   "cc" 'evilnc-copy-and-comment-lines ; Or use `evilnc-comment-and-kill-ring-save' instead
 ;;   "cp" 'evilnc-comment-or-uncomment-paragraphs
 ;;   "cr" 'comment-or-uncomment-region
 ;;   "cv" 'evilnc-toggle-invert-comment-line-by-line
@@ -133,7 +133,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
     ;; since comment-use-syntax is nil in autoconf.el, the comment-start-skip need
     ;; make sure its first parenthesized expression match the string exactly before
     ;; the "dnl", check the comment-start-skip in lisp-mode for sample.
-    ;; See code in (defun comment-search-forward) from emacs 24.2.3:
+    ;; See code in (defun comment-search-forward) from emacs 24.2.3.1:
     ;; (if (not comment-use-syntax)
     ;;     (if (re-search-forward comment-start-skip limit noerror)
     ;;     (or (match-end 1) (match-beginning 0)))
@@ -588,6 +588,29 @@ Then we operate the expanded region.  NUM is ignored."
         (comment-region beg end)))
    num))
 
+;;;###autoload
+(defun evilnc-comment-and-kill-ring-save (&optional num)
+  "Comment lines save origin lines into `kill-ring'.
+NUM could be negative.
+
+Case 1: If no region selected, operate on current line.
+;; if NUM>1, comment/uncomment extra N-1 lines from next line
+
+Case 2: Selected region is expanded to make it contain whole lines.
+Then we operate the expanded region.  NUM is ignored."
+  (interactive "p")
+  ;; support negative number
+  (when (< num 0)
+    (forward-line (1+ num))
+    (setq num (- 0 num)))
+
+  (evilnc--operation-on-lines-or-region
+   '(lambda (beg end)
+      (evilnc--fix-buggy-major-modes)
+      (kill-new (buffer-substring-no-properties beg end))
+      (comment-region beg end))
+   num))
+
 ;; {{ for non-evil user only
 ;;;###autoload
 (defun evilnc-copy-to-line (&optional LINENUM)
@@ -627,7 +650,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "2.3"))
+  (message "2.3.1"))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys ()

@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v2.3)
+* evil-nerd-commenter (v2.3.1)
 
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
@@ -20,7 +20,7 @@ So you strike less keys than the original "M-x comment-dwim".
 
 Live demo:
 [[https://raw.github.com/redguardtoo/evil-nerd-commenter/master/evil-nerd-commenter-demo.gif]]
-** It will even fix Emacs bug for you
+** It fixes Emacs bug for you
 I'll provide long-term support for *ANY language* in the future. Here is an example how I work around [[https://github.com/redguardtoo/evil-nerd-commenter/issues/3][a bug in autoconf.el]].
 
 ** Perfect integration with org-mode
@@ -61,7 +61,7 @@ Insert following code into you ~/.emacs,
 )
 #+END_SRC
 
-** Assign keybindings manually
+** Assign key bindings manually
 Manual setup is necessary for certain major modes (matlab-mode, for example)
 
 Here is the minimum setup,
@@ -72,9 +72,9 @@ Here is the minimum setup,
 #+end_src
 * Usage
 ** Available commands and hotkeys
-Here are available commands. They are NOT dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]:
+Here are available commands which are NOT dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]:
 
-If you use evil-leader, the "," in all evil-mode hotkeys is replaced with "\".
+If you use evil-leader, the =,= in all evil-mode hotkeys is replaced with =\=.
 
 *** evilnc-comment-or-uncomment-lines (RECOMMENDED)
 comment/uncomment lines. This command supports negative arguments.
@@ -98,10 +98,11 @@ The hotkey is ",cl" or ",ll" in evil-mode and "C-c l" (C means Ctrl key) in emac
 comment/uncomment paragraphs which separated by empty lines
 
 *** evilnc-copy-and-comment-lines
-copy and paste lines, then comment out original lines. This command supports negative arguments.
+Copy and paste lines, then comment out original lines. This command supports negative arguments.
 
 The hotkey is ",cc" in evil-mode and "C-c c" in emacs normal mode.
-
+*** evilnc-comment-and-kill-ring-save
+Comment lines and insert original lines into =kill-ring=.
 *** evilnc-comment-or-uncomment-to-the-line
 Comment to the specified line. evilnc-quick-comment-or-uncomment-to-the-line may be better alternative.
 *** evilnc-toggle-comment-empty-lines
