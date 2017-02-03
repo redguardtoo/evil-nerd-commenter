@@ -40,10 +40,11 @@
   (interactive "<R>")
   (cond
    ((eq type 'block)
-    (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
-      (evil-apply-on-block #'evilnc--comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos) nil)
-      )
-    )
+    (let* ((newpos (evilnc--extend-to-whole-comment beg end) ))
+      (evil-apply-on-block #'evilnc--comment-or-uncomment-region
+                           (nth 0 newpos)
+                           (nth 1 newpos)
+                           nil)))
    ((and (eq type 'line)
          (= end (point-max))
          (or (= beg end)
@@ -51,18 +52,18 @@
          (/= beg (point-min))
          (=  (char-before beg) ?\n))
     (evilnc--comment-or-uncomment-region (1- beg) end))
+
    ((eq type 'line)
     (evilnc--comment-or-uncomment-region beg (1- end)))
+
    (t
-    (let ((newpos (evilnc--extend-to-whole-comment beg end) ))
-      (evilnc--comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos))
-      )
-    ))
+    (let* ((newpos (evilnc--extend-to-whole-comment beg end) ))
+      (evilnc--comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos)))))
+
   ;; place cursor on beginning of line
-  (when (and (evil-called-interactively-p)
-             (eq type 'line))
+  (if (and (evil-called-interactively-p)
+           (eq type 'line))
     (evil-first-non-blank)))
 
 (provide 'evil-nerd-commenter-operator)
-
 ;;; evil-nerd-commenter-operator.el ends here
