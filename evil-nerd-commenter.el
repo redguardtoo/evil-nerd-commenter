@@ -171,6 +171,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
                                 js-mode
                                 js2-mode
                                 js3-mode
+                                rjsx-mode
                                 c++-mode
                                 objc-mode)))
       (let* ((comment-start-old comment-start)
