@@ -197,6 +197,8 @@ Example 6: ",,w" comment to the beginning of the next word, ",,e" to the end of 
 
 Example 7: ",,it", comment the region inside html tags (all html major modes are supported , *including [[http://web-mode.org/][web-mode]]*)
 
+"evilnc-copy-and-comment-operator" is another evil-mode operator. Instead of commenting out the text in the operator-range, it inserts an copy of the text in the range and comments out that copy.
+
 * Tips
 ** Tip 1, Yank in evil-mode
 You can yank to line 99 using hotkey "y99G" or "y99gg". That's the feature from evil-mode.
