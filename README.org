@@ -1,10 +1,10 @@
-* evil-nerd-commenter (v2.3.1)
+* evil-nerd-commenter (v2.3.2)
 
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
-This program can be used *independently WITHOUT [[http://www.emacswiki.org/Evil][evil-mode]]!*
+This program can be used *WITHOUT* [[http://www.emacswiki.org/Evil][evil-mode]]!
 
-A [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] emulation, help you comment code efficiently. For example, you can press key `,,99j` or `99,ci` to comment out 99 lines.
+A [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] emulation, help you comment code efficiently. For example, you can press key =,,99j= or =99,ci= to comment out 99 lines.
 
 I recommend using it with Evil though Evil is optional.
 
@@ -12,25 +12,26 @@ Tested on Emacs 23.4, 24.3, 24.4, 24.5
 
 * Why?
 ** A simple use case on the efficiency
-If you want to comment out nine lines. Instead pressing "C-space M-9 C-n M-;", now you can press "M-9 M-;" or ",,9j" or "9,ci".
+If you want to comment out nine lines. Instead pressing =C-space M-9 C-n M-;=, now you can press =M-9 M-;= or =,,9j= or =9,ci=.
 
 The point is that you need *NOT* mark any text to comment line(s)!
 
-So you strike less keys than the original "M-x comment-dwim".
+So you strike less keys than the original =M-x comment-dwim=.
 
-Live demo:
+demo:
+
 [[https://raw.github.com/redguardtoo/evil-nerd-commenter/master/evil-nerd-commenter-demo.gif]]
 ** It fixes Emacs bug for you
 I'll provide long-term support for *ANY language* in the future. Here is an example how I work around [[https://github.com/redguardtoo/evil-nerd-commenter/issues/3][a bug in autoconf.el]].
 
 ** Perfect integration with org-mode
 The code snippet embedded in org file will automatically be detected and *correct* comment syntax will be used!
-
 * Install
 evil-nerd-commenter is already uploaded to [[http://melpa.org]]. The best way to install is Emacs package manager.
 * Setup
-** Use default key bindings
-You need only one line into ~/.emacs,
+Please note NO key bindings are setup automatically. You need use following ways to setup key bindings.
+** Use recommended key bindings
+Insert one line into =~/.emacs=,
 #+BEGIN_SRC lisp
 (evilnc-default-hotkeys)
 #+END_SRC
@@ -38,7 +39,7 @@ You need only one line into ~/.emacs,
 ** Use evil-leader instead
 Install [[https://github.com/cofi/evil-leader][evil-leader according to its README]].
 
-Insert following code into you ~/.emacs,
+Insert following code into you =~/.emacs=,
 #+BEGIN_SRC elisp
 ;; Emacs key bindings
 (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
@@ -57,6 +58,7 @@ Insert following code into you ~/.emacs,
   "cp" 'evilnc-comment-or-uncomment-paragraphs
   "cr" 'comment-or-uncomment-region
   "cv" 'evilnc-toggle-invert-comment-line-by-line
+  "."  'evilnc-copy-and-comment-operator
   "\\" 'evilnc-comment-operator ; if you prefer backslash key
 )
 #+END_SRC
@@ -73,26 +75,23 @@ Here is the minimum setup,
 * Usage
 ** Available commands and hotkeys
 Here are available commands which are NOT dependent on [[http://emacswiki.org/emacs/Evil][evil-mode]]:
-
-If you use evil-leader, the =,= in all evil-mode hotkeys is replaced with =\=.
-
 *** evilnc-comment-or-uncomment-lines (RECOMMENDED)
-comment/uncomment lines. This command supports negative arguments.
+Comment/uncomment lines. This command supports negative arguments.
 
-The hotkey is ",ci" in evil-mode and "M-;" in all modes. "M" means ALT key.
+The hotkey is ",cl" in evil-mode and "M-;" in all modes. "M" means ALT key.
 
 If a region selected, the region is expand to make sure the region contain
 whole lines. Then we comment/uncomment the expanded region. NUM is ignored.
 
-If the region is insided of ONE line, we comment/uncomment that region. In this case, CORRECT comment syntax will be used for C++/Java/Javascript.
+If the region is inside of ONE line, we comment/uncomment that region. In this case, CORRECT comment syntax will be used for C++/Java/Javascript.
 
 This may be the *only command* you need to learn!
 *** evilnc-quick-comment-or-uncomment-to-the-line
 comment/uncomment from current line to the user-specified line. You can input the rightest digit(s) to specify the line number if you want to type less.
 
-For example, say current line number is 497. "C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line" will comment to the line 503 because the rightest digit of "503" is 3.
+For example, say current line number is 497. =C-u 3 M-x evilnc-quick-comment-or-uncomment-to-the-line= will comment to the line 503 because the rightest digit of "503" is 3.
 
-The hotkey is ",cl" or ",ll" in evil-mode and "C-c l" (C means Ctrl key) in emacs normal mode.
+The hotkey is ",cl" or ",ll" in evil-mode and =C-c l= (C means Ctrl key) in emacs normal mode.
 
 *** evilnc-comment-or-uncomment-paragraphs
 comment/uncomment paragraphs which separated by empty lines
@@ -100,16 +99,15 @@ comment/uncomment paragraphs which separated by empty lines
 *** evilnc-copy-and-comment-lines
 Copy and paste lines, then comment out original lines. This command supports negative arguments.
 
-The hotkey is ",cc" in evil-mode and "C-c c" in emacs normal mode.
+The hotkey is ",cc" in evil-mode and =C-c c= in emacs normal mode.
 *** evilnc-comment-and-kill-ring-save
 Comment lines and insert original lines into =kill-ring=.
 *** evilnc-comment-or-uncomment-to-the-line
-Comment to the specified line. evilnc-quick-comment-or-uncomment-to-the-line may be better alternative.
+Comment to the specified line.
 *** evilnc-toggle-comment-empty-lines
-toggle the flag to comment/uncomment empty lines.
+Toggle the flag to comment/uncomment empty lines.
 
 The hotkey is ",cv" in evil-mode.
-
 *** evilnc-copy-to-line
 Copy from the current line to the user-specified line.
 
@@ -121,11 +119,10 @@ For example:
 #+BEGIN_SRC elisp
 (global-set-key (kbd "C-c C-t C-l") 'evilnc-copy-to-line)
 #+END_SRC
-
 *** evilnc-toggle-invert-comment-line-by-line
-Toggle flag evilnc-invert-comment-line-by-line.
+Toggle flag =evilnc-invert-comment-line-by-line=.
 
-When the flag is true, the command "evilnc-comment-or-uncomment-lines", "evilnc-comment-or-uncomment-to-the-line", and "evilnc-comment-or-uncomment-paragraphs" will be influenced. They will *invert* each line's comment status instead comment the whole thing.
+When the flag is true, the command =evilnc-comment-or-uncomment-lines=, =evilnc-comment-or-uncomment-to-the-line=, and =evilnc-comment-or-uncomment-paragraphs= will be influenced. They will *invert* each line's comment status instead comment the whole thing.
 
 Please note this command may NOT work on complex evil text object.
 *** evilnc-kill-to-line
@@ -139,27 +136,21 @@ For example:
 #+BEGIN_SRC elisp
 (global-set-key (kbd "C-c C-t C-l") 'evilnc-kill-to-line)
 #+END_SRC
-
 *** evilnc-comment-both-snippet-html
 If a line is snippet wrapped HTML tags in HTML template, only the HTML syntax is used to comment out the line by default.
 
-But if you `(setq evilnc-comment-both-snippet-html t)`, snippet will be commented out with its own syntax at first. Then the wrapped html tag will be comment out using HTML syntax. This flag has effect on all above commands.  [[http://web-mode.org/][Web-mode]] should be enabled to use this flag.
-
+But if you =(setq evilnc-comment-both-snippet-html t)=, snippet will be commented out with its own syntax at first. Then the wrapped html tag will be comment out using HTML syntax. This flag has effect on all above commands.  [[http://web-mode.org/][Web-mode]] should be enabled to use this flag.
 ** Examples
 *** Comment lines
-"C-u NUM M-x evilnc-comment-or-uncomment-lines", comment/uncomment next NUM lines.
-
+=C-u NUM M-x evilnc-comment-or-uncomment-lines=, comment/uncomment next NUM lines.
 *** Comment region
-Select a region and "M-x evilnc-comment-or-uncomment-lines". The region will be *automatically expanded to contain whole lines*. Then we comment/uncomment the region.
-
+Select a region and =M-x evilnc-comment-or-uncomment-lines=. The region will be *automatically expanded to contain whole lines*. Then we comment/uncomment the region.
 *** Comment to the line number
-"C-u 56 M-x evilnc-comment-or-uncomment-to-the-line", comment/uncomment *from current line* to line 56.
-
+=C-u 56 M-x evilnc-comment-or-uncomment-to-the-line=, comment/uncomment *from current line* to line 56.
 *** Copy and comment
-"C-u 2 M-x evilnc-copy-and-comment-lines", copy 2 lines and paste them below the original line. Then comment out original lines. The focus will be moved to the new lines.
-
+=C-u 2 M-x evilnc-copy-and-comment-lines=, copy 2 lines and paste them below the original line. Then comment out original lines. The focus will be moved to the new lines.
 *** Comment paragraph
-"C-u 2 M-x evilnc-comment-or-uncomment-paragraphs", comment out two paragraphs. This is useful if you have large hunk of data to be commented out as below:
+=C-u 2 M-x evilnc-comment-or-uncomment-paragraphs=, comment out two paragraphs. This is useful if you have large hunk of data to be commented out as below:
 #+BEGIN_SRC javascript
 var myJson={
   "key1":"v1",
@@ -167,7 +158,6 @@ var myJson={
   "key3":"v3"
 }
 #+END_SRC
-
 *** Invert comment
 Say there are two lines of javascript code,
 #+BEGIN_SRC javascript
@@ -176,12 +166,11 @@ if(flag==true){ doSomething(); }
 #+END_SRC
 The first line is production code. The second line is your debug code. You want to invert the comment status of these two lines (for example, comment out first line and uncomment the second line) for debug purpose.
 
-All you need to is "M-x evilnc-toggle-invert-comment-line-by-line" then "C-u 2 evilnc-comment-or-uncomment-lines". The first command turn on some flag, so the behavior of (un)commenting is different.
-
+All you need to is =M-x evilnc-toggle-invert-comment-line-by-line= then =C-u 2 evilnc-comment-or-uncomment-lines=. The first command turn on some flag, so the behavior of (un)commenting is different.
 * Evil usage
-If you use [[http://emacswiki.org/emacs/Evil][Evil]], you can use [[http://vimdoc.sourceforge.net/htmldoc/motion.html#text-objects][text objects and motions]]. But if you only *deals with lines*, I suggest *using evilnc-comment-or-uncomment-lines instead*.
-
-"evilnc-comment-operator" acts much like the delete/change operator. Takes a motion or text object and comments it out, yanking its content in the process.
+If you use [[http://emacswiki.org/emacs/Evil][Evil]], you can use [[http://vimdoc.sourceforge.net/htmldoc/motion.html#text-objects][text objects and motions]]. But if you only *deals with lines*, I suggest using =evilnc-comment-or-uncomment-lines= instead.
+**  evilnc-comment-operator
+=evilnc-comment-operator= acts much like the delete/change operator. Takes a motion or text object and comments it out, yanking its content in the process.
 
 Example 1: ",,," to comment out the current line.
 
@@ -197,17 +186,16 @@ Example 6: ",,w" comment to the beginning of the next word, ",,e" to the end of 
 
 Example 7: ",,it", comment the region inside html tags (all html major modes are supported , *including [[http://web-mode.org/][web-mode]]*)
 
-"evilnc-copy-and-comment-operator" is another evil-mode operator. Instead of commenting out the text in the operator-range, it inserts an copy of the text in the range and comments out that copy.
+** evilnc-copy-and-comment-operator
+=evilnc-copy-and-comment-operator= is another evil-mode operator. Instead of commenting out the text in the operator-range, it inserts an copy of the text in the range and comments out that copy. Its hot key is ",.". For example, ",.," to comment out the current line.
 
 * Tips
 ** Tip 1, Yank in evil-mode
-You can yank to line 99 using hotkey "y99G" or "y99gg". That's the feature from evil-mode.
+You can yank to line 99 using hotkey =y99G= or =y99gg=. That's the feature from evil-mode.
 
 Please read vim manual on "text objects and motions".
 ** Tip 2, change comment style
-For example, use double slashes (//) instead of slash-stars (/* ... */) in c-mode.
-
-Insert below code into your ~/.emacs:
+For example, if you prefer double slashes =//= instead of slash-stars =/* ... */= in =c-mode=, insert below code into your =~/.emacs=:
 #+BEGIN_SRC elisp
 (add-hook 'c-mode-common-hook
   (lambda ()
@@ -216,11 +204,11 @@ Insert below code into your ~/.emacs:
           comment-end "")))
 #+END_SRC
 
-Thanks for Andrew Pennebaker (aka mcandre) providing this tip.
+Thanks for [[https://github.com/mcandre][Andrew Pennebaker (aka mcandre)]] providing this tip.
 ** Tip 3, comment code snippet
-Please check my project [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]. You can press "vi%" to select a region between tags and press "M-/" to comment the region.
+Please install [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]. You can press =vi=%= to select a region between tags and press =M-;= to comment the region.
 
-Most popular programming languages are supported;
+Most popular programming languages are supported.
 ** Tip 4, (un)comment Lisp code
 - Make sure Evil installed
 - Press ",,a("
@@ -228,5 +216,6 @@ Most popular programming languages are supported;
 - [[https://github.com/lalopmak][Lally Oppenheimer (AKA lalopmak)]] added the support for text-object in Evil
 - [[https://github.com/ryuslash][Tom Willemse (AKA ryuslash)]] provided the fix to make Emacs 24.4 work
 - [[https://github.com/TheBB][Eivind Fonn (AKA TheBB)]] fixed the web-mode issue #45
+- [[https://github.com/Dickby][Dickby]] provided =evilnc-copy-and-comment-operator=
 * Contact me
 Report bug at [[https://github.com/redguardtoo/evil-nerd-commenter]].
