@@ -312,7 +312,9 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
 
     (if evilnc-invert-comment-line-by-line
         (evilnc--invert-comment beg end)
-      (funcall fn beg end))
+      (setq pos (point))
+      (funcall fn beg end)
+      (goto-char pos))
 
     ;; turn off  3rd party language's major-mode temporarily and clean the shit
     (when lang-f
