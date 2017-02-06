@@ -1,8 +1,13 @@
 #!/bin/bash
-pkg=evil-nerd-commenter-2.3.2
+name=evil-nerd-commenter
+version=2.3.2
+pkg=$name-$version
 mkdir $pkg
-cp README.org $pkg
 cp *.el $pkg
+cat << EOF > $pkg/$name-pkg.el
+(define-package "$name" "$version"
+                "whatever")
+EOF
 if [[ `uname -s` == *Darwin* ]]; then
    COPYFILE_DISABLE="" tar cvf $pkg.tar $pkg/
 else
