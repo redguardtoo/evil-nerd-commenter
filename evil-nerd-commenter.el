@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 2.3.2
+;; Version: 2.3.3
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -57,7 +57,7 @@
 ;;
 ;; Setup:
 ;;
-;; 1. If comma is your leader key, as most Vim users do, setup is one liner,
+;; If comma is your leader key, as most Vim users do, setup is one liner,
 ;; (evilnc-default-hotkeys)
 ;;
 ;; If you use evil-leader and its default leader key,
@@ -78,6 +78,11 @@
 ;;   "."  'evilnc-copy-and-comment-operator
 ;;   "\\" 'evilnc-comment-operator)
 ;;
+;; You can setup `evilnc-original-above-comment-when-copy-and-comment' to decide which
+;; style to use when `evilnc-copy-and-comment-lines' or `evilnc-copy-and-comment-operator',
+;;   - Place the commented out text above original text
+;;   - Or place the original text above commented out text
+;;
 ;; For certain major modes, you need manual setup to override its original
 ;; keybindings,
 ;;
@@ -90,6 +95,10 @@
 ;;; Code:
 
 (autoload 'count-lines "simple")
+
+(defvar evilnc-original-above-comment-when-copy-and-comment nil
+  "Original text is above commented out when using `evilnc-copy-and-comment-lines'
+ and `evilnc-copy-and-comment-operator'.")
 
 (defvar evilnc-invert-comment-line-by-line nil
   "If t then invert region comment status line by line.
@@ -133,7 +142,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
     ;; since comment-use-syntax is nil in autoconf.el, the comment-start-skip need
     ;; make sure its first parenthesized expression match the string exactly before
     ;; the "dnl", check the comment-start-skip in lisp-mode for sample.
-    ;; See code in (defun comment-search-forward) from emacs 24.2.3.2:
+    ;; See code in (defun comment-search-forward) from emacs 24.2.3.3:
     ;; (if (not comment-use-syntax)
     ;;     (if (re-search-forward comment-start-skip limit noerror)
     ;;     (or (match-end 1) (match-beginning 0)))
@@ -585,10 +594,18 @@ Then we operate the expanded region.  NUM is ignored."
    '(lambda (beg end)
       (evilnc--fix-buggy-major-modes)
       (let* ((str (buffer-substring-no-properties beg end)))
-        (goto-char end)
-        (newline 1)
-        (insert-before-markers str)
-        (comment-region beg end)))
+        (cond
+         (evilnc-original-above-comment-when-copy-and-comment
+          (let* ((p (point)))
+            (comment-region beg end)
+            (goto-char beg)
+            (insert-before-markers (concat str "\n"))
+            (goto-char p)))
+         (t
+          (goto-char end)
+          (newline 1)
+          (insert-before-markers str)
+          (comment-region beg end)))))
    num))
 
 ;;;###autoload
@@ -653,7 +670,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "2.3.2"))
+  (message "2.3.3"))
 
 ;;;###autoload
 (defun evilnc-default-hotkeys (&optional no-evil-keybindings)

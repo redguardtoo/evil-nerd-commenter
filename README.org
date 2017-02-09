@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v2.3.2)
+* evil-nerd-commenter (v2.3.3)
 
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
@@ -188,11 +188,11 @@ Example 7: ",,it", comment the region inside html tags (all html major modes are
 =evilnc-copy-and-comment-operator= is another evil-mode operator. Instead of commenting out the text in the operator-range, it inserts an copy of the text in the range and comments out that copy. Its hot key is ",.". For example, ",.," to comment out the current line.
 
 * Tips
-** Tip 1, Yank in evil-mode
+** Yank in evil-mode
 You can yank to line 99 using hotkey =y99G= or =y99gg=. That's the feature from evil-mode.
 
 Please read vim manual on "text objects and motions".
-** Tip 2, change comment style
+** Change comment style
 For example, if you prefer double slashes =//= instead of slash-stars =/* ... */= in =c-mode=, insert below code into your =~/.emacs=:
 #+BEGIN_SRC elisp
 (add-hook 'c-mode-common-hook
@@ -203,13 +203,17 @@ For example, if you prefer double slashes =//= instead of slash-stars =/* ... */
 #+END_SRC
 
 Thanks for [[https://github.com/mcandre][Andrew Pennebaker (aka mcandre)]] providing this tip.
-** Tip 3, comment code snippet
+** Comment code snippet
 Please install [[https://github.com/redguardtoo/evil-matchit][evil-matchit]]. You can press =vi=%= to select a region between tags and press =M-;= to comment the region.
 
 Most popular programming languages are supported.
-** Tip 4, (un)comment Lisp code
+** Comment and uncomment Lisp code
 - Make sure Evil installed
 - Press ",,a("
+** Choose the style of copy and comment
+You can setup =evilnc-original-above-comment-when-copy-and-comment= to decide which style to use when =evilnc-copy-and-comment-lines= or =evilnc-copy-and-comment-operator=,
+- Place the commented out text above original text
+- Or place the original text above commented out text
 * Credits
 - [[https://github.com/lalopmak][Lally Oppenheimer (AKA lalopmak)]] added the support for text-object in Evil
 - [[https://github.com/ryuslash][Tom Willemse (AKA ryuslash)]] provided the fix to make Emacs 24.4 work
