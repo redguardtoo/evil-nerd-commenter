@@ -656,8 +656,9 @@ Then we operate the expanded region.  NUM is ignored."
   (message "2.3.2"))
 
 ;;;###autoload
-(defun evilnc-default-hotkeys ()
-  "Set the hotkeys of evil-nerd-comment."
+(defun evilnc-default-hotkeys (&optional no-evil-keybindings)
+  "Set up the key bindings of evil-nerd-comment.
+If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in evil-mode."
   (interactive)
 
   ;; Install hotkeys for Emacs mode
@@ -667,23 +668,24 @@ Then we operate the expanded region.  NUM is ignored."
   (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
 
   ;; Install key bindings for evil
-  (eval-after-load 'evil
-    '(progn
-       (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
-       (define-key evil-normal-state-map ",cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
-       (define-key evil-normal-state-map ",ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
-       (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
-       (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
-       (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
-       (define-key evil-normal-state-map ",cv" 'evilnc-toggle-invert-comment-line-by-line)))
+  (unless no-evil-keybindings
+    (eval-after-load 'evil
+      '(progn
+         (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
+         (define-key evil-normal-state-map ",cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
+         (define-key evil-normal-state-map ",ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
+         (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
+         (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
+         (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
+         (define-key evil-normal-state-map ",cv" 'evilnc-toggle-invert-comment-line-by-line)))
 
-  ;; Install operator for evil text objects
-  (eval-after-load 'evil-nerd-commenter-operator
-    '(progn
-       (define-key evil-normal-state-map ",." 'evilnc-copy-and-comment-operator)
-       (define-key evil-visual-state-map ",." 'evilnc-copy-and-comment-operator)
-       (define-key evil-normal-state-map ",," 'evilnc-comment-operator)
-       (define-key evil-visual-state-map ",," 'evilnc-comment-operator))))
+    ;; Install operator for evil text objects
+    (eval-after-load 'evil-nerd-commenter-operator
+      '(progn
+         (define-key evil-normal-state-map ",." 'evilnc-copy-and-comment-operator)
+         (define-key evil-visual-state-map ",." 'evilnc-copy-and-comment-operator)
+         (define-key evil-normal-state-map ",," 'evilnc-comment-operator)
+         (define-key evil-visual-state-map ",," 'evilnc-comment-operator)))))
 
 ;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded

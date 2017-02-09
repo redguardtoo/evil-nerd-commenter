@@ -31,11 +31,9 @@ evil-nerd-commenter is already uploaded to [[http://melpa.org]]. The best way to
 * Setup
 Please note NO key bindings are setup automatically. You need use following ways to setup key bindings.
 ** Use recommended key bindings
-Insert one line into =~/.emacs=,
-#+BEGIN_SRC lisp
-(evilnc-default-hotkeys)
-#+END_SRC
+Insert =(evilnc-default-hotkeys)= into =~/.emacs= to use key bindings preset for both evil and non-evil mode. This is recommended way.
 
+Use =(evilnc-default-hotkeys t)= to use key binding only for non-evil mode if you want to define key bindings in evil-mode by yourself.
 ** Use evil-leader instead
 Install [[https://github.com/cofi/evil-leader][evil-leader according to its README]].
 
