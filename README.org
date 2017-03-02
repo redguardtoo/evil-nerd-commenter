@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v2.3.3)
+* evil-nerd-commenter (v3.0.0)
 
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
@@ -167,7 +167,15 @@ The first line is production code. The second line is your debug code. You want 
 All you need to is =M-x evilnc-toggle-invert-comment-line-by-line= then =C-u 2 evilnc-comment-or-uncomment-lines=. The first command turn on some flag, so the behavior of (un)commenting is different.
 * Evil usage
 If you use [[http://emacswiki.org/emacs/Evil][Evil]], you can use [[http://vimdoc.sourceforge.net/htmldoc/motion.html#text-objects][text objects and motions]]. But if you only *deals with lines*, I suggest using =evilnc-comment-or-uncomment-lines= instead.
-**  evilnc-comment-operator
+** commenter text object "c"
+We defined commenter text object "c" which can have *multi-lines*.
+
+Press =vac= to select outer object (comment with limiters).
+
+Press =vic= to select inner object (comment without limiter).
+
+You can assign other key instead of "c" to the text object by customizing =evilnc-comment-text-object=.
+** evilnc-comment-operator
 =evilnc-comment-operator= acts much like the delete/change operator. Takes a motion or text object and comments it out, yanking its content in the process.
 
 Example 1: ",,," to comment out the current line.
