@@ -145,7 +145,6 @@
         (setq e (- e 1)))))
     e))
 
-;;;###autoload
 (evil-define-text-object evilnc-inner-comment (&optional count begin end type)
   "An inner comment text object."
   (let* ((bounds (evilnc-get-comment-bounds)))
@@ -165,7 +164,6 @@
      (t
       (error "Not inside a comment.")))))
 
-;;;###autoload
 (evil-define-text-object evilnc-outer-commenter (&optional count begin end type)
   "An outer comment text object."
   (let* ((bounds (evilnc-get-comment-bounds)))
