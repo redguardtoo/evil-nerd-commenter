@@ -119,7 +119,7 @@ Please note it has NOT effect on evil text object!")
 (defvar evilnc-comment-text-object "c"
   "The comment object.
 `vic` to select inner object.
-`vac` to select outer objectselect outer object.")
+`vac` to select outer object.")
 
 (defun evilnc--count-lines (beg end)
   "Assume BEG is less than END."
