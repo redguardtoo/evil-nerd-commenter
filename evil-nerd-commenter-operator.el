@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-(require 'evil nil 'noerror)
+(require 'evil)
 (require 'evil-nerd-commenter-sdk)
 
 (defvar evilnc-c-style-comment-modes
@@ -209,5 +209,5 @@
 ;;; evil-nerd-commenter-operator.el ends here
 
 ;; Local Variables:
-;; byte-compile-warnings: (not free-vars unresolved)
+;; no-byte-compile: t
 ;; End:
