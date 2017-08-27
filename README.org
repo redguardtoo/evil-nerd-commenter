@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v3.0.2)
+* evil-nerd-commenter (v3.0.3)
 
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
@@ -175,6 +175,8 @@ Press =vac= to select outer object (comment with limiters).
 Press =vic= to select inner object (comment without limiter).
 
 You can assign other key instead of "c" to the text object by customizing =evilnc-comment-text-object=.
+
+Please note in order to select innner object precisely, either the first or last line is the longest line.
 ** evilnc-comment-operator
 =evilnc-comment-operator= acts much like the delete/change operator. Takes a motion or text object and comments it out, yanking its content in the process.
 
