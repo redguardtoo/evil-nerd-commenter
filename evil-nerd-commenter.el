@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.1.1
+;; Version: 3.1.2
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -109,8 +109,7 @@
 (autoload 'count-lines "simple")
 
 (defvar evilnc-original-above-comment-when-copy-and-comment nil
-  "Original text is above commented out when using `evilnc-copy-and-comment-lines'
- and `evilnc-copy-and-comment-operator'.")
+  "Original text is abovl commentn using `evilnc-copy-and-comment-lines'and `evilnc-copy-and-comment-operator'.")
 
 (defvar evilnc-invert-comment-line-by-line nil
   "If t then invert region comment status line by line.
@@ -356,6 +355,7 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
 (defvar web-mode-engine)
 
 (defun evilnc--warn-on-web-mode (is-comment)
+  "Check certain part of html code IS-COMMENT."
   (let* ((comment-operation (concat "web-mode-"
                                     (if is-comment "comment-" "uncomment-")
                                     web-mode-engine
@@ -605,23 +605,28 @@ Then we operate the expanded region.  NUM is ignored."
     (forward-line (1+ num))
     (setq num (- 0 num)))
 
-  (evilnc--operation-on-lines-or-region
-   '(lambda (beg end)
-      (evilnc--fix-buggy-major-modes)
-      (let* ((str (buffer-substring-no-properties beg end)))
-        (cond
-         (evilnc-original-above-comment-when-copy-and-comment
-          (let* ((p (point)))
-            (comment-region beg end)
-            (goto-char beg)
-            (insert-before-markers (concat str "\n"))
-            (goto-char p)))
-         (t
-          (goto-char end)
-          (newline 1)
-          (insert-before-markers str)
-          (comment-region beg end)))))
-   num))
+  (let* ((original-column (current-column)))
+    (evilnc--operation-on-lines-or-region
+     '(lambda (beg end)
+        (evilnc--fix-buggy-major-modes)
+        (let* ((str (buffer-substring-no-properties beg end)))
+          (cond
+           (evilnc-original-above-comment-when-copy-and-comment
+            (let* ((p (point)))
+              (comment-region beg end)
+              (goto-char beg)
+              (insert-before-markers (concat str "\n"))
+              (goto-char p)))
+           (t
+            (goto-char end)
+            (newline 1)
+            (insert-before-markers str)
+            (comment-region beg end)))))
+     num)
+    ;; Go to original column after evilnc-copy-and-comment-lines
+    ;; @see https://github.com/redguardtoo/evil-nerd-commenter/issues/79
+    ;; Thanks for Kevin Brubeck (AKA unhammer) for idea/implementation
+    (move-to-column original-column)))
 
 ;;;###autoload
 (defun evilnc-comment-and-kill-ring-save (&optional num)
@@ -685,7 +690,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.1.1"))
+  (message "3.1.2"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
