@@ -109,7 +109,7 @@
 (autoload 'count-lines "simple")
 
 (defvar evilnc-original-above-comment-when-copy-and-comment nil
-  "Original text is abovl commentn using `evilnc-copy-and-comment-lines'and `evilnc-copy-and-comment-operator'.")
+  "Original text is above commentn using `evilnc-copy-and-comment-lines' and `evilnc-copy-and-comment-operator'.")
 
 (defvar evilnc-invert-comment-line-by-line nil
   "If t then invert region comment status line by line.
