@@ -50,10 +50,10 @@
   "Major modes using C comment syntax.")
 
 (defvar evilnc-temporary-goal-column 0
-  "Value passed to `temporary-goal-column' which specify the right edge
-of rectangle yank.")
+  "Value of`temporary-goal-column' specifying right edge of rectangle yank.")
 
 (defadvice evil-visual-highlight-block (around evil-visual-highlight-block-hack activate)
+  "Show overlay over innert comment text object."
   ad-do-it
   (when (eq this-command 'evilnc-inner-comment)
     (dolist (overlay evil-visual-block-overlays)
@@ -64,6 +64,7 @@ of rectangle yank.")
         (move-overlay overlay b e)))))
 
 (defadvice evil-apply-on-block (around evil-apply-on-block-around-hack activate)
+  "Yank correct region of nner comment text object."
   (let* ((tmp-command last-command))
     ;; force `evil-apply-on-block' use our temporary-goal-column
     (when (> evilnc-temporary-goal-column 0)
@@ -127,7 +128,7 @@ of rectangle yank.")
       (comment-region beg end))))
 
 (defun evilnc-is-one-line-comment (b e)
-  "One line comment."
+  "Check whether text between B and E is one line comment."
   (save-excursion
     (goto-char b)
     (and (<= (line-beginning-position) b)
@@ -176,6 +177,7 @@ of rectangle yank.")
     rlt))
 
 (defun evilnc-adjusted-comment-end (b e)
+  "Ajust comment end of region between B and E."
   (let* ((next-end-char (evilnc-get-char (- e 2)))
          (end-char (evilnc-get-char (- e 1))))
     ;; avoid selecting CR/LF at the end of comment
@@ -208,7 +210,8 @@ of rectangle yank.")
 
 (defun evilnc-comment-column-bounds (beg end &optional c-style)
   "From BEG to END find column bounds of rectangle selection.
-Return (cons col-min col-max) or nil."
+Return (cons col-min col-max) or nil.  If C-STYLE is t,
+we are processing C like language."
   (let* ((col-min most-positive-fixnum)
          (col-max 0))
     (while (< beg end)
@@ -282,7 +285,7 @@ Return (cons col-min col-max) or nil."
             (setq evilnc-temporary-goal-column (evil-column e)))))
         (evil-range b e 'block :expanded t))))
      (t
-      (error "Not inside a comment.")))))
+      (error "Not inside a comment")))))
 
 (evil-define-text-object evilnc-outer-commenter (&optional count begin end type)
   "An outer comment text object."
@@ -293,7 +296,7 @@ Return (cons col-min col-max) or nil."
              (e (cdr bounds)))
         (evil-range b e 'exclusive :expanded t)))
      (t
-      (error "Not inside a comment.")))))
+      (error "Not inside a comment")))))
 
 (provide 'evil-nerd-commenter-operator)
 ;;; evil-nerd-commenter-operator.el ends here

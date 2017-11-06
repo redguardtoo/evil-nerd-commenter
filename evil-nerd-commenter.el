@@ -366,6 +366,7 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
     is-comment))
 
 (defun evilnc--web-mode-is-region-comment (beg end)
+  "Is region between BEG and END is comment in web mode?"
   (let* ((rlt (and (save-excursion
                      (goto-char beg)
                      (goto-char (line-end-position))
@@ -654,7 +655,7 @@ Then we operate the expanded region.  NUM is ignored."
 ;; {{ for non-evil user only
 ;;;###autoload
 (defun evilnc-copy-to-line (&optional LINENUM)
-  "Copy from current line to LINENUM line. For non-evil user only."
+  "Copy from current line to LINENUM line.  For non-evil user only."
   (interactive "nCopy to line: ")
   (if (not (region-active-p))
       (let* ((b (line-beginning-position))
@@ -698,10 +699,9 @@ Then we operate the expanded region.  NUM is ignored."
 (defvar evil-outer-text-objects-map)
 ;;;###autoload
 (defun evilnc-default-hotkeys (&optional no-evil-keybindings)
-  "Set up the key bindings of evil-nerd-comment.
-If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in evil-mode."
+  "Setup the key bindings of evil-nerd-comment.
+If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL."
   (interactive)
-
   ;; Install hotkeys for Emacs mode
   (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
   (global-set-key (kbd "C-c l") 'evilnc-quick-comment-or-uncomment-to-the-line)
