@@ -62,6 +62,9 @@
   "Character at POS is line end."
   (member (evilnc-get-char pos) '(10 11)))
 
+(defun evilnc-get-comment-end (end)
+  (if (= end (point-max)) end (1- end)))
+
 (defun evilnc-is-comment (pos)
   "Check whether the code at POS is comment by comparing font face.
 Please note the white spaces out of comment is treated as comment,

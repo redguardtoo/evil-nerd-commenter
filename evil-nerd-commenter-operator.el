@@ -78,6 +78,45 @@
     (setq last-command tmp-command)
     (setq evilnc-temporary-goal-column 0)))
 
+(defun evilnc--in-comment-p (pos)
+  "Check whether the code at POS is comment by comparing font face."
+  (interactive)
+  (let* ((fontfaces (get-text-property pos 'face)))
+    (if (not (listp fontfaces))
+        (setf fontfaces (list fontfaces)))
+    (delq nil
+          (mapcar #'(lambda (f)
+                      ;; learn this trick from flyspell
+                      (or (eq f 'font-lock-comment-face)
+                          (eq f 'font-lock-comment-delimiter-face)))
+                  fontfaces))))
+
+(defun evilnc--extend-to-whole-comment (beg end)
+  "Extend the comment region defined by BEG and END so ALL comment is included."
+  (interactive)
+  (if (evilnc--in-comment-p beg)
+      (save-excursion
+        (let* ((newbeg beg)
+               (newend end))
+
+          ;; extend the beginning
+          (goto-char newbeg)
+          (while (and (>= newbeg (line-beginning-position)) (evilnc--in-comment-p newbeg))
+            (setq newbeg (1- newbeg)))
+
+          ;; make sure newbeg is at the beginning of the comment
+          (if (< newbeg beg) (setq newbeg (1+ newbeg)))
+
+          ;; extend the end
+          (goto-char newend)
+          (while (and (<= newend (line-end-position)) (evilnc--in-comment-p newend))
+            (setq newend (1+ newend)))
+          ;; make sure newend is at the end of the comment
+          (if (> newend end) (setq newend (evilnc-get-comment-end newend)))
+
+          (list newbeg newend)))
+    (list beg end)))
+
 (evil-define-operator evilnc-comment-operator (beg end type)
   "Comments text from BEG to END with TYPE."
   (interactive "<R>")
@@ -97,7 +136,7 @@
     (evilnc--comment-or-uncomment-region (1- beg) end))
 
    ((eq type 'line)
-    (evilnc--comment-or-uncomment-region beg (1- end)))
+    (evilnc--comment-or-uncomment-region beg (evilnc-get-comment-end end)))
 
    (t
     (let* ((newpos (evilnc--extend-to-whole-comment beg end) ))

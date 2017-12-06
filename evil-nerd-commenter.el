@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.1.2
+;; Version: 3.1.3
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -250,45 +250,6 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
             (setq e (line-end-position)))
         (setq e (point-max))))
     (list b e)))
-
-(defun evilnc--in-comment-p (pos)
-  "Check whether the code at POS is comment by comparing font face."
-  (interactive)
-  (let* ((fontfaces (get-text-property pos 'face)))
-    (if (not (listp fontfaces))
-        (setf fontfaces (list fontfaces)))
-    (delq nil
-          (mapcar #'(lambda (f)
-                      ;; learn this trick from flyspell
-                      (or (eq f 'font-lock-comment-face)
-                          (eq f 'font-lock-comment-delimiter-face)))
-                  fontfaces))))
-
-(defun evilnc--extend-to-whole-comment (beg end)
-  "Extend the comment region defined by BEG and END so ALL comment is included."
-  (interactive)
-  (if (evilnc--in-comment-p beg)
-      (save-excursion
-        (let* ((newbeg beg)
-               (newend end))
-
-          ;; extend the beginning
-          (goto-char newbeg)
-          (while (and (>= newbeg (line-beginning-position)) (evilnc--in-comment-p newbeg))
-            (setq newbeg (1- newbeg)))
-
-          ;; make sure newbeg is at the beginning of the comment
-          (if (< newbeg beg) (setq newbeg (1+ newbeg)))
-
-          ;; extend the end
-          (goto-char newend)
-          (while (and (<= newend (line-end-position)) (evilnc--in-comment-p newend))
-            (setq newend (1+ newend)))
-          ;; make sure newend is at the end of the comment
-          (if (> newend end) (setq newend (1- newend)))
-
-          (list newbeg newend)))
-    (list beg end)))
 
 (defun evilnc--invert-comment (beg end)
   "Scan the region from BEG to END line by line, invert its comment status."
@@ -692,7 +653,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.1.2"))
+  (message "3.1.3"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)

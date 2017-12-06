@@ -1,6 +1,6 @@
 #!/bin/bash
 name=evil-nerd-commenter
-version=3.1.2
+version=3.1.3
 pkg=$name-$version
 mkdir $pkg
 cp *.el $pkg
