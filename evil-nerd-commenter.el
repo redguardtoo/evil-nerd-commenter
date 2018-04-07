@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.1.3
+;; Version: 3.2.0
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -92,7 +92,16 @@
 ;;
 ;; You can assign other key instead of "c" to the text object by
 ;; customizing `evilnc-comment-text-object'.
-
+;;
+;; You can list of comments in current buffer through using imenu.
+;; by setup `imenu-create-index-function' to `evilnc-imenu-create-index-function',
+;;
+;;   (defun counsel-imenu-comments ()
+;;     (interactive)
+;;     (let* ((imenu-create-index-function 'evilnc-imenu-create-index-function))
+;;       (unless (featurep 'counsel) (require 'counsel))
+;;       (counsel-imenu)))
+;;
 ;; For certain major modes, you need manual setup to override its original
 ;; keybindings,
 ;;
@@ -125,7 +134,10 @@ Please note it has NOT effect on evil text object!")
 `vic` to select inner object.
 `vac` to select outer object.")
 
-(defun evilnc--count-lines (beg end)
+(defvar evilnc-min-comment-length-for-imenu 8
+  "Minimum length of comment to display in imenu.")
+
+(defun  evilnc--count-lines (beg end)
   "Assume BEG is less than END."
   (let* ((rlt (count-lines beg end)))
     (save-excursion
@@ -653,7 +665,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.1.3"))
+  (message "3.2.0"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
@@ -696,6 +708,50 @@ If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL."
          ;; comment itself is text object
          (define-key evil-inner-text-objects-map evilnc-comment-text-object 'evilnc-inner-comment)
          (define-key evil-outer-text-objects-map evilnc-comment-text-object 'evilnc-outer-commenter)))))
+
+;;;###autoload
+(defun evilnc-imenu-create-index-function ()
+  "Imenu function find comments."
+  (let* (beg
+         end
+         linenum
+         str
+         (searching t)
+         m
+         cands)
+    (save-excursion
+      (goto-char (point-min))
+      ;; learn this skill from etags-select
+      ;; use simple string search to speed up searching
+      (while searching
+        (setq beg (search-forward comment-start (point-max) t))
+        ;; OK, it's comment
+        (cond
+         ((not beg)
+          (setq searching nil))
+         (t
+          (setq beg (1+ beg))))
+
+        (when (and searching (evilnc-is-comment beg))
+          (setq linenum (line-number-at-pos beg) )
+          (cond
+           ((string= comment-end "")
+            (setq end (line-end-position)))
+           (t
+            (setq end (search-forward comment-end (point-max) t))))
+          (cond
+           ((and end (> end beg))
+            (setq str (buffer-substring-no-properties beg end))
+            (when (and (not (string-match-p "^[ \t]*$" str))
+                       (> (length str) evilnc-min-comment-length-for-imenu))
+              (setq m (make-marker))
+              (set-marker m beg)
+              (add-to-list 'cands
+                           (cons (format "%d:%s" linenum str) m)
+                           t)))
+           (t
+            (setq searching nil))))))
+    cands))
 
 ;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded

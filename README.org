@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v3.1.3)
+* evil-nerd-commenter (v3.2.0)
 
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
@@ -138,6 +138,17 @@ For example:
 If a line is snippet wrapped HTML tags in HTML template, only the HTML syntax is used to comment out the line by default.
 
 But if you =(setq evilnc-comment-both-snippet-html t)=, snippet will be commented out with its own syntax at first. Then the wrapped html tag will be comment out using HTML syntax. This flag has effect on all above commands.  [[http://web-mode.org/][Web-mode]] should be enabled to use this flag.
+*** Use imenu to list and jump to comments in current file
+Please setup `imenu-create-index-function' to `evilnc-imenu-create-index-function'.
+
+Setup on using =counsel-imenu= to list comments in current buffer,
+#+begin_src elisp
+(defun counsel-imenu-comments ()
+  (interactive)
+  (let* ((imenu-create-index-function 'evilnc-imenu-create-index-function))
+    (unless (featurep 'counsel) (require 'counsel))
+    (counsel-imenu)))
+#+end_src
 ** Examples
 *** Comment lines
 =C-u NUM M-x evilnc-comment-or-uncomment-lines=, comment/uncomment next NUM lines.
