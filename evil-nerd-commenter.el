@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.2.0
+;; Version: 3.2.1
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -665,7 +665,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.2.0"))
+  (message "3.2.1"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
@@ -748,7 +748,8 @@ If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL."
               (set-marker m beg)
               (add-to-list 'cands
                            (cons (format "%d:%s" linenum str) m)
-                           t)))
+                           t))
+            (goto-char (min (1+ end) (point-max))))
            (t
             (setq searching nil))))))
     cands))
