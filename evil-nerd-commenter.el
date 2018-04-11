@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.2.1
+;; Version: 3.2.3
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: commenter vim line evil
 ;;
@@ -666,7 +666,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.2.1"))
+  (message "3.2.3"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
@@ -761,16 +761,16 @@ If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL."
             (setq str (replace-regexp-in-string "[\r\n]+" "\n" str))
             ;; could be multi-lines comment
             (let* ((a (split-string str "[\r\n]+"))
-                   (pre-p (concat "^[ \t]*["
-                                  (string-trim comment-start)
-                                  "][ \t]*"))
-                   (post-p (concat "[ \t]*["
-                                   (string-trim comment-end)
-                                   "][ \t]*$")))
+                   (pre-pattern (concat "^[ \t]*["
+                                        (string-trim comment-start)
+                                        "]*[ \t]*"))
+                   (post-pattern (concat "[ \t]*["
+                                         (string-trim comment-end)
+                                         "]*[ \t]*$")))
               ;; remove empty lines
               (setq a (delq nil (mapcar (lambda (s)
-                                          (setq s (replace-regexp-in-string pre-p "" s))
-                                          (setq s (replace-regexp-in-string post-p "" s))
+                                          (setq s (replace-regexp-in-string pre-pattern "" s))
+                                          (setq s (replace-regexp-in-string post-pattern "" s))
                                           (setq s (string-trim s))
                                           (unless (string-match-p "^[ \t]*$" s) s))
                                         a)))
