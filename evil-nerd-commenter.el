@@ -5,6 +5,7 @@
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
 ;; Version: 3.2.1
+;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: commenter vim line evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -709,6 +710,19 @@ If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL."
          (define-key evil-inner-text-objects-map evilnc-comment-text-object 'evilnc-inner-comment)
          (define-key evil-outer-text-objects-map evilnc-comment-text-object 'evilnc-outer-commenter)))))
 
+
+(defun evilnc-frame-wide-string (s)
+  "Build summary from S."
+  (let* ((w (frame-width))
+         ;; display kill ring item in one line
+         (key (replace-regexp-in-string "[ \t]*[\n\r]+[ \t]*" "\\\\n" s)))
+    ;; strip the whitespace
+    (setq key (replace-regexp-in-string "^[ \t]+" "" key))
+    ;; fit to the minibuffer width
+    (if (> (length key) w)
+        (setq key (concat (substring key 0 (- w 4)) "...")))
+    key))
+
 ;;;###autoload
 (defun evilnc-imenu-create-index-function ()
   "Imenu function find comments."
@@ -724,7 +738,8 @@ If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL."
       ;; learn this skill from etags-select
       ;; use simple string search to speed up searching
       (while searching
-        (setq beg (search-forward comment-start (point-max) t))
+        ;; C/C++ might use "/* " as comment-start
+        (setq beg (search-forward (string-trim comment-start) (point-max) t))
         ;; OK, it's comment
         (cond
          ((not beg)
@@ -741,13 +756,31 @@ If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL."
             (setq end (search-forward comment-end (point-max) t))))
           (cond
            ((and end (> end beg))
-            (setq str (buffer-substring-no-properties beg end))
-            (when (and (not (string-match-p "^[ \t]*$" str))
+            (setq str (string-trim (buffer-substring-no-properties beg end)))
+            ;; no empty line
+            (setq str (replace-regexp-in-string "[\r\n]+" "\n" str))
+            ;; could be multi-lines comment
+            (let* ((a (split-string str "[\r\n]+"))
+                   (pre-p (concat "^[ \t]*["
+                                  (string-trim comment-start)
+                                  "][ \t]*"))
+                   (post-p (concat "[ \t]*["
+                                   (string-trim comment-end)
+                                   "][ \t]*$")))
+              ;; remove empty lines
+              (setq a (delq nil (mapcar (lambda (s)
+                                          (setq s (replace-regexp-in-string pre-p "" s))
+                                          (setq s (replace-regexp-in-string post-p "" s))
+                                          (setq s (string-trim s))
+                                          (unless (string-match-p "^[ \t]*$" s) s))
+                                        a)))
+              (setq str (mapconcat 'identity a "\n" )))
+            (when (and (not (string-match-p "^[ \t\n\r]*$" str))
                        (> (length str) evilnc-min-comment-length-for-imenu))
               (setq m (make-marker))
               (set-marker m beg)
               (add-to-list 'cands
-                           (cons (format "%d:%s" linenum str) m)
+                           (cons (evilnc-frame-wide-string (format "%d:%s" linenum str)) m)
                            t))
             (goto-char (min (1+ end) (point-max))))
            (t
