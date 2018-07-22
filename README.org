@@ -36,6 +36,8 @@ Please note v3.2.1 is the last version supporting Emacs 24.3.
 Insert =(evilnc-default-hotkeys)= into =~/.emacs= to use key bindings preset for both evil and non-evil mode. This is recommended way.
 
 Use =(evilnc-default-hotkeys t)= to use key binding only for non-evil mode if you want to define key bindings in evil-mode by yourself.
+
+Use =(evilnc-default-hotkeys nil t)= to use key binding only for evil mode if you want to define key bindings in Emacs mode by yourself.
 ** Use evil-leader instead
 Install [[https://github.com/cofi/evil-leader][evil-leader according to its README]].
 
