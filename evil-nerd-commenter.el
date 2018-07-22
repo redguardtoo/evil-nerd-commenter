@@ -673,15 +673,17 @@ Then we operate the expanded region.  NUM is ignored."
 (defvar evil-inner-text-objects-map)
 (defvar evil-outer-text-objects-map)
 ;;;###autoload
-(defun evilnc-default-hotkeys (&optional no-evil-keybindings)
+(defun evilnc-default-hotkeys (&optional no-evil-keybindings no-emacs-keybindings)
   "Setup the key bindings of evil-nerd-comment.
-If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL."
+If NO-EVIL-KEYBINDINGS is t, we don't define keybindings in EVIL,
+if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
   (interactive)
   ;; Install hotkeys for Emacs mode
-  (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
-  (global-set-key (kbd "C-c l") 'evilnc-quick-comment-or-uncomment-to-the-line)
-  (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
-  (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs)
+  (unless no-emacs-keybindings
+    (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
+    (global-set-key (kbd "C-c l") 'evilnc-quick-comment-or-uncomment-to-the-line)
+    (global-set-key (kbd "C-c c") 'evilnc-copy-and-comment-lines)
+    (global-set-key (kbd "C-c p") 'evilnc-comment-or-uncomment-paragraphs))
 
   ;; Install key bindings for evil
   (unless no-evil-keybindings
