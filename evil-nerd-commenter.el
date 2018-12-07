@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.2.3
+;; Version: 3.3.0
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: commenter vim line evil
 ;;
@@ -81,6 +81,8 @@
 ;;   "."  'evilnc-copy-and-comment-operator
 ;;   "\\" 'evilnc-comment-operator)
 ;;
+;; `evilnc-comment-or-uncomment-html-tag' comment/uncomment html tag(s).
+;;
 ;; You can setup `evilnc-original-above-comment-when-copy-and-comment'
 ;; to decide which style to use when `evilnc-copy-and-comment-lines'
 ;; or `evilnc-copy-and-comment-operator',
@@ -114,6 +116,9 @@
 ;;
 ;;; Code:
 
+(require 'subr-x) ; required by `string-trim'
+(require 'sgml-mode)
+(require 'newcomment)
 (require 'evil-nerd-commenter-sdk)
 
 (autoload 'count-lines "simple")
@@ -137,6 +142,12 @@ Please note it has NOT effect on evil text object!")
 
 (defvar evilnc-min-comment-length-for-imenu 8
   "Minimum length of comment to display in imenu.")
+
+(defvar evilnc-html-comment-start "{/* "
+  "String to start comment of HTML tag.  JSX syntax is used by default.")
+
+(defvar evilnc-html-comment-end " */}"
+  "String to end Comment of HTML tag.  JSX syntax is used by default.")
 
 (defun  evilnc--count-lines (beg end)
   "Assume BEG is less than END."
@@ -194,8 +205,8 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
    ((and (<= (line-beginning-position) (region-beginning))
           (<= (region-end) (line-end-position)))
     (cond
-     ;; Well, looks current comment syntax is NOT fit for comment out a region.
-     ;; So we also need hack the comment-start and comment-end
+     ;; current comment syntax is NOT fit to comment out a region.
+     ;; So we also need hack the `comment-start' and `comment-end'
      ((and (string= "" comment-end)
            (member major-mode '(java-mode
                                 javascript-mode
@@ -233,7 +244,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
       (let* ((b (region-beginning))
              (e (region-end)))
         ;; Another work around for evil-visual-line bug:
-        ;; In evil-mode, if we use hotkey V or `M-x evil-visual-line` to select line,
+        ;; In `evil-mode', if we use hotkey V or `evil-visual-line' to select line,
         ;; the (line-beginning-position) of the line which is after the last selected
         ;; line is always (region-end)! Don't know why.
         (if (and (> e b)
@@ -295,7 +306,7 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
          old-flag)
     (when (and (eq major-mode 'org-mode)
                (fboundp 'org-edit-src-find-region-and-lang))
-      (setq info (org-edit-src-find-region-and-lang)))
+      (setq info (funcall 'org-edit-src-find-region-and-lang)))
 
     (when info
       (setq lang (or (cdr (assoc (nth 2 info) org-src-lang-modes))
@@ -666,7 +677,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.2.3"))
+  (message "3.3.0"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
@@ -788,6 +799,83 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
            (t
             (setq searching nil))))))
     cands))
+
+(defun evilnc-html-comment-region (beg end)
+  "Comment region between BEG and END."
+  (save-excursion
+    (goto-char end)
+    (insert evilnc-html-comment-end)
+    (goto-char beg)
+    (insert evilnc-html-comment-start)))
+
+(defun evilnc-html-uncomment-region (beg end)
+  "Uncomment HTML tag between BEG and END."
+  (let* (mark-start-pos mark-end-pos)
+    (save-excursion
+      (goto-char beg)
+      (setq mark-start-pos (search-forward evilnc-html-comment-start end t))
+      (goto-char end)
+      (setq mark-end-pos (search-backward evilnc-html-comment-end beg t))
+      (when (and mark-start-pos mark-end-pos)
+        (goto-char mark-end-pos)
+        (delete-char (length evilnc-html-comment-end))
+        (goto-char (- mark-start-pos (length evilnc-html-comment-start)))
+        (delete-char (length evilnc-html-comment-start))))))
+
+(defun evilnc-is-html-tag-comment-p (beg)
+  "Html tag comment at position BEG?"
+  (save-excursion
+    (goto-char beg)
+    (let* ((line (buffer-substring-no-properties (line-beginning-position)
+                                                    (line-end-position)))
+           (re (concat "^[ \t]*" (regexp-quote evilnc-html-comment-start))))
+      (string-match-p re line))))
+
+;;;###autoload
+(defun evilnc-comment-or-uncomment-html-tag ()
+  "Comment or uncomment html tag(s).
+If no region is selected, current tag under focus is automatically selected.
+In this case, only one tag is selected.
+
+If user manually selects region, the region could cross multiple sibling tags
+and automatically expands to include complete tags.
+So user only need press \"v\" key in `evil-mode' to select multiple tags.
+
+JSX from ReactJS like \"{/* ... */}\" is the default comment syntax.
+Customize `evilnc-html-comment-end' and `evilnc-html-comment-end' to used
+different syntax."
+  (interactive)
+  (let* (beg end beg-line-beg end-line-end)
+    (cond
+     ((region-active-p)
+      (setq beg (region-beginning))
+      (setq end (region-end))
+      (save-excursion
+        (goto-char beg)
+        (setq beg-line-beg (line-beginning-position))
+        (goto-char end)
+        (setq end-line-end (line-end-position))
+        (when (< beg-line-beg (line-beginning-position))
+          ;; it's multiple lines region
+          (goto-char beg-line-beg)
+          (setq beg (re-search-forward "^[ \t]*" end t))
+          (setq end end-line-end))))
+     (t
+      (save-excursion
+        (sgml-skip-tag-backward 1)
+        (setq beg (point))
+        (setq beg-line-beg (line-beginning-position))
+        (sgml-skip-tag-forward 1)
+        (setq end (point))
+        (setq end-line-end (line-end-position)))))
+
+    (cond
+     ((evilnc-is-html-tag-comment-p beg)
+      ;; make sure all tags plus comment marks are selected
+      (evilnc-html-uncomment-region beg-line-beg end-line-end))
+     (t
+      ;; the whole tags is already selected
+      (evilnc-html-comment-region beg end)))))
 
 ;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded

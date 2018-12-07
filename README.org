@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v3.2.3)
+* evil-nerd-commenter (v3.3.0)
 
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
@@ -8,7 +8,7 @@ A [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] emula
 
 I recommend using it with Evil though Evil is optional.
 
-Tested on Emacs 24.4, 24.5, 25.3
+Tested on Emacs 24.4, 24.5, 25.3, 26.1
 
 * Why?
 ** A simple use case on the efficiency
@@ -106,6 +106,22 @@ The hotkey is ",cc" in evil-mode and =C-c c= in emacs normal mode.
 Comment lines and insert original lines into =kill-ring=.
 *** evilnc-comment-or-uncomment-to-the-line
 Comment to the specified line.
+*** evilnc-comment-or-uncomment-html-tag
+Comment or uncomment current html tag or selected region.
+JSX from ReactJS is the default syntax to comment tags.
+Customize =evilnc-html-comment-start= and =evilnc-html-comment-end= for different syntax.
+Please note you don't need force the whole line selection (pressing =V=) in =evil-mode=. This command is smart to select whole lines if needed.
+
+Comment or uncomment html tag(s).
+
+If no region is selected, current tag under focus is automatically selected.
+In this case, only one tag is selected.
+
+If user manually selects region, the region could cross multiple sibling tags and automatically expands to include complete tags. So user only need press =v= key in =evil-mode= to select multiple tags.
+
+JSX from ReactJS like ={/* ... */}= is the default comment syntax.
+
+Customize =evilnc-html-comment-end= and =evilnc-html-comment-end= to use different syntax.
 *** evilnc-toggle-comment-empty-lines
 Toggle the flag to comment/uncomment empty lines.
 
