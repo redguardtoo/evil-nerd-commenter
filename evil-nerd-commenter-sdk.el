@@ -27,6 +27,8 @@
 
 ;;; Code:
 
+(require 'subr-x) ; required by `string-trim'
+
 (defun evilnc--check-fonts (fonts-under-cursor fonts-list)
   "Check whether FONTS-UNDER-CURSOR among FONTS-LIST."
   (delq nil
