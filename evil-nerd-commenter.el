@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.3.0
+;; Version: 3.3.1
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: commenter vim line evil
 ;;
@@ -82,6 +82,8 @@
 ;;   "\\" 'evilnc-comment-operator)
 ;;
 ;; `evilnc-comment-or-uncomment-html-tag' comment/uncomment html tag(s).
+;; `evilnc-comment-or-uncomment-html-paragraphs' comment/uncomment paragraphs
+;; containing html tags.
 ;;
 ;; You can setup `evilnc-original-above-comment-when-copy-and-comment'
 ;; to decide which style to use when `evilnc-copy-and-comment-lines'
@@ -421,7 +423,7 @@ DO-COMMENT decides we comment or uncomment."
         (setq line-cnt (1- line-cnt))))))
 
 (defun evilnc--comment-or-uncomment-region (beg end)
-  "Comment or uncommment region from BEG to END."
+  "Comment or uncomment region from BEG to END."
   (cond
    ((eq major-mode 'web-mode)
     ;; elixir is not supported in web-mode for now
@@ -457,12 +459,8 @@ If UNITS is 16, line 16, line 116, and line 216 are good candidates."
 
 ;; ==== below this line are public commands
 
-;;;###autoload
-(defun evilnc-comment-or-uncomment-paragraphs (&optional num)
-  "Comment or uncomment NUM paragraph(s).
-A paragraph is a continuation non-empty lines.
-Paragraphs are separated by empty lines."
-  (interactive "p")
+(defun evilnc-do-paragraphs (action num)
+  "Apply ACTION on NUM paragraphs."
   (let* ((i 0)
          rlt
          (b (point-max))
@@ -492,8 +490,19 @@ Paragraphs are separated by empty lines."
 
     (when (<= b e)
       (save-excursion
-        (evilnc--fix-buggy-major-modes)
-        (evilnc--comment-or-uncomment-region b e)))))
+        (funcall action b e)))))
+
+;;;###autoload
+(defun evilnc-comment-or-uncomment-paragraphs (&optional num)
+  "Comment or uncomment NUM paragraph(s).
+A paragraph is a continuation non-empty lines.
+Paragraphs are separated by empty lines."
+  (interactive "p")
+  (evilnc-do-paragraphs
+   (lambda (b e)
+     (evilnc--fix-buggy-major-modes)
+     (evilnc--comment-or-uncomment-region b e))
+   num))
 
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-to-the-line (&optional LINENUM)
@@ -515,7 +524,7 @@ Paragraphs are separated by empty lines."
 ;;;###autoload
 (defun evilnc-quick-comment-or-uncomment-to-the-line (&optional units)
   "Comment/uncomment to line number by last digit(s) whose value is UNITS.
-For exmaple, you can use either \
+For example, you can use either \
 \\<M-53>\\[evilnc-quick-comment-or-uncomment-to-the-line] \
 or \\<M-3>\\[evilnc-quick-comment-or-uncomment-to-the-line] \
 to comment to the line 6453"
@@ -677,7 +686,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.3.0"))
+  (message "3.3.1"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
@@ -839,7 +848,7 @@ In this case, only one tag is selected.
 
 If user manually selects region, the region could cross multiple sibling tags
 and automatically expands to include complete tags.
-So user only need press \"v\" key in `evil-mode' to select multiple tags.
+So user only need press \"v\" key in \"evil-mode\" to select multiple tags.
 
 JSX from ReactJS like \"{/* ... */}\" is the default comment syntax.
 Customize `evilnc-html-comment-end' and `evilnc-html-comment-end' to used
@@ -876,6 +885,23 @@ different syntax."
      (t
       ;; the whole tags is already selected
       (evilnc-html-comment-region beg end)))))
+
+;;;###autoload
+(defun evilnc-comment-or-uncomment-html-paragraphs (&optional num)
+  "Comment or uncomment NUM paragraphs contain html tag.
+A paragraph is a continuation non-empty lines.
+Paragraphs are separated by empty lines."
+  (interactive "p")
+  (save-excursion
+    (evilnc-do-paragraphs
+     (lambda (b e)
+       ;; {{ select region from b to e
+       (set-mark b)
+       (goto-char e)
+       (activate-mark)
+       ;; }}
+       (evilnc-comment-or-uncomment-html-tag))
+     num)))
 
 ;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded

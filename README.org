@@ -1,4 +1,4 @@
-* evil-nerd-commenter (v3.3.0)
+* evil-nerd-commenter (v3.3.1)
 
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
@@ -96,7 +96,7 @@ For example, say current line number is 497. =C-u 3 M-x evilnc-quick-comment-or-
 The hotkey is ",cl" or ",ll" in evil-mode and =C-c l= (C means Ctrl key) in emacs normal mode.
 
 *** evilnc-comment-or-uncomment-paragraphs
-comment/uncomment paragraphs which separated by empty lines
+comment/uncomment paragraphs which is separated by empty lines.
 
 *** evilnc-copy-and-comment-lines
 Copy and paste lines, then comment out original lines. This command supports negative arguments.
@@ -122,6 +122,10 @@ If user manually selects region, the region could cross multiple sibling tags an
 JSX from ReactJS like ={/* ... */}= is the default comment syntax.
 
 Customize =evilnc-html-comment-end= and =evilnc-html-comment-end= to use different syntax.
+
+Or you can use =evilnc-comment-or-uncomment-html-paragraphs= to comment/uncomment paragraphs containing html tags.
+
+Paragraph is text separated by empty lines.
 *** evilnc-toggle-comment-empty-lines
 Toggle the flag to comment/uncomment empty lines.
 
