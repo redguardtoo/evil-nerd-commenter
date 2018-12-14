@@ -85,6 +85,25 @@
 ;; `evilnc-comment-or-uncomment-html-paragraphs' comment/uncomment paragraphs
 ;; containing html tags.
 ;;
+;; Sample to combine `evilnc-comment-or-uncomment-html-paragraphs' and
+;; `evilnc-comment-or-uncomment-paragraphs':
+;;   (defun my-evilnc-comment-or-uncomment-paragraphs (&optional num)
+;;     "Comment or uncomment NUM paragraphs which might contain html tags."
+;;     (interactive "p")
+;;     (unless (featurep 'evil-nerd-commenter) (require 'evil-nerd-commenter))
+;;     (let* ((paragraph-region (evilnc--get-one-paragraph-region))
+;;            (html-p (save-excursion
+;;                      (sgml-skip-tag-backward 1)
+;;                      (let* ((line (buffer-substring-no-properties (line-beginning-position)
+;;                                                                   (line-end-position))))
+;;                        ;; current paragraph does contain html tag
+;;                        (if (and (>= (point) (car paragraph-region))
+;;                                 (string-match-p (format "^[ \t]*\\(%s\\)?[ \t]*<[a-zA-Z]+"
+;;                                                         (regexp-quote evilnc-html-comment-start)) line))
+;;                            t)))))
+;;       (if html-p (evilnc-comment-or-uncomment-html-paragraphs num)
+;;         (evilnc-comment-or-uncomment-paragraphs num))))
+;;
 ;; You can setup `evilnc-original-above-comment-when-copy-and-comment'
 ;; to decide which style to use when `evilnc-copy-and-comment-lines'
 ;; or `evilnc-copy-and-comment-operator',
