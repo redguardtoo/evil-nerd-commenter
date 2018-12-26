@@ -1,10 +1,10 @@
 ;;; evil-nerd-commenter.el --- Comment/uncomment lines efficiently. Like Nerd Commenter in Vim
 
-;; Copyright (C) 2013-2017, Chen Bin
+;; Copyright (C) 2013-2019, Chen Bin
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.3.2
+;; Version: 3.3.3
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: commenter vim line evil
 ;;
@@ -84,25 +84,6 @@
 ;; `evilnc-comment-or-uncomment-html-tag' comment/uncomment html tag(s).
 ;; `evilnc-comment-or-uncomment-html-paragraphs' comment/uncomment paragraphs
 ;; containing html tags.
-;;
-;; Sample to combine `evilnc-comment-or-uncomment-html-paragraphs' and
-;; `evilnc-comment-or-uncomment-paragraphs':
-;;   (defun my-evilnc-comment-or-uncomment-paragraphs (&optional num)
-;;     "Comment or uncomment NUM paragraphs which might contain html tags."
-;;     (interactive "p")
-;;     (unless (featurep 'evil-nerd-commenter) (require 'evil-nerd-commenter))
-;;     (let* ((paragraph-region (evilnc--get-one-paragraph-region))
-;;            (html-p (save-excursion
-;;                      (sgml-skip-tag-backward 1)
-;;                      (let* ((line (buffer-substring-no-properties (line-beginning-position)
-;;                                                                   (line-end-position))))
-;;                        ;; current paragraph does contain html tag
-;;                        (if (and (>= (point) (car paragraph-region))
-;;                                 (string-match-p (format "^[ \t]*\\(%s\\)?[ \t]*<[a-zA-Z]+"
-;;                                                         (regexp-quote evilnc-html-comment-start)) line))
-;;                            t)))))
-;;       (if html-p (evilnc-comment-or-uncomment-html-paragraphs num)
-;;         (evilnc-comment-or-uncomment-paragraphs num))))
 ;;
 ;; You can setup `evilnc-original-above-comment-when-copy-and-comment'
 ;; to decide which style to use when `evilnc-copy-and-comment-lines'
@@ -464,6 +445,12 @@ DO-COMMENT decides we comment or uncomment."
       (beginning-of-line)
       (1+ (count-lines 1 (point))))))
 
+(defun evilnc--get-line-num (position)
+  "Get line number at POSITION."
+  (save-excursion
+    (goto-char position)
+    (evilnc--current-line-num)))
+
 (defun evilnc--find-dst-line-num (UNITS)
   "Find closet line whose line number ends with digit UNITS.
 Given UNITS as 5, line 5, line 15, and line 25 are good candidates.
@@ -486,19 +473,25 @@ If UNITS is 16, line 16, line 116, and line 216 are good candidates."
   (let* ((i 0)
          rlt
          (b (point-max))
-         (e 0))
+         (e 0)
+         linenum)
     (catch 'break
       (while (< i num)
-        (setq i (1+ i))
-        (setq rlt (evilnc--get-one-paragraph-region))
-        (setq b (if (< (nth 0 rlt) b) (nth 0 rlt) b))
-        (setq e (if (> (nth 1 rlt) e) (nth 1 rlt) e))
+        (when (setq rlt (evilnc--get-one-paragraph-region))
+          (setq b (nth 0 rlt))
+          (setq e (nth 1 rlt))
+          (setq linenum (evilnc--get-line-num e)))
+
+        ;; Original algorithm select all paragraph and comment once
+        ;; New algorithm comment paragraph by paragraph
+        (when (<= b e)
+          (save-excursion
+            (funcall action b e)))
 
         ;; prepare for the next paragraph
         (if (and rlt (< i num))
             (progn
-              ;; e should be the end of last non-empty line
-              (goto-char e)
+              (evilnc--goto-line linenum)
 
               ;; move to an empty line
               (forward-line)
@@ -508,11 +501,10 @@ If UNITS is 16, line 16, line 116, and line 216 are good candidates."
 
               (if (<= (line-beginning-position) e)
                   (throw 'break i)))
-          (throw 'break i))))
+          (throw 'break i))
+        (setq i (1+ i))))
 
-    (when (<= b e)
-      (save-excursion
-        (funcall action b e)))))
+    ))
 
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-paragraphs (&optional num)
@@ -708,7 +700,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.3.2"))
+  (message "3.3.3"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
@@ -915,16 +907,14 @@ different syntax."
 A paragraph is a continuation non-empty lines.
 Paragraphs are separated by empty lines."
   (interactive "p")
-  (save-excursion
-    (evilnc-do-paragraphs
-     (lambda (b e)
-       ;; {{ select region from b to e
-       (set-mark b)
-       (goto-char e)
-       (activate-mark)
-       ;; }}
-       (evilnc-comment-or-uncomment-html-tag))
-     num)))
+  (evilnc-do-paragraphs
+   (lambda (b e)
+     ;; {{ make sure tag is focused
+     (goto-char b)
+     (sgml-skip-tag-forward 1)
+     ;; }}
+     (evilnc-comment-or-uncomment-html-tag))
+   num))
 
 ;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded
