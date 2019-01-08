@@ -4,7 +4,7 @@
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.3.3
+;; Version: 3.3.4
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: commenter vim line evil
 ;;
@@ -700,7 +700,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.3.3"))
+  (message "3.3.4"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)

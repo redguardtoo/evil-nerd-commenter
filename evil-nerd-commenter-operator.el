@@ -64,7 +64,7 @@
         (move-overlay overlay b e)))))
 
 (defadvice evil-apply-on-block (around evil-apply-on-block-around-hack activate)
-  "Yank correct region of nner comment text object."
+  "Yank correct region of inner comment text object."
   (let* ((tmp-command last-command))
     ;; force `evil-apply-on-block' use our temporary-goal-column
     (when (> evilnc-temporary-goal-column 0)
@@ -101,18 +101,13 @@
 
           ;; extend the beginning
           (goto-char newbeg)
-          (while (and (>= newbeg (line-beginning-position)) (evilnc--in-comment-p newbeg))
+          (while (and (>= (1- newbeg) (line-beginning-position)) (evilnc--in-comment-p (1- newbeg)))
             (setq newbeg (1- newbeg)))
-
-          ;; make sure newbeg is at the beginning of the comment
-          (if (< newbeg beg) (setq newbeg (1+ newbeg)))
 
           ;; extend the end
           (goto-char newend)
           (while (and (<= newend (line-end-position)) (evilnc--in-comment-p newend))
             (setq newend (1+ newend)))
-          ;; make sure newend is at the end of the comment
-          (if (> newend end) (setq newend (evilnc-get-comment-end newend)))
 
           (list newbeg newend)))
     (list beg end)))
@@ -136,16 +131,20 @@
     (evilnc--comment-or-uncomment-region (1- beg) end))
 
    ((eq type 'line)
-    (evilnc--comment-or-uncomment-region beg (evilnc-get-comment-end end)))
+    ;; comment whole line, for now
+    (evilnc--comment-or-uncomment-region beg
+                                         (save-excursion
+                                           (goto-char (1- end))
+                                           (line-end-position))))
 
    (t
-    (let* ((newpos (evilnc--extend-to-whole-comment beg end) ))
-      (evilnc--comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos)))))
+    (when (and beg end)
+      (let* ((newpos (evilnc--extend-to-whole-comment beg end)))
+        (evilnc--comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos))))))
 
   ;; place cursor on beginning of line
-  (if (and (called-interactively-p 'any)
-           (eq type 'line))
-    (evil-first-non-blank)))
+  (if (and (called-interactively-p 'any) (eq type 'line))
+      (evil-first-non-blank)))
 
 (evil-define-operator evilnc-copy-and-comment-operator (beg end)
   "Inserts an out commented copy of the text from BEG to END."
@@ -216,7 +215,7 @@
     rlt))
 
 (defun evilnc-adjusted-comment-end (b e)
-  "Ajust comment end of region between B and E."
+  "Adjust comment end of region between B and E."
   (let* ((next-end-char (evilnc-get-char (- e 2)))
          (end-char (evilnc-get-char (- e 1))))
     ;; avoid selecting CR/LF at the end of comment
