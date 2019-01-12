@@ -202,7 +202,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
    ((not (region-active-p))
     (let* ((b (line-beginning-position)) e)
       (save-excursion
-        (forward-line (- num 1))
+        (vertical-motion (- num 1))
         (setq e (line-end-position)))
       (funcall fn b e)))
 
@@ -592,7 +592,7 @@ CORRECT comment syntax will be used for C++/Java/Javascript."
    (t
     (save-excursion
       (when (< num 0)
-        (forward-line (1+ num))
+        (vertical-motion (1+ num))
         (setq num (- 0 num)))
       (evilnc--operation-on-lines-or-region '(lambda (b e)
                                                (evilnc--fix-buggy-major-modes)
@@ -612,7 +612,7 @@ Then we operate the expanded region.  NUM is ignored."
   (interactive "p")
   ;; support negative number
   (when (< num 0)
-    (forward-line (1+ num))
+    (vertical-motion (1+ num))
     (setq num (- 0 num)))
 
   (let* ((original-column (current-column)))
@@ -651,7 +651,7 @@ Then we operate the expanded region.  NUM is ignored."
   (interactive "p")
   ;; support negative number
   (when (< num 0)
-    (forward-line (1+ num))
+    (vertical-motion (1+ num))
     (setq num (- 0 num)))
 
   (evilnc--operation-on-lines-or-region
