@@ -195,6 +195,15 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
     (setq comment-start "-# ")
     (setq comment-start-skip "-##*[ \t]*"))))
 
+(defun evilnc--forward-line (num)
+  "Move NUM source or screen lines forward, depending on visual-line settings."
+  (if (or (and visual-line-mode
+               (or (not evil-mode)
+                   (bound-and-true-p evil-respect-visual-line-mode)))
+          (eq display-line-numbers-type 'visual))
+      (vertical-motion num)
+    (forward-line num)))
+
 (defun evilnc--operation-on-lines-or-region (fn &optional num)
   "Apply FN on NUM lines or selected region."
   (cond
@@ -202,7 +211,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
    ((not (region-active-p))
     (let* ((b (line-beginning-position)) e)
       (save-excursion
-        (vertical-motion (- num 1))
+        (evilnc--forward-line (- num 1))
         (setq e (line-end-position)))
       (funcall fn b e)))
 
@@ -592,7 +601,7 @@ CORRECT comment syntax will be used for C++/Java/Javascript."
    (t
     (save-excursion
       (when (< num 0)
-        (vertical-motion (1+ num))
+        (evilnc--forward-line (1+ num))
         (setq num (- 0 num)))
       (evilnc--operation-on-lines-or-region '(lambda (b e)
                                                (evilnc--fix-buggy-major-modes)
@@ -612,7 +621,7 @@ Then we operate the expanded region.  NUM is ignored."
   (interactive "p")
   ;; support negative number
   (when (< num 0)
-    (vertical-motion (1+ num))
+    (evilnc--forward-line (1+ num))
     (setq num (- 0 num)))
 
   (let* ((original-column (current-column)))
@@ -651,7 +660,7 @@ Then we operate the expanded region.  NUM is ignored."
   (interactive "p")
   ;; support negative number
   (when (< num 0)
-    (vertical-motion (1+ num))
+    (evilnc--forward-line (1+ num))
     (setq num (- 0 num)))
 
   (evilnc--operation-on-lines-or-region
