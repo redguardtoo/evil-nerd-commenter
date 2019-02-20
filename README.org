@@ -1,5 +1,6 @@
 * evil-nerd-commenter (v3.3.4)
 
+[[https://travis-ci.org/redguardtoo/evil-nerd-commenter][https://travis-ci.org/redguardtoo/evil-nerd-commenter.svg?branch=master]]
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]] [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
 This program can be used *WITHOUT* [[http://www.emacswiki.org/Evil][evil-mode]]!
