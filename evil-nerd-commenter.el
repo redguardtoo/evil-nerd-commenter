@@ -197,12 +197,15 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
 
 (defun evilnc--forward-line (num)
   "Move NUM source or screen lines forward, depending on visual-line settings."
-  (if (or (and visual-line-mode
-               (or (not evil-mode)
-                   (bound-and-true-p evil-respect-visual-line-mode)))
-          (eq display-line-numbers-type 'visual))
-      (vertical-motion num)
-    (forward-line num)))
+  (cond
+   ((or (and visual-line-mode
+             (or (not (bound-and-true-p evil-mode))
+                 (bound-and-true-p evil-respect-visual-line-mode)))
+        (and (boundp 'display-line-numbers-type)
+             (eq display-line-numbers-type 'visual)))
+    (vertical-motion num))
+   (t
+    (forward-line num))))
 
 (defun evilnc--operation-on-lines-or-region (fn &optional num)
   "Apply FN on NUM lines or selected region."
