@@ -1,7 +1,5 @@
 ;;; evil-nerd-commenter-operator.el --- Provides an evil operator for evil-nerd-commenter
 
-;; Copyright (C) 2013-2017, Chen Bin
-
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 
 ;; This file is not part of GNU Emacs.

@@ -1,8 +1,7 @@
 ;;; evil-nerd-commenter.el --- Comment/uncomment lines efficiently. Like Nerd Commenter in Vim
 
-;; Copyright (C) 2013-2019, Chen Bin
-
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
+
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
 ;; Version: 3.3.4
 ;; Package-Requires: ((emacs "24.4"))

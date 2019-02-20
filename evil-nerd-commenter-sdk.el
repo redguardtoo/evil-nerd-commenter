@@ -1,8 +1,6 @@
 ;;; evil-nerd-commenter-sdk.el --- SDK used by other files
 
-;; Copyright (C) 2017 Chen Bin
-
-;; Author: Chen Bin <chenin DOT sh AT gmail DOT com>
+;; Author: Chen Bin <chenbin DOT sh AT gmail DOT com>
 
 ;;; License:
 
