@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.3.4
+;; Version: 3.3.5
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: commenter vim line evil
 ;;
@@ -312,34 +312,45 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
 (declare-function org-show-subtree "org")
 (declare-function outline-up-heading "outline")
 
+(defun evilnc--org-lang-major-mode ()
+  "Get `major-mode' for language of org source block."
+  (let* (info lang lang-f)
+    (when (eq major-mode 'org-mode)
+      (cond
+       ;; Emacs 24.4+
+       ((fboundp 'org-edit-src-find-region-and-lang)
+        (setq info (org-edit-src-find-region-and-lang))
+        (when info
+          (setq lang (or (cdr (assoc (nth 2 info) org-src-lang-modes))
+                         (nth 2 info)))))
+
+       ;; Emacs 26.1
+       ((fboundp 'org-element-at-point)
+        (setq lang (org-element-property :language (org-element-at-point))))))
+    (when lang
+      (setq lang (if (symbolp lang) (symbol-name lang) lang))
+      (setq lang-f (intern (concat lang "-mode"))))
+    lang-f))
+
 (defun evilnc--working-on-region (beg end fn)
   "Region from BEG to END is applied with operation FN.
 Code snippets embedded in Org-mode is identified and right `major-mode' is used."
   (let* (pos
-         info
-         lang
-         lang-f
+         (lang-f (evilnc--org-lang-major-mode))
          old-flag)
-    (when (and (eq major-mode 'org-mode)
-               (fboundp 'org-edit-src-find-region-and-lang))
-      (setq info (funcall 'org-edit-src-find-region-and-lang)))
-
-    (when info
-      (setq lang (or (cdr (assoc (nth 2 info) org-src-lang-modes))
-                     (nth 2 info)))
-      (setq lang (if (symbolp lang) (symbol-name lang) lang))
-      (setq lang-f (intern (concat lang "-mode"))))
 
     ;; turn on 3rd party language's major-mode temporarily
     (if lang-f (funcall lang-f))
 
-    (if evilnc-invert-comment-line-by-line
-        (evilnc--invert-comment beg end)
+    (cond
+     (evilnc-invert-comment-line-by-line
+      (evilnc--invert-comment beg end))
+     (t
       (setq pos (point))
       (funcall fn beg end)
-      (goto-char pos))
+      (goto-char pos)))
 
-    ;; turn off  3rd party language's major-mode temporarily and clean the shit
+    ;; turn off  3rd party language's major-mode and clean up
     (when lang-f
       ;; avoid org file automatically collapsed
       (setq pos (point))
@@ -351,6 +362,7 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
          (message "in the beginning ...")))
       ;; expand current node because by default (org-mode) will collapse all nodes
       (org-show-subtree)
+      ;; goto original point before commenting
       (goto-char pos))))
 
 (declare-function web-mode-comment-or-uncomment "ext:web-mode")
@@ -711,7 +723,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.3.4"))
+  (message "3.3.5"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)

@@ -98,7 +98,22 @@
       (setq lines (evilnc-get-lines (point-min) (point-max)))
       (should (string= (nth 0 lines) "<div class=\"box\">"))
       (should (string= (nth 1 lines) "hello world"))
-      (should (string= (nth 2 lines) "</div>"))
-      )))
+      (should (string= (nth 2 lines) "</div>")))))
+
+(ert-deftest evilnc-test-org-src-block ()
+  (let* (lang-f)
+    (with-temp-buffer
+      (insert "* hello\n"
+              "** world\n"
+              "#+BEGIN_SRC python\n"
+              "def f():"
+              "    print 'hello world'\n"
+              "    print 'bye wrold'\n"
+              "#+END_SRC\n")
+      (org-mode)
+      (goto-char (point-min))
+      (re-search-forward "print 'hello world'")
+      (setq lang-f (evilnc--org-lang-major-mode))
+      (should (string= lang-f "python-mode")))))
 
 (ert-run-tests-batch-and-exit)

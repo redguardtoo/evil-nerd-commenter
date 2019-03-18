@@ -1,6 +1,5 @@
 SHELL = /bin/sh
 EMACS ?= emacs
-FILES = $(filter-out evil-test-helpers.el evil-tests.el evil-pkg.el,$(wildcard evil*.el))
 PROFILER =
 
 .PHONY: test
@@ -12,6 +11,5 @@ clean:
 	rm -f *.elc
 
 # Run tests.
-test:
+test: clean
 	$(EMACS) -batch -Q -l evil-nerd-commenter-sdk.el -l evil-nerd-commenter.el -l evil-nerd-commenter-tests.el
-	rm -f *.elc .depend
