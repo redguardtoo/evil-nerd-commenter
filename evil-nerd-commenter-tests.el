@@ -106,14 +106,30 @@
       (insert "* hello\n"
               "** world\n"
               "#+BEGIN_SRC python\n"
-              "def f():"
+              "def f():\n"
               "    print 'hello world'\n"
-              "    print 'bye wrold'\n"
+              "    print 'bye world'\n"
               "#+END_SRC\n")
       (org-mode)
       (goto-char (point-min))
       (re-search-forward "print 'hello world'")
       (setq lang-f (evilnc--org-lang-major-mode))
       (should (string= lang-f "python-mode")))))
+
+(ert-deftest evilnc-test-org-src-block-with-org-src-lang-modes ()
+  (let* (lang-f)
+    (with-temp-buffer
+      (insert "* hello\n"
+              "** world\n"
+              "#+BEGIN_SRC elisp\n"
+              "(defun f ()\n"
+              "  (princ 'hello world')\n"
+              "  (princ 'bye world'))\n"
+              "#+END_SRC\n")
+      (org-mode)
+      (goto-char (point-min))
+      (re-search-forward "(princ 'hello world'")
+      (setq lang-f (evilnc--org-lang-major-mode))
+      (should (string= lang-f "emacs-lisp-mode")))))
 
 (ert-run-tests-batch-and-exit)
