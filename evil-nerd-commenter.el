@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.3.5
+;; Version: 3.3.6
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: commenter vim line evil
 ;;
@@ -276,19 +276,20 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
 
 (defun evilnc--get-one-paragraph-region ()
   "Select a paragraph which has NO empty line."
-  (let* (b e)
-    (save-excursion
-      (if (setq b (re-search-backward "^[ \t]*$" nil t))
-          (progn
-            (forward-line)
-            (setq b (line-beginning-position)))
-        (setq b 1)))
-    (save-excursion
-      (if (setq e (re-search-forward "^[ \t]*$" nil t))
-          (progn
-            (forward-line -1)
-            (setq e (line-end-position)))
-        (setq e (point-max))))
+  (let* ((b (save-excursion
+              (cond
+               ((re-search-backward "^[ \t]*$" nil t)
+                (forward-line)
+                (line-beginning-position))
+               (t
+                1))))
+         (e (save-excursion
+              (cond
+               ((re-search-forward "^[ \t]*$" nil t)
+                (forward-line -1)
+                (line-end-position))
+               (t
+                (point-max))))))
     (list b e)))
 
 (defun evilnc--invert-comment (beg end)
@@ -314,22 +315,19 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
 
 (defun evilnc--org-lang-major-mode ()
   "Get `major-mode' for language of org source block."
-  (let* (info lang lang-f)
-    (when (eq major-mode 'org-mode)
-      (cond
-       ;; Emacs 24.4+
-       ((fboundp 'org-edit-src-find-region-and-lang)
-        (setq info (org-edit-src-find-region-and-lang))
-        (when info
-          (setq lang (or (cdr (assoc (nth 2 info) org-src-lang-modes))
-                         (nth 2 info)))))
+  (let* (info lang lang-f fallback-lang)
+    (cond
+     ;; Emacs 24.4+
+     ((and (fboundp 'org-edit-src-find-region-and-lang)
+           (setq info (org-edit-src-find-region-and-lang)))
+      (setq info (nth 2 info)))
 
-       ;; Emacs 26.1
-       ((fboundp 'org-element-at-point)
-        (setq lang
-              (let ((lang (org-element-property :language (org-element-at-point))))
-                (or (cdr (assoc lang org-src-lang-modes)) lang))))))
-    (when lang
+     ;; Emacs 26.1
+     ((fboundp 'org-element-at-point)
+      (setq info (org-element-property :language (org-element-at-point)))))
+
+    (when (setq lang (or (cdr (assoc info org-src-lang-modes))
+                         info))
       (setq lang (if (symbolp lang) (symbol-name lang) lang))
       (setq lang-f (intern (concat lang "-mode"))))
     lang-f))
@@ -338,7 +336,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
   "Region from BEG to END is applied with operation FN.
 Code snippets embedded in Org-mode is identified and right `major-mode' is used."
   (let* (pos
-         (lang-f (evilnc--org-lang-major-mode))
+         (lang-f (if (eq major-mode 'org-mode) (evilnc--org-lang-major-mode)))
          old-flag)
 
     ;; turn on 3rd party language's major-mode temporarily
@@ -476,22 +474,19 @@ DO-COMMENT decides we comment or uncomment."
     (goto-char position)
     (evilnc--current-line-num)))
 
-(defun evilnc--find-dst-line-num (UNITS)
-  "Find closet line whose line number ends with digit UNITS.
-Given UNITS as 5, line 5, line 15, and line 25 are good candidates.
-If UNITS is 16, line 16, line 116, and line 216 are good candidates."
+(defun evilnc--find-destination-linenum (last-digits)
+  "Find closest line whose line number ends with digit LAST-DIGITS.
+If LAST-DIGITS is 16, line 16, line 116, and line 216 are candidates.
+Then if current line is 17, 16 is the final result."
   (let* ((cur-line-num (evilnc--current-line-num))
-         dst-line-num
          (r 1)
-         (l (length (number-to-string UNITS))))
+         (l (length (number-to-string last-digits))))
     (while (> l 0)
       (setq r (* r 10))
       (setq l (- l 1)))
-    (if (>= (mod cur-line-num r) UNITS)
-        (setq UNITS (+ UNITS r)))
-    (setq dst-line-num (+ cur-line-num (- UNITS (mod cur-line-num r))))))
-
-;; ==== below this line are public commands
+    (if (>= (mod cur-line-num r) last-digits)
+        (setq last-digits (+ last-digits r)))
+    (+ cur-line-num (- last-digits (mod cur-line-num r)))))
 
 (defun evilnc-do-paragraphs (action num)
   "Apply ACTION on NUM paragraphs."
@@ -514,22 +509,22 @@ If UNITS is 16, line 16, line 116, and line 216 are good candidates."
             (funcall action b e)))
 
         ;; prepare for the next paragraph
-        (if (and rlt (< i num))
-            (progn
-              (evilnc--goto-line linenum)
+        (cond
+         ((and rlt (< i num))
+          (evilnc--goto-line linenum)
 
-              ;; move to an empty line
-              (forward-line)
+          ;; move to an empty line
+          (forward-line)
 
-              ;; move to next non-empty line
-              (re-search-forward "^[ \t]*[^ \t]" nil t)
+          ;; move to next non-empty line
+          (re-search-forward "^[ \t]*[^ \t]" nil t)
+          (if (<= (line-beginning-position) e)
+              (throw 'break i)))
 
-              (if (<= (line-beginning-position) e)
-                  (throw 'break i)))
-          (throw 'break i))
-        (setq i (1+ i))))
+          (t
+           (throw 'break i)))
 
-    ))
+        (setq i (1+ i))))))
 
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-paragraphs (&optional num)
@@ -561,16 +556,16 @@ Paragraphs are separated by empty lines."
           ))))
 
 ;;;###autoload
-(defun evilnc-quick-comment-or-uncomment-to-the-line (&optional units)
-  "Comment/uncomment to line number by last digit(s) whose value is UNITS.
+(defun evilnc-quick-comment-or-uncomment-to-the-line (&optional last-digits)
+  "Comment/uncomment to line number by LAST DIGITS.
 For example, you can use either \
 \\<M-53>\\[evilnc-quick-comment-or-uncomment-to-the-line] \
 or \\<M-3>\\[evilnc-quick-comment-or-uncomment-to-the-line] \
 to comment to the line 6453"
   (interactive "p")
-  (let* ((dst-line-num (evilnc--find-dst-line-num units)))
-    (evilnc-comment-or-uncomment-to-the-line dst-line-num)
-    (evilnc--goto-line (+ 1 dst-line-num))))
+  (let* ((l (evilnc--find-destination-linenum last-digits)))
+    (evilnc-comment-or-uncomment-to-the-line l)
+    (evilnc--goto-line (+ 1 l))))
 
 ;;;###autoload
 (defun evilnc-toggle-invert-comment-line-by-line ()
@@ -725,7 +720,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.3.5"))
+  (message "3.3.6"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)

@@ -132,4 +132,48 @@
       (setq lang-f (evilnc--org-lang-major-mode))
       (should (string= lang-f "emacs-lisp-mode")))))
 
+(ert-deftest evilnc-test-paragraph-line-calculation ()
+  (let* (selected-region)
+    (with-temp-buffer
+      (insert "hello world\n"
+              "\n"
+              "para1 begin\n"
+              "line 4\n"
+              "line 5\n"
+              "para1 end\n"
+              "\n"
+              "bye world")
+
+      ;; test paragraph selection
+      (goto-char (point-min))
+      ;; begin of paragraph
+      (re-search-forward "para1 begin")
+      (setq selected-region (evilnc--get-one-paragraph-region))
+      (should (eq 14 (car selected-region)))
+      (should (eq 49 (cadr selected-region)))
+      ;; middle of paragraph
+      (re-search-forward "line 4")
+      (setq selected-region (evilnc--get-one-paragraph-region))
+      (should (eq 14 (car selected-region)))
+      (should (eq 49 (cadr selected-region)))
+
+      ;; test line number
+      (goto-char (point-min))
+      ;; move focus to line 4
+      (re-search-forward "line 4")
+      ;; line 14 is close
+      (should (eq 14 (evilnc--find-destination-linenum 4)))
+      ;; line 5 is close to line 4
+      (should (eq 5 (evilnc--find-destination-linenum 5)))
+      ;; line 9 is close to line 4
+      (should (eq 9 (evilnc--find-destination-linenum 9)))
+      ;; move focus to line 5
+      (re-search-forward "line 5")
+      ;; line 14 is close, ignore the lines abover current line (line 5)
+      (should (eq 14 (evilnc--find-destination-linenum 4)))
+      ;; line 5 is close to line 4
+      (should (eq 15 (evilnc--find-destination-linenum 5)))
+      ;; line 9 is close to line 4
+      (should (eq 9 (evilnc--find-destination-linenum 9))))))
+
 (ert-run-tests-batch-and-exit)
