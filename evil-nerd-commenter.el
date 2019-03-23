@@ -326,7 +326,9 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
 
        ;; Emacs 26.1
        ((fboundp 'org-element-at-point)
-        (setq lang (org-element-property :language (org-element-at-point))))))
+        (setq lang
+              (let ((lang (org-element-property :language (org-element-at-point))))
+                (or (cdr (assoc lang org-src-lang-modes)) lang))))))
     (when lang
       (setq lang (if (symbolp lang) (symbol-name lang) lang))
       (setq lang-f (intern (concat lang "-mode"))))
