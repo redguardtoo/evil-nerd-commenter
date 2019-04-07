@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.3.6
+;; Version: 3.3.7
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: commenter vim line evil
 ;;
@@ -313,57 +313,84 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
 (declare-function org-show-subtree "org")
 (declare-function outline-up-heading "outline")
 
-(defun evilnc--org-lang-major-mode ()
-  "Get `major-mode' for language of org source block."
-  (let* (info lang lang-f fallback-lang)
+(defun evilnc--org-src-block-info ()
+  "Return src-block info in org.  It's like (beg end language)."
+  (cond
+   ;; Emacs 24.4+
+   ((and (fboundp 'org-edit-src-find-region-and-lang))
+    (let* ((info (org-edit-src-find-region-and-lang)))
+      (list (nth 0 info)
+            (1+ (nth 1 info))
+            (nth 2 info))))
+
+   ;; Emacs 26.1
+   ((fboundp 'org-element-at-point)
+    (let* ((elem (org-element-at-point))
+           (b (org-element-property :begin elem))
+           (e (org-element-property :end elem))
+           (lang (org-element-property :language (org-element-at-point)))
+           (str (buffer-substring-no-properties b e))
+           (case-fold-search t))
+      (when (string-match ".\+BEGIN_SRC .*$" str)
+        (setq b (+ b (length (match-string 0 str)) 1)))
+      (save-excursion
+        (goto-char b)
+        (search-forward "#+END_SRC" e t)
+        ;; - 1 to remove line feed
+        (setq e (- (point) (length "#+END_SRC"))))
+      ;; Now Emacs 24.4 and Emacs 26.1 return same result
+      (list b e lang)))))
+
+(defun evilnc--org-lang-major-mode (info)
+  "Get `major-mode' from INFO of org source block."
+  (let* ((lang (nth 2 info)))
     (cond
-     ;; Emacs 24.4+
-     ((and (fboundp 'org-edit-src-find-region-and-lang)
-           (setq info (org-edit-src-find-region-and-lang)))
-      (setq info (nth 2 info)))
-
-     ;; Emacs 26.1
-     ((fboundp 'org-element-at-point)
-      (setq info (org-element-property :language (org-element-at-point)))))
-
-    (when (setq lang (or (cdr (assoc info org-src-lang-modes))
-                         info))
-      (setq lang (if (symbolp lang) (symbol-name lang) lang))
-      (setq lang-f (intern (concat lang "-mode"))))
-    lang-f))
+     ((setq lang (or (cdr (assoc lang org-src-lang-modes))
+                     lang))
+      (intern (concat (if (symbolp lang) (symbol-name lang) lang)
+                      "-mode")))
+     (t
+      nil))))
 
 (defun evilnc--working-on-region (beg end fn)
   "Region from BEG to END is applied with operation FN.
 Code snippets embedded in Org-mode is identified and right `major-mode' is used."
-  (let* (pos
-         (lang-f (if (eq major-mode 'org-mode) (evilnc--org-lang-major-mode)))
-         old-flag)
+  (let* ((old-pos (point))
+         (info (if (eq major-mode 'org-mode) (evilnc--org-src-block-info)))
+         (lang-f (and info (evilnc--org-lang-major-mode info))))
 
     ;; turn on 3rd party language's major-mode temporarily
-    (if lang-f (funcall lang-f))
-
     (cond
-     (evilnc-invert-comment-line-by-line
-      (evilnc--invert-comment beg end))
-     (t
-      (setq pos (point))
-      (funcall fn beg end)
-      (goto-char pos)))
+     (lang-f
+      (let* ((src-beg (nth 0 info))
+             (src-end (nth 1 info))
+             (comment-beg-in-buf (1+ (- beg src-beg)))
+             (comment-end-in-buf (1+ (- end src-beg)))
+             (new-pos (1+ (- old-pos src-beg)))
+             (old-code (buffer-substring-no-properties src-beg src-end))
+             new-code)
+        (with-temp-buffer
+          (goto-char (point-min))
+          (insert old-code)
+          (funcall lang-f)
+          (goto-char new-pos)
 
-    ;; turn off  3rd party language's major-mode and clean up
-    (when lang-f
-      ;; avoid org file automatically collapsed
-      (setq pos (point))
-      (org-mode)
-      ;; just goto the root element
-      (condition-case nil
-          (outline-up-heading 1)
-        (error
-         (message "in the beginning ...")))
-      ;; expand current node because by default (org-mode) will collapse all nodes
-      (org-show-subtree)
-      ;; goto original point before commenting
-      (goto-char pos))))
+          (cond
+           (evilnc-invert-comment-line-by-line
+            (evilnc--invert-comment comment-beg-in-buf comment-end-in-buf))
+           (t
+            (funcall fn comment-beg-in-buf comment-end-in-buf)))
+
+          (setq new-code (buffer-substring-no-properties (point-min) (point-max))))
+
+        (delete-region src-beg src-end)
+        (insert new-code)))
+     (t
+      (cond
+       (evilnc-invert-comment-line-by-line
+        (evilnc--invert-comment beg end))
+       (t
+        (funcall fn beg end)))))))
 
 (declare-function web-mode-comment-or-uncomment "ext:web-mode")
 (defvar web-mode-engine)
@@ -552,8 +579,7 @@ Paragraphs are separated by empty lines."
           (if (> (line-end-position) e)
               (setq e (line-end-position)))
           (evilnc--fix-buggy-major-modes)
-          (evilnc--comment-or-uncomment-region b e)
-          ))))
+          (evilnc--comment-or-uncomment-region b e)))))
 
 ;;;###autoload
 (defun evilnc-quick-comment-or-uncomment-to-the-line (&optional last-digits)
@@ -603,21 +629,23 @@ Case 3: If a region inside of ONE line is selected,
 we comment/uncomment that region.
 CORRECT comment syntax will be used for C++/Java/Javascript."
   (interactive "p")
-  ;; donot move the cursor
-  ;; support negative number
-  (cond
-   ((and (= 1 num) (string-match "^[ \t]*$" (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
-    ;; comment on current empty line
-    (comment-dwim nil))
-   (t
-    (save-excursion
-      (when (< num 0)
-        (evilnc--forward-line (1+ num))
-        (setq num (- 0 num)))
-      (evilnc--operation-on-lines-or-region '(lambda (b e)
-                                               (evilnc--fix-buggy-major-modes)
-                                               (evilnc--comment-or-uncomment-region b e))
-                                            num)))))
+  (let* ((orig-pos (point)))
+    ;; donot move the cursor
+    ;; support negative number
+    (cond
+     ((and (= 1 num) (string-match "^[ \t]*$" (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+      ;; comment on current empty line
+      (comment-dwim nil))
+     (t
+      (save-excursion
+        (when (< num 0)
+          (evilnc--forward-line (1+ num))
+          (setq num (- 0 num)))
+        (evilnc--operation-on-lines-or-region '(lambda (b e)
+                                                 (evilnc--fix-buggy-major-modes)
+                                                 (evilnc--comment-or-uncomment-region b e))
+                                              num))
+      (goto-char orig-pos)))))
 
 ;;;###autoload
 (defun evilnc-copy-and-comment-lines (&optional num)
@@ -720,7 +748,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.3.6"))
+  (message "3.3.7"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)

@@ -113,10 +113,10 @@
       (org-mode)
       (goto-char (point-min))
       (re-search-forward "print 'hello world'")
-      (setq lang-f (evilnc--org-lang-major-mode))
+      (setq lang-f (evilnc--org-lang-major-mode (evilnc--org-src-block-info)))
       (should (string= lang-f "python-mode")))))
 
-(ert-deftest evilnc-test-org-src-block-with-org-src-lang-modes ()
+(ert-deftest evilnc-test-org-elisp-src-block()
   (let* (lang-f)
     (with-temp-buffer
       (insert "* hello\n"
@@ -129,7 +129,7 @@
       (org-mode)
       (goto-char (point-min))
       (re-search-forward "(princ 'hello world'")
-      (setq lang-f (evilnc--org-lang-major-mode))
+      (setq lang-f (evilnc--org-lang-major-mode (evilnc--org-src-block-info)))
       (should (string= lang-f "emacs-lisp-mode")))))
 
 (ert-deftest evilnc-test-paragraph-line-calculation ()
@@ -175,5 +175,26 @@
       (should (eq 15 (evilnc--find-destination-linenum 5)))
       ;; line 9 is close to line 4
       (should (eq 9 (evilnc--find-destination-linenum 9))))))
+
+(ert-deftest evilnc-test-org-src-block-info ()
+  (let* (info)
+    (with-temp-buffer
+      (insert "* test\n"
+              "test\n"
+              "#+BEGIN_SRC python\n"
+              "hello world\n"
+              "line\n"
+              "#+END_SRC\n\n"
+              "* heading\n"
+              "subtext\n")
+
+      ;; move foucs to the middle of source block
+      (goto-char (point-min))
+      (search-forward "hello world")
+      ;; extract src block info
+      (setq info (evilnc--org-src-block-info))
+      (should (eq 32 (nth 0 info)))
+      (should (eq 49 (nth 1 info)))
+      (should (string= "python" (nth 2 info))))))
 
 (ert-run-tests-batch-and-exit)
