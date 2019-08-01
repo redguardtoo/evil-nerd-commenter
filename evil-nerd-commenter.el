@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.3.7
+;; Version: 3.3.8
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: commenter vim line evil
 ;;
@@ -136,6 +136,19 @@ Please note it has NOT effect on evil text object!")
   "Comment both embedded snippet and HTML tag if they are mixed in one line.
 `web-mode' required.")
 
+(defvar evilnc-cpp-like-comment-syntax-modes
+  '(java-mode
+    javascript-mode
+    js-mode
+    js2-mode
+    js3-mode
+    rjsx-mode
+    js2-jsx-mode
+    rust-mode
+    c++-mode
+    objc-mode)
+  "Major modes which has C++ like comment syntax.")
+
 (defvar evilnc-comment-text-object "c"
   "The comment object.
 `vic` to select inner object.
@@ -222,17 +235,9 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
           (<= (region-end) (line-end-position)))
     (cond
      ;; current comment syntax is NOT fit to comment out a region.
-     ;; So we also need hack the `comment-start' and `comment-end'
+     ;; So we also need hack the `comment-start' and `comment-end'.
      ((and (string= "" comment-end)
-           (member major-mode '(java-mode
-                                javascript-mode
-                                js-mode
-                                js2-mode
-                                js3-mode
-                                rjsx-mode
-                                rust-mode
-                                c++-mode
-                                objc-mode)))
+           (member major-mode evilnc-cpp-like-comment-syntax-modes))
       (let* ((comment-start-old comment-start)
             (comment-end-old comment-end)
             (comment-start-skip-old comment-start-skip)
@@ -749,7 +754,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.3.7"))
+  (message "3.3.8"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
