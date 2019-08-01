@@ -92,7 +92,8 @@
       (should (string= (nth 1 lines) "hello world"))
       (should (string= (nth 2 lines) "</div> */}"))
       ;; move the cursor to the middle of html tag
-      (goto-line 2)
+      (goto-char (point-min))
+      (forward-line 1)
       ;; uncomment whole tag
       (evilnc-comment-or-uncomment-html-tag)
       (setq lines (evilnc-get-lines (point-min) (point-max)))
