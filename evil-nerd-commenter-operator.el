@@ -148,6 +148,7 @@
   "Inserts an out commented copy of the text from BEG to END."
   :move-point (not evilnc-original-above-comment-when-copy-and-comment)
   (interactive "<r>")
+  (evil-with-single-undo
     (evil-yank-lines beg end nil 'lines)
     (cond
      (evilnc-original-above-comment-when-copy-and-comment
@@ -161,7 +162,7 @@
       (evil-paste-before 1)
       ;; actual comment operatio should happen at last
       ;; or else beg end will be screwed up
-      (comment-region beg end))))
+      (comment-region beg end)))))
 
 (defun evilnc-is-one-line-comment (b e)
   "Check whether text between B and E is one line comment."
