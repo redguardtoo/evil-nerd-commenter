@@ -1,11 +1,11 @@
 ;;; evil-nerd-commenter.el --- Comment/uncomment lines efficiently. Like Nerd Commenter in Vim
 
-;; Author: Chen Bin <chenbin.sh@gmail.com>
+;; Author: Chen Bin <chenbin DOT sh AT gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
 ;; Version: 3.3.8
 ;; Package-Requires: ((emacs "24.4"))
-;; Keywords: commenter vim line evil
+;; Keywords: convenience evil
 ;;
 ;; This file is not part of GNU Emacs.
 
@@ -16,14 +16,12 @@
 
 ;;; License:
 
-;; This file is part of evil-nerd-commenter
-;;
-;; evil-nerd-commenter is free software: you can redistribute it and/or
+;; This program is free software: you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as published
 ;; by the Free Software Foundation, either version 3 of the License, or
 ;; (at your option) any later version.
 ;;
-;; evil-nerd-commenter is distributed in the hope that it will be useful,
+;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
