@@ -79,27 +79,45 @@
       (should (string= (nth 2 lines) "hello"))
       (should (string= (nth 3 lines) "world")))))
 
+(defun evilnc-uncomment-to-original-html ()
+  ;; move the cursor to the middle of html tag and uncomment
+  (goto-char (point-min))
+  (forward-line 1)
+  ;; uncomment whole tag
+  (evilnc-comment-or-uncomment-html-tag)
+  ;; should be same as original html
+  (let* ((lines (evilnc-get-lines (point-min) (point-max))))
+    (should (string= (nth 0 lines) "<div class=\"box\">"))
+    (should (string= (nth 1 lines) "hello world"))
+    (should (string= (nth 2 lines) "</div>"))))
+
 (ert-deftest evilnc-test-comment-html-tag ()
   (let* (lines)
     (with-temp-buffer
       (insert "<div class=\"box\">\nhello world\n</div>")
+
+
+      ;; comment tag in html file
       (html-mode)
-      ;; comment tag
+      (goto-char (point-min))
+      (evilnc-comment-or-uncomment-html-tag)
+      (setq lines (evilnc-get-lines (point-min) (point-max)))
+      (should (string= (nth 0 lines) "<!-- <div class=\"box\">"))
+      (should (string= (nth 1 lines) "hello world"))
+      (should (string= (nth 2 lines) "</div> -->"))
+
+      (evilnc-uncomment-to-original-html)
+
+      ;; comment tag in html file
+      (js-mode)
       (goto-char (point-min))
       (evilnc-comment-or-uncomment-html-tag)
       (setq lines (evilnc-get-lines (point-min) (point-max)))
       (should (string= (nth 0 lines) "{/* <div class=\"box\">"))
       (should (string= (nth 1 lines) "hello world"))
       (should (string= (nth 2 lines) "</div> */}"))
-      ;; move the cursor to the middle of html tag
-      (goto-char (point-min))
-      (forward-line 1)
-      ;; uncomment whole tag
-      (evilnc-comment-or-uncomment-html-tag)
-      (setq lines (evilnc-get-lines (point-min) (point-max)))
-      (should (string= (nth 0 lines) "<div class=\"box\">"))
-      (should (string= (nth 1 lines) "hello world"))
-      (should (string= (nth 2 lines) "</div>")))))
+
+      (evilnc-uncomment-to-original-html))))
 
 (ert-deftest evilnc-test-org-src-block ()
   (let* (lang-f)

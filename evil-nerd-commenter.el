@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin DOT sh AT gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.3.8
+;; Version: 3.3.9
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: convenience evil
 ;;
@@ -144,6 +144,7 @@ Please note it has NOT effect on evil text object!")
     js2-jsx-mode
     rust-mode
     c++-mode
+    c-mode
     objc-mode)
   "Major modes which has C++ like comment syntax.")
 
@@ -158,11 +159,65 @@ Please note it has NOT effect on evil text object!")
 (defvar evilnc-min-comment-length-for-imenu 8
   "Minimum length of comment to display in imenu.")
 
-(defvar evilnc-html-comment-start "{/* "
-  "String to start comment of HTML tag.  JSX syntax is used by default.")
+(defvar evilnc-html-comment-delimiters
+  '((evilnc-html-jsx-p "{/* " " */}")
+    ("js-mode" "{/* " " */}")
+    (("web-mode" "html-mode") "<!-- " " -->"))
+  "List of html tag comment rules.
+The 1st item of each rule is the major mode(s) to match curernt `major-mode'.
+Current `major-mode' could equal or derive from the listed major mode(s).
+The 2nd and 3rd item is the comment start and comment end.")
 
-(defvar evilnc-html-comment-end " */}"
-  "String to end Comment of HTML tag.  JSX syntax is used by default.")
+(defun evilnc-html-jsx-p ()
+  "Test if current file is jsx."
+  (and buffer-file-name
+       (string-match-p "\.jsx?$" buffer-file-name)))
+
+(defun evilnc-html-match-comment-delimiters-p (target-mode)
+  "Use `major-mode' to match TARGET-MODE which could be:
+One major mode.
+List of major modes.
+A function to return t or nil."
+  (let* (rlt)
+    (cond
+     ((functionp target-mode)
+      (setq rlt (funcall target-mode)))
+     ((stringp target-mode)
+      ;; convert name of `major-mode' to symbol
+      (when (or (eq major-mode (intern target-mode))
+                (derived-mode-p (intern target-mode)))
+        (setq rlt t)))
+     ((listp target-mode)
+      (while (and (not rlt) target-mode)
+        (unless (setq rlt (evilnc-html-match-comment-delimiters-p (nth 0 target-mode)))
+          ;; continue looping
+          (setq target-mode (cdr target-mode))))))
+    rlt))
+
+(defun evilnc-html-find-comment-delimiter ()
+  "Found comment delimiter from `evilnc-html-find-comment-delimiter'."
+  (let* (found
+         (delimiters evilnc-html-comment-delimiters)
+         rule)
+    (while (and (not found) delimiters)
+      (setq rule (car delimiters))
+      (cond
+       ((evilnc-html-match-comment-delimiters-p (nth 0 rule))
+        (setq found rule))
+       (t
+        ;; keep looping
+        (setq delimiters (cdr delimiters)))))
+    found))
+
+(defun evilnc-html-comment-start ()
+  "Return start of html comment."
+  (let* ((s (evilnc-html-find-comment-delimiter)))
+    (if s (nth 1 s) "<!-- ")))
+
+(defun evilnc-html-comment-end ()
+  "Return end of html comment."
+  (let* ((s (evilnc-html-find-comment-delimiter)))
+    (if s (nth 2 s) " -->")))
 
 (defun  evilnc--count-lines (beg end)
   "Assume BEG is less than END."
@@ -321,7 +376,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
   "Return src-block info in org.  It's like (beg end language)."
   (cond
    ;; Emacs 24.4+
-   ((and (fboundp 'org-edit-src-find-region-and-lang))
+   ((fboundp 'org-edit-src-find-region-and-lang)
     (let* ((info (org-edit-src-find-region-and-lang)))
       (list (nth 0 info)
             (1+ (nth 1 info))
@@ -587,7 +642,7 @@ Paragraphs are separated by empty lines."
 
 ;;;###autoload
 (defun evilnc-quick-comment-or-uncomment-to-the-line (&optional last-digits)
-  "Comment/uncomment to line number by LAST DIGITS.
+  "Comment/uncomment to line number by LAST-DIGITS.
 For example, you can use either \
 \\<M-53>\\[evilnc-quick-comment-or-uncomment-to-the-line] \
 or \\<M-3>\\[evilnc-quick-comment-or-uncomment-to-the-line] \
@@ -752,7 +807,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.3.8"))
+  (message "3.3.9"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
@@ -880,23 +935,25 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
   "Comment region between BEG and END."
   (save-excursion
     (goto-char end)
-    (insert evilnc-html-comment-end)
+    (insert (evilnc-html-comment-end))
     (goto-char beg)
-    (insert evilnc-html-comment-start)))
+    (insert (evilnc-html-comment-start))))
 
 (defun evilnc-html-uncomment-region (beg end)
   "Uncomment HTML tag between BEG and END."
-  (let* (mark-start-pos mark-end-pos)
+  (let* (mark-start-pos
+         mark-end-pos
+         (len-comment-start (length (evilnc-html-comment-start))))
     (save-excursion
       (goto-char beg)
-      (setq mark-start-pos (search-forward evilnc-html-comment-start end t))
+      (setq mark-start-pos (search-forward (evilnc-html-comment-start) end t))
       (goto-char end)
-      (setq mark-end-pos (search-backward evilnc-html-comment-end beg t))
+      (setq mark-end-pos (search-backward (evilnc-html-comment-end) beg t))
       (when (and mark-start-pos mark-end-pos)
         (goto-char mark-end-pos)
-        (delete-char (length evilnc-html-comment-end))
-        (goto-char (- mark-start-pos (length evilnc-html-comment-start)))
-        (delete-char (length evilnc-html-comment-start))))))
+        (delete-char (length (evilnc-html-comment-end)))
+        (goto-char (- mark-start-pos len-comment-start))
+        (delete-char len-comment-start)))))
 
 (defun evilnc-is-html-tag-comment-p (beg)
   "Html tag comment at position BEG?"
@@ -904,7 +961,7 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
     (goto-char beg)
     (let* ((line (buffer-substring-no-properties (line-beginning-position)
                                                     (line-end-position)))
-           (re (concat "^[ \t]*" (regexp-quote evilnc-html-comment-start))))
+           (re (concat "^[ \t]*" (regexp-quote (evilnc-html-comment-start)))))
       (string-match-p re line))))
 
 ;;;###autoload
@@ -913,13 +970,9 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
 If no region is selected, current tag under focus is automatically selected.
 In this case, only one tag is selected.
 
-If user manually selects region, the region could cross multiple sibling tags
+If users manually select region, the region could cross multiple sibling tags
 and automatically expands to include complete tags.
-So user only need press \"v\" key in \"evil-mode\" to select multiple tags.
-
-JSX from ReactJS like \"{/* ... */}\" is the default comment syntax.
-Customize `evilnc-html-comment-end' and `evilnc-html-comment-end' to used
-different syntax."
+Users can press \"v\" key in evil mode to select multiple tags."
   (interactive)
   (let* (beg end beg-line-beg end-line-end)
     (cond
