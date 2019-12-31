@@ -110,6 +110,8 @@ Comment to the specified line.
 *** evilnc-comment-or-uncomment-html-tag
 Comment or uncomment current html tag or selected region.
 
+It supports html and jsx without any set up. It's not dependent on any third party package.
+
 Please note you don't need force the whole line selection (pressing =V=) in =evil-mode=. This command is smart to select whole lines if needed.
 
 Comment or uncomment html tag(s).

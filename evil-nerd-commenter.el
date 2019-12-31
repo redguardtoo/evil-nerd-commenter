@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin DOT sh AT gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.3.9
+;; Version: 3.4.0
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: convenience evil
 ;;
@@ -129,10 +129,6 @@
 (defvar evilnc-invert-comment-line-by-line nil
   "If t then invert region comment status line by line.
 Please note it has NOT effect on evil text object!")
-
-(defvar evilnc-comment-both-snippet-html nil
-  "Comment both embedded snippet and HTML tag if they are mixed in one line.
-`web-mode' required.")
 
 (defvar evilnc-cpp-like-comment-syntax-modes
   '(java-mode
@@ -465,74 +461,20 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
                comment-operation))
     is-comment))
 
-(defun evilnc--web-mode-is-region-comment (beg end)
-  "Is region between BEG and END is comment in web mode?"
-  (let* ((rlt (and (save-excursion
-                     (goto-char beg)
-                     (goto-char (line-end-position))
-                     (re-search-backward "^\\|[^[:space:]]")
-                     (evilnc-web-mode-is-comment))
-                   (evilnc-web-mode-is-comment (/ (+ beg end) 2))
-                   (save-excursion
-                     (goto-char end)
-                     (back-to-indentation)
-                     (evilnc-web-mode-is-comment)))))
-    rlt))
-
-(defun evilnc--web-mode-do-current-line ()
-  "In `web-mode', have to select whole line to comment."
-  (let* (first-char-is-snippet e)
-
-    (save-excursion
-      (goto-char (line-beginning-position))
-      (skip-chars-forward "[:space:]" (line-end-position))
-      (setq first-char-is-snippet (get-text-property (point) 'block-side)))
-
-    ;; comment the snippet block at first
-    (when (and evilnc-comment-both-snippet-html (not first-char-is-snippet))
-      (save-excursion
-        (let* (fired)
-          (goto-char (line-beginning-position))
-          ;; please note (line-beginning-position) is changing in (while)
-          (while (< (point) (line-end-position))
-            (forward-char)
-            (if (get-text-property (point) 'block-side)
-                (when (not fired)
-                  (save-excursion
-                    (push-mark (1+ (point)) t t)
-                    (goto-char (point))
-                    (web-mode-comment-or-uncomment))
-                  (setq fired t))
-              (setq fired nil))))))
-
-    ;; comment the html line
-    ;; To comment one line ONLY, you need select a line at first,
-    ;; in order to work around web-mode "feature".
-    (push-mark (setq e (line-end-position)) t t)
-    (goto-char (line-beginning-position))
-    (skip-chars-forward "[:space:]" e)
-    (evilnc--warn-on-web-mode (evilnc--web-mode-is-region-comment (point) e))
-    (web-mode-comment-or-uncomment)))
-
 (defun evilnc--web-mode-comment-or-uncomment (beg end)
   "Comment/uncomment line by line from BEG to END.
 DO-COMMENT decides we comment or uncomment."
   ;; end will change when you comment line by line
-  (let* (line-cnt tmp)
+  (let* (tmp)
     ;; make sure beg <= end
     (when (> beg end)
       (setq tmp beg)
       (setq beg end)
       (setq end tmp))
-
-    ;; start (un)comment
     (save-excursion
-      (setq line-cnt (evilnc--count-lines beg end))
-      (goto-char beg)
-      (while (> line-cnt 0)
-        (evilnc--web-mode-do-current-line)
-        (forward-line)
-        (setq line-cnt (1- line-cnt))))))
+      (push-mark beg t t)
+      (goto-char end)
+      (web-mode-comment-or-uncomment))))
 
 (defun evilnc--comment-or-uncomment-region (beg end)
   "Comment or uncomment region from BEG to END."
@@ -807,7 +749,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.3.9"))
+  (message "3.4.0"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
@@ -969,10 +911,10 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
   "Comment or uncomment html tag(s).
 If no region is selected, current tag under focus is automatically selected.
 In this case, only one tag is selected.
-
 If users manually select region, the region could cross multiple sibling tags
 and automatically expands to include complete tags.
-Users can press \"v\" key in evil mode to select multiple tags."
+Users can press \"v\" key in evil mode to select multiple tags.
+This command is not dependent on any 3rd party package."
   (interactive)
   (let* (beg end beg-line-beg end-line-end)
     (cond
