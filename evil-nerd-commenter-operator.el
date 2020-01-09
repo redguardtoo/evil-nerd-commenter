@@ -76,35 +76,22 @@
     (setq last-command tmp-command)
     (setq evilnc-temporary-goal-column 0)))
 
-(defun evilnc--in-comment-p (pos)
-  "Check whether the code at POS is comment by comparing font face."
-  (interactive)
-  (let* ((fontfaces (get-text-property pos 'face)))
-    (if (not (listp fontfaces))
-        (setf fontfaces (list fontfaces)))
-    (delq nil
-          (mapcar #'(lambda (f)
-                      ;; learn this trick from flyspell
-                      (or (eq f 'font-lock-comment-face)
-                          (eq f 'font-lock-comment-delimiter-face)))
-                  fontfaces))))
-
 (defun evilnc--extend-to-whole-comment (beg end)
   "Extend the comment region defined by BEG and END so ALL comment is included."
   (interactive)
-  (if (evilnc--in-comment-p beg)
+  (if (evilnc-is-pure-comment beg)
       (save-excursion
         (let* ((newbeg beg)
                (newend end))
 
           ;; extend the beginning
           (goto-char newbeg)
-          (while (and (>= (1- newbeg) (line-beginning-position)) (evilnc--in-comment-p (1- newbeg)))
+          (while (and (>= (1- newbeg) (line-beginning-position)) (evilnc-is-pure-comment (1- newbeg)))
             (setq newbeg (1- newbeg)))
 
           ;; extend the end
           (goto-char newend)
-          (while (and (<= newend (line-end-position)) (evilnc--in-comment-p newend))
+          (while (and (<= newend (line-end-position)) (evilnc-is-pure-comment newend))
             (setq newend (1+ newend)))
 
           (list newbeg newend)))

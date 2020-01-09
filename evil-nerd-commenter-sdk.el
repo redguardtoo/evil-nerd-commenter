@@ -41,16 +41,18 @@
                  (eq (get-text-property pos 'block-token) 'comment)
                  (eq (get-text-property pos 'part-token) 'comment)))))
 
+(defun evilnc-fonts-at-point (pos)
+  "Get font faces at POS."
+  (let* ((fontfaces (if (> pos 0) (get-text-property pos 'face))))
+    (if (listp fontfaces) fontfaces (list fontfaces))))
+
 (defun evilnc-is-pure-comment (pos)
   "Check character at POS is pure comment."
-  (let* ((fontfaces (if (> pos 0) (get-text-property pos 'face))))
-    (if (not (listp fontfaces))
-        (setf fontfaces (list fontfaces)))
-    (or (and (string= major-mode "web-mode")
-             (evilnc-web-mode-is-comment pos))
-        (evilnc--check-fonts fontfaces
-                             '(font-lock-comment-face
-                               font-lock-comment-delimiter-face)))))
+  (or (and (eq major-mode 'web-mode)
+           (evilnc-web-mode-is-comment pos))
+      (evilnc--check-fonts (evilnc-fonts-at-point pos)
+                           '(font-lock-comment-face
+                             font-lock-comment-delimiter-face))))
 
 (defun evilnc-is-whitespace (pos)
   "Character at POS is white space."
@@ -64,18 +66,15 @@
   "Check whether the code at POS is comment by comparing font face.
 Please note the white spaces out of comment is treated as comment,
 or else we can't select multiple lines comment."
-  (let* ((fontfaces (if (> pos 0) (get-text-property pos 'face))))
-    (if (not (listp fontfaces))
-        (setf fontfaces (list fontfaces)))
-    (cond
-     ((or (< pos (point-min)) (> pos (point-max)))
-      nil)
-     ((not fontfaces)
-      ;; character under cursor is SPACE or TAB
-      ;; and out of comment
-      (evilnc-is-whitespace pos))
-     (t
-      (evilnc-is-pure-comment pos)))))
+  (cond
+   ((or (< pos (point-min)) (> pos (point-max)))
+    nil)
+   ((not (evilnc-fonts-at-point pos))
+    ;; character under cursor is SPACE or TAB
+    ;; and out of comment
+    (evilnc-is-whitespace pos))
+   (t
+    (evilnc-is-pure-comment pos))))
 
 (defun evilnc-get-char (pos)
   "Get character at POS."
@@ -85,13 +84,10 @@ or else we can't select multiple lines comment."
 
 (defun evilnc-is-comment-delimiter (pos)
   "Is character at POS a comment delimiter?"
-  (let* ((fontfaces (if (> pos 0) (get-text-property pos 'face))))
-    (if (not (listp fontfaces))
-        (setf fontfaces (list fontfaces)))
+  (let* ((fontfaces (evilnc-fonts-at-point pos)))
     (and fontfaces
          (evilnc--check-fonts fontfaces
                               '(font-lock-comment-delimiter-face)))))
 
 (provide 'evil-nerd-commenter-sdk)
 ;;; evil-nerd-commenter-sdk.el ends here
-
