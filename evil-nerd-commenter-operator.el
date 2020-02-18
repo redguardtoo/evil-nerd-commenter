@@ -76,36 +76,40 @@
     (setq last-command tmp-command)
     (setq evilnc-temporary-goal-column 0)))
 
-(defun evilnc--extend-to-whole-comment (beg end)
-  "Extend the comment region defined by BEG and END so ALL comment is included."
-  (interactive)
-  (if (evilnc-is-pure-comment beg)
-      (save-excursion
-        (let* ((newbeg beg)
-               (newend end))
+(defun evilnc-extend-to-whole-comment-or-line (beg end)
+  "Extend the comment region defined by BEG and END so all comment is included.
+Or extend the region to contain whole lines if the region is not a comment."
+  (cond
+   ((evilnc-is-pure-comment beg)
+    (save-excursion
+      (let* ((newbeg beg)
+             (newend end))
 
-          ;; extend the beginning
-          (goto-char newbeg)
-          (while (and (>= (1- newbeg) (line-beginning-position)) (evilnc-is-pure-comment (1- newbeg)))
-            (setq newbeg (1- newbeg)))
+        ;; extend the beginning
+        (goto-char newbeg)
+        (while (and (>= (1- newbeg) (line-beginning-position)) (evilnc-is-pure-comment (1- newbeg)))
+          (setq newbeg (1- newbeg)))
 
-          ;; extend the end
-          (goto-char newend)
-          (while (and (<= newend (line-end-position)) (evilnc-is-pure-comment newend))
-            (setq newend (1+ newend)))
+        ;; extend the end
+        (goto-char newend)
+        (while (and (<= newend (line-end-position)) (evilnc-is-pure-comment newend))
+          (setq newend (1+ newend)))
 
-          (list newbeg newend)))
-    (list beg end)))
+        (cons newbeg newend))))
+   ((not (evilnc-sdk-inside-one-line-p beg end))
+    (evilnc-sdk-extend-to-contain-whole-lines beg end))
+   (t
+    (cons beg end))))
 
 (evil-define-operator evilnc-comment-operator (beg end type)
   "Comments text from BEG to END with TYPE."
   (interactive "<R>")
   (cond
    ((eq type 'block)
-    (let* ((newpos (evilnc--extend-to-whole-comment beg end) ))
+    (let* ((newpos (evilnc-extend-to-whole-comment-or-line beg end) ))
       (evil-apply-on-block #'evilnc--comment-or-uncomment-region
-                           (nth 0 newpos)
-                           (nth 1 newpos)
+                           (car newpos)
+                           (cdr newpos)
                            nil)))
    ((and (eq type 'line)
          (= end (point-max))
@@ -124,8 +128,8 @@
 
    (t
     (when (and beg end)
-      (let* ((newpos (evilnc--extend-to-whole-comment beg end)))
-        (evilnc--comment-or-uncomment-region (nth 0 newpos) (nth 1 newpos))))))
+      (let* ((newpos (evilnc-extend-to-whole-comment-or-line beg end)))
+        (evilnc--comment-or-uncomment-region (car newpos) (cdr newpos))))))
 
   ;; place cursor on beginning of line
   (if (and (called-interactively-p 'any) (eq type 'line))

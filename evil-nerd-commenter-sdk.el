@@ -89,5 +89,29 @@ or else we can't select multiple lines comment."
          (evilnc--check-fonts fontfaces
                               '(font-lock-comment-delimiter-face)))))
 
+(defun evilnc-sdk-inside-one-line-p (beg end)
+  "Test BEG and END is inside one line."
+  (and (<= (line-beginning-position) beg)
+       (<= end (line-end-position))))
+
+(defun evilnc-sdk-extend-to-contain-whole-lines (beg end)
+  "Extend region between BEG and END so the region contain whole lines.
+Return new range like '(region_begin . region_end)."
+  (save-excursion
+    ;; Another work around for evil-visual-line bug:
+    ;; In `evil-mode', if we use hotkey V or `evil-visual-line' to select line,
+    ;; the (line-beginning-position) of the line which is after the last selected
+    ;; line is always (region-end)! Don't know why.
+    (when (and (> end beg)
+               (save-excursion (goto-char end) (= end (line-beginning-position)))
+               (boundp 'evil-state) (eq evil-state 'visual))
+      (setq end (1- end)))
+
+    (goto-char beg)
+    (setq beg (line-beginning-position))
+    (goto-char end)
+    (setq end (line-end-position)))
+  (cons beg end))
+
 (provide 'evil-nerd-commenter-sdk)
 ;;; evil-nerd-commenter-sdk.el ends here

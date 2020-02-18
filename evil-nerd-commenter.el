@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin DOT sh AT gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.4.0
+;; Version: 3.5.0
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: convenience evil
 ;;
@@ -279,9 +279,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
         (setq e (line-end-position)))
       (funcall fn b e)))
 
-   ;; Select region inside ONE line
-   ((and (<= (line-beginning-position) (region-beginning))
-          (<= (region-end) (line-end-position)))
+   ((evilnc-sdk-inside-one-line-p (region-beginning) (region-end))
     (cond
      ;; current comment syntax is NOT fit to comment out a region.
      ;; So we also need hack the `comment-start' and `comment-end'.
@@ -311,22 +309,11 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
    ;; Select more than one line
    (t
     ;; selected region spans MORE than one line
-    (save-excursion
-      (let* ((b (region-beginning))
-             (e (region-end)))
-        ;; Another work around for evil-visual-line bug:
-        ;; In `evil-mode', if we use hotkey V or `evil-visual-line' to select line,
-        ;; the (line-beginning-position) of the line which is after the last selected
-        ;; line is always (region-end)! Don't know why.
-        (if (and (> e b)
-                 (save-excursion (goto-char e) (= e (line-beginning-position)))
-                 (boundp 'evil-state) (eq evil-state 'visual))
-            (setq e (1- e)))
-
-        (goto-char b)
-        (setq b (line-beginning-position))
-        (goto-char e)
-        (setq e (line-end-position))
+    (let* ((range (evilnc-sdk-extend-to-contain-whole-lines (region-beginning)
+                                                            (region-end)))
+           (b (car range))
+           (e (cdr range)))
+      (save-excursion
         (funcall fn b e))))))
 
 (defun evilnc--get-one-paragraph-region ()
@@ -751,7 +738,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.4.0"))
+  (message "3.5.0"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
