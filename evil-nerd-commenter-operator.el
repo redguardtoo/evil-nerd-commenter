@@ -322,6 +322,7 @@ we are processing C like language."
      (t
       (error "Not inside a comment")))))
 
+
 (provide 'evil-nerd-commenter-operator)
 ;;; evil-nerd-commenter-operator.el ends here
 

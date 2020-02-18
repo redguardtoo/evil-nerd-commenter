@@ -757,6 +757,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defvar evil-visual-state-map)
 (defvar evil-inner-text-objects-map)
 (defvar evil-outer-text-objects-map)
+
 ;;;###autoload
 (defun evilnc-default-hotkeys (&optional no-evil-keybindings no-emacs-keybindings)
   "Setup the key bindings of evil-nerd-comment.
@@ -772,31 +773,27 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
 
   ;; Install key bindings for evil
   (unless no-evil-keybindings
-    (eval-after-load 'evil
-      '(progn
-         (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
-         (define-key evil-visual-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
-         (define-key evil-normal-state-map ",cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
-         (define-key evil-normal-state-map ",ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
-         (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
-         (define-key evil-visual-state-map ",cc" 'evilnc-copy-and-comment-lines)
-         (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
-         (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
-         (define-key evil-normal-state-map ",cv" 'evilnc-toggle-invert-comment-line-by-line))))
+    (define-key evil-normal-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
+    (define-key evil-visual-state-map ",ci" 'evilnc-comment-or-uncomment-lines)
+    (define-key evil-normal-state-map ",cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
+    (define-key evil-normal-state-map ",ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
+    (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
+    (define-key evil-visual-state-map ",cc" 'evilnc-copy-and-comment-lines)
+    (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
+    (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
+    (define-key evil-normal-state-map ",cv" 'evilnc-toggle-invert-comment-line-by-line))
 
   ;; Install operator for evil text objects
   (unless (and no-evil-keybindings (not evilnc-use-comment-object-setup))
-    (eval-after-load 'evil-nerd-commenter-operator
-      '(progn
-         ;; operator to comment at text objects
-         (define-key evil-normal-state-map ",." 'evilnc-copy-and-comment-operator)
-         (define-key evil-visual-state-map ",." 'evilnc-copy-and-comment-operator)
-         (define-key evil-normal-state-map ",," 'evilnc-comment-operator)
-         (define-key evil-visual-state-map ",," 'evilnc-comment-operator)
+    ;; operator to comment at text objects
+    (define-key evil-normal-state-map ",." 'evilnc-copy-and-comment-operator)
+    (define-key evil-visual-state-map ",." 'evilnc-copy-and-comment-operator)
+    (define-key evil-normal-state-map ",," 'evilnc-comment-operator)
+    (define-key evil-visual-state-map ",," 'evilnc-comment-operator)
 
-         ;; comment itself is text object
-         (define-key evil-inner-text-objects-map evilnc-comment-text-object 'evilnc-inner-comment)
-         (define-key evil-outer-text-objects-map evilnc-comment-text-object 'evilnc-outer-commenter)))))
+    ;; comment itself is text object
+    (define-key evil-inner-text-objects-map evilnc-comment-text-object 'evilnc-inner-comment)
+    (define-key evil-outer-text-objects-map evilnc-comment-text-object 'evilnc-outer-commenter)))
 
 
 (defun evilnc-frame-wide-string (s)
