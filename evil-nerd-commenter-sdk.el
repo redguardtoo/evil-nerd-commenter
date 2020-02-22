@@ -94,8 +94,8 @@ or else we can't select multiple lines comment."
   (and (<= (line-beginning-position) beg)
        (<= end (line-end-position))))
 
-(defun evilnc-sdk-extend-to-contain-whole-lines (beg end)
-  "Extend region between BEG and END so the region contain whole lines.
+(defun evilnc-sdk-expand-to-contain-whole-lines (beg end)
+  "Expand region between BEG and END so the region contain whole lines.
 Return new range like '(region_begin . region_end)."
   (save-excursion
     ;; Another work around for evil-visual-line bug:

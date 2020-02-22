@@ -216,7 +216,7 @@
       (should (eq 49 (nth 1 info)))
       (should (string= "python" (nth 2 info))))))
 
-(ert-deftest evilnc-test-extend-whole ()
+(ert-deftest evilnc-test-expand-whole ()
   (let* (info)
     (with-temp-buffer
       (insert "console.log('hello world');\n"
@@ -235,7 +235,7 @@
         (search-forward "hello world") ; middle of third line
         (setq e (point))
         (should (not (evilnc-sdk-inside-one-line-p b e)))
-        (setq range (evilnc-sdk-extend-to-contain-whole-lines b e))
+        (setq range (evilnc-sdk-expand-to-contain-whole-lines b e))
         (should (eq (car range) (save-excursion (goto-char b) (line-beginning-position))))
         (should (eq (cdr range) (save-excursion (goto-char e) (line-end-position))))))))
 

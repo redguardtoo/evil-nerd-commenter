@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin DOT sh AT gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.5.0
+;; Version: 3.5.1
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: convenience evil
 ;;
@@ -309,7 +309,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
    ;; Select more than one line
    (t
     ;; selected region spans MORE than one line
-    (let* ((range (evilnc-sdk-extend-to-contain-whole-lines (region-beginning)
+    (let* ((range (evilnc-sdk-expand-to-contain-whole-lines (region-beginning)
                                                             (region-end)))
            (b (car range))
            (e (cdr range)))
@@ -738,7 +738,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.5.0"))
+  (message "3.5.1"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)

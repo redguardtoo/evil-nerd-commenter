@@ -47,6 +47,14 @@
     web-mode)
   "Major modes using C comment syntax.")
 
+(defvar evilnc-current-text-object nil
+  "Internal variable to detect current object working on.")
+
+(defvar evilnc-whole-line-text-objects
+  '(evil-forward-paragraph
+    evil-backward-paragraph)
+  "Comment operator operates on wholes when dealing with these text objects.")
+
 (defvar evilnc-temporary-goal-column 0
   "Value of`temporary-goal-column' specifying right edge of rectangle yank.")
 
@@ -76,41 +84,72 @@
     (setq last-command tmp-command)
     (setq evilnc-temporary-goal-column 0)))
 
-(defun evilnc-extend-to-whole-comment-or-line (beg end)
-  "Extend the comment region defined by BEG and END so all comment is included.
-Or extend the region to contain whole lines if the region is not a comment."
+(defun evilnc-expand-to-whole-comment-or-line (beg end)
+  "Expand the comment region defined by BEG and END so all comment is included.
+Or expand the region to contain whole lines if it's not comment and certain conditions met."
+
   (cond
    ((evilnc-is-pure-comment beg)
     (save-excursion
       (let* ((newbeg beg)
              (newend end))
 
-        ;; extend the beginning
+        ;; expand the beginning
         (goto-char newbeg)
         (while (and (>= (1- newbeg) (line-beginning-position)) (evilnc-is-pure-comment (1- newbeg)))
           (setq newbeg (1- newbeg)))
 
-        ;; extend the end
+        ;; expand the end
         (goto-char newend)
         (while (and (<= newend (line-end-position)) (evilnc-is-pure-comment newend))
           (setq newend (1+ newend)))
 
         (cons newbeg newend))))
-   ((not (evilnc-sdk-inside-one-line-p beg end))
-    (evilnc-sdk-extend-to-contain-whole-lines beg end))
+
+   ;; try to expand region to contain whole line if,
+   ;; - currently more than one line text in the region,
+   ;; - a specific text object is touched just before the operator
+   ((and (not (evilnc-sdk-inside-one-line-p beg end))
+         evilnc-current-text-object
+         (member (car evilnc-current-text-object) evilnc-whole-line-text-objects)
+         ;; 0.5 second
+         (< (- (float-time (current-time)) (cdr evilnc-current-text-object)) 0.5))
+    (evilnc-sdk-expand-to-contain-whole-lines beg end))
    (t
     (cons beg end))))
+
+;; {{ know text object type to operate on
+(defun evilnc-set-current-text-object (text-object)
+  "Set current TEXT-OBJECT."
+  (setq evilnc-current-text-object
+        (cons text-object (float-time (current-time)))))
+
+(defadvice evil-select-an-object (before evilnc-evil-select-an-object-hack activate)
+  "Figure out text object type."
+  (let* ((thing (car (ad-get-args 0))))
+    ;; record the thing and timestamp `evil-select-an-object' is called
+    (evilnc-set-current-text-object thing)))
+
+(defadvice evil-backward-paragraph (before evilnc-evil-backward-paragraph-hack activate)
+  "Record current text object."
+  (evilnc-set-current-text-object 'evil-backward-paragraph))
+
+(defadvice evil-forward-paragraph (before evilnc-evil-forward-paragraph-hack activate)
+  "Record current text object."
+  (evilnc-set-current-text-object 'evil-forward-paragraph))
+;; }}
 
 (evil-define-operator evilnc-comment-operator (beg end type)
   "Comments text from BEG to END with TYPE."
   (interactive "<R>")
   (cond
    ((eq type 'block)
-    (let* ((newpos (evilnc-extend-to-whole-comment-or-line beg end) ))
+    (let* ((newpos (evilnc-expand-to-whole-comment-or-line beg end) ))
       (evil-apply-on-block #'evilnc--comment-or-uncomment-region
                            (car newpos)
                            (cdr newpos)
                            nil)))
+
    ((and (eq type 'line)
          (= end (point-max))
          (or (= beg end)
@@ -128,7 +167,7 @@ Or extend the region to contain whole lines if the region is not a comment."
 
    (t
     (when (and beg end)
-      (let* ((newpos (evilnc-extend-to-whole-comment-or-line beg end)))
+      (let* ((newpos (evilnc-expand-to-whole-comment-or-line beg end)))
         (evilnc--comment-or-uncomment-region (car newpos) (cdr newpos))))))
 
   ;; place cursor on beginning of line
@@ -169,11 +208,11 @@ Or extend the region to contain whole lines if the region is not a comment."
          (e (point))
          (col 0)
          rlt)
-    ;; extend begin
+    ;; decrease begin
     (while (evilnc-is-comment (- b 1))
       (setq b (- b 1)))
 
-    ;; extend end
+    ;; increase end
     (while (evilnc-is-comment (+ e 1))
       (setq e (+ e 1)))
 
