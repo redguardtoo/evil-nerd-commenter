@@ -945,7 +945,7 @@ Paragraphs are separated by empty lines."
 
 ;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded
-(with-eval-after-load "evil"
+(with-eval-after-load 'evil
   (require 'evil-nerd-commenter-operator))
 
 (provide 'evil-nerd-commenter)
