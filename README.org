@@ -3,7 +3,7 @@
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]]
 [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 
-This program can be used *WITHOUT* [[http://www.emacswiki.org/Evil][evil-mode]]!
+This program can be used *WITHOUT* [[https://www.emacswiki.org/emacs/Evil][evil-mode]]!
 
 A [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] emulation, help you comment code efficiently. For example, you can press key =,,99j= or =99,ci= to comment out 99 lines.
 
