@@ -89,19 +89,19 @@
 Or expand the region to contain whole lines if it's not comment and certain conditions met."
 
   (cond
-   ((evilnc-is-pure-comment beg)
+   ((evilnc-pure-comment-p beg)
     (save-excursion
       (let* ((newbeg beg)
              (newend end))
 
         ;; expand the beginning
         (goto-char newbeg)
-        (while (and (>= (1- newbeg) (line-beginning-position)) (evilnc-is-pure-comment (1- newbeg)))
+        (while (and (>= (1- newbeg) (line-beginning-position)) (evilnc-pure-comment-p (1- newbeg)))
           (setq newbeg (1- newbeg)))
 
         ;; expand the end
         (goto-char newend)
-        (while (and (<= newend (line-end-position)) (evilnc-is-pure-comment newend))
+        (while (and (<= newend (line-end-position)) (evilnc-pure-comment-p newend))
           (setq newend (1+ newend)))
 
         (cons newbeg newend))))
@@ -174,33 +174,33 @@ Or expand the region to contain whole lines if it's not comment and certain cond
   (if (and (called-interactively-p 'any) (eq type 'line))
       (evil-first-non-blank)))
 
-(evil-define-operator evilnc-copy-and-comment-operator (beg end)
-  "Inserts an out commented copy of the text from BEG to END."
+(evil-define-operator evilnc-copy-and-comment-operator (begin end)
+  "Inserts an out commented copy of the text from BEGIN to END."
   :move-point (not evilnc-original-above-comment-when-copy-and-comment)
   (interactive "<r>")
   (evil-with-single-undo
-    (evil-yank-lines beg end nil 'lines)
+    (evil-yank-lines begin end nil 'lines)
     (cond
      (evilnc-original-above-comment-when-copy-and-comment
       (let* ((p (point)))
-        (comment-region beg end)
-        (goto-char beg)
+        (comment-region begin end)
+        (goto-char begin)
         (evil-paste-before 1)
         (goto-char p)))
      (t
       (goto-char end)
       (evil-paste-before 1)
       ;; actual comment operatio should happen at last
-      ;; or else beg end will be screwed up
-      (comment-region beg end)))))
+      ;; or else begin end will be screwed up
+      (comment-region begin end)))))
 
-(defun evilnc-is-one-line-comment (b e)
-  "Check whether text between B and E is one line comment."
+(defun evilnc-one-line-comment-p (begin end)
+  "Test if text between BEGIN and END is one line comment."
   (save-excursion
-    (goto-char b)
-    (and (<= (line-beginning-position) b)
-         ;; e is the upper limit great than (line-end-position)
-         (<= e (1+ (line-end-position))))))
+    (goto-char begin)
+    (and (<= (line-beginning-position) begin)
+         ;; end is the upper limit great than (line-end-position)
+         (<= end (1+ (line-end-position))))))
 
 (defun evilnc-get-comment-bounds ()
   "Return bounds like (cons beg end)."
@@ -209,11 +209,11 @@ Or expand the region to contain whole lines if it's not comment and certain cond
          (col 0)
          rlt)
     ;; decrease begin
-    (while (evilnc-is-comment (- b 1))
+    (while (evilnc-comment-p (- b 1))
       (setq b (- b 1)))
 
     ;; increase end
-    (while (evilnc-is-comment (+ e 1))
+    (while (evilnc-comment-p (+ e 1))
       (setq e (+ e 1)))
 
     ;; we could select extra spaces at the end of comment
@@ -228,13 +228,13 @@ Or expand the region to contain whole lines if it's not comment and certain cond
     (cond
      ((>= b e)
       (setq rlt nil))
-     ((evilnc-is-one-line-comment b e)
+     ((evilnc-one-line-comment-p b e)
       ;; contract begin
-      (while (not (evilnc-is-pure-comment b))
+      (while (not (evilnc-pure-comment-p b))
         (setq b (+ b 1)))
 
       ;; contract end
-      (while (not (evilnc-is-pure-comment e))
+      (while (not (evilnc-pure-comment-p e))
         (setq e (- e 1)))
 
       (if (< b e) (setq rlt (cons b (+ e 1)))))
@@ -265,11 +265,11 @@ Or expand the region to contain whole lines if it's not comment and certain cond
      (t
       ;; other languages we can safely use font face
       (while (and (> e b)
-                  (evilnc-is-comment-delimiter (- e 1)))
+                  (evilnc-comment-delimiter-p (- e 1)))
         (setq e (- e 1)))))
     e))
 
-(defun evilnc-is-c-style-comment (pos)
+(defun evilnc-c-style-comment-p (pos)
   "Is C style comment at POS?"
   (and (memq major-mode evilnc-c-style-comment-modes)
        (= (evilnc-get-char pos) ?/)
@@ -282,9 +282,9 @@ we are processing C like language."
   (let* ((col-min most-positive-fixnum)
          (col-max 0))
     (while (< beg end)
-      (when (and (not (evilnc-is-whitespace beg))
-                 (evilnc-is-pure-comment beg)
-                 (not (or (evilnc-is-comment-delimiter beg)
+      (when (and (not (evilnc-whitespace-p beg))
+                 (evilnc-pure-comment-p beg)
+                 (not (or (evilnc-comment-delimiter-p beg)
                           (and c-style
                                (memq (evilnc-get-char beg) '(?/ ?*))))))
         (let* ((col (evil-column beg)))
@@ -307,15 +307,15 @@ we are processing C like language."
       (setq b (car bounds))
       (setq e (cdr bounds))
       (cond
-       ((setq c-style (evilnc-is-c-style-comment b))
+       ((setq c-style (evilnc-c-style-comment-p b))
         (while (and (< b e)
-                    (or (evilnc-is-whitespace b)
-                        (evilnc-is-line-end b)
+                    (or (evilnc-whitespace-p b)
+                        (evilnc-line-end-p b)
                         (memq (evilnc-get-char b) '(?/ ?*))))
           (setq b (1+ b)))
         (while (and (< b e)
-                    (or (evilnc-is-whitespace e)
-                        (evilnc-is-line-end e)
+                    (or (evilnc-whitespace-p e)
+                        (evilnc-line-end-p e)
                         (memq (evilnc-get-char e) '(?/ ?*))))
           (setq e (1- e)))
         (setq e (1+ e))
@@ -335,7 +335,7 @@ we are processing C like language."
                   (goto-char (evilnc-adjusted-comment-end b (line-end-position)))
                   (point)))))
       (cond
-       ((evilnc-is-one-line-comment b e)
+       ((evilnc-one-line-comment-p b e)
         ;; keep move e to the end of comment
         (evil-range b ;; (if c-style (1+ e) e)
                     e))

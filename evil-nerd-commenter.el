@@ -451,8 +451,7 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
     is-comment))
 
 (defun evilnc--web-mode-comment-or-uncomment (beg end)
-  "Comment/uncomment line by line from BEG to END.
-DO-COMMENT decides we comment or uncomment."
+  "Comment/uncomment line by line from BEG to END."
   ;; end will change when you comment line by line
   (let* (tmp)
     ;; make sure beg <= end
@@ -813,7 +812,7 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
          (t
           (setq beg (1+ beg))))
 
-        (when (and searching (evilnc-is-comment beg))
+        (when (and searching (evilnc-comment-p beg))
           (setq linenum (line-number-at-pos beg) )
           (cond
            ((string= comment-end "")
@@ -877,7 +876,7 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
         (goto-char (- mark-start-pos len-comment-start))
         (delete-char len-comment-start)))))
 
-(defun evilnc-is-html-tag-comment-p (beg)
+(defun evilnc-html-tag-comment-p (beg)
   "Html tag comment at position BEG?"
   (save-excursion
     (goto-char beg)
@@ -921,7 +920,7 @@ This command is not dependent on any 3rd party package."
         (setq end-line-end (line-end-position)))))
 
     (cond
-     ((evilnc-is-html-tag-comment-p beg)
+     ((evilnc-html-tag-comment-p beg)
       ;; make sure all tags plus comment marks are selected
       (evilnc-html-uncomment-region beg-line-beg end-line-end))
      (t

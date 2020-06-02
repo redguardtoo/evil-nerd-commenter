@@ -33,7 +33,7 @@
                     (member f fonts-list))
                 fonts-under-cursor)))
 
-(defun evilnc-web-mode-is-comment (&optional pos)
+(defun evilnc-web-mode-comment-p (&optional pos)
   "Check whether the code at POS is comment.
 `web-mode' removes its API, so create our own."
   (unless pos (setq pos (point)))
@@ -46,23 +46,29 @@
   (let* ((fontfaces (if (> pos 0) (get-text-property pos 'face))))
     (if (listp fontfaces) fontfaces (list fontfaces))))
 
-(defun evilnc-is-pure-comment (pos)
+(defun evilnc-pure-comment-p (pos)
   "Check character at POS is pure comment."
   (or (and (eq major-mode 'web-mode)
-           (evilnc-web-mode-is-comment pos))
+           (evilnc-web-mode-comment-p pos))
       (evilnc--check-fonts (evilnc-fonts-at-point pos)
                            '(font-lock-comment-face
                              font-lock-comment-delimiter-face))))
 
-(defun evilnc-is-whitespace (pos)
-  "Character at POS is white space."
-  (member (evilnc-get-char pos) '(32 9)))
+(defmacro evilnc-get-char (position)
+  "Get character at POSITION."
+  `(save-excursion
+     (goto-char ,position)
+     (following-char)))
 
-(defun evilnc-is-line-end (pos)
-  "Character at POS is line end."
-  (member (evilnc-get-char pos) '(10 11)))
+(defmacro evilnc-whitespace-p (position)
+  "Character at POSITION is white space."
+  `(member (evilnc-get-char ,position) '(32 9)))
 
-(defun evilnc-is-comment (pos)
+(defmacro evilnc-line-end-p (position)
+  "Character at POSITION is line end."
+  `(member (evilnc-get-char ,position) '(10 11)))
+
+(defun evilnc-comment-p (pos)
   "Check whether the code at POS is comment by comparing font face.
 Please note the white spaces out of comment is treated as comment,
 or else we can't select multiple lines comment."
@@ -72,19 +78,13 @@ or else we can't select multiple lines comment."
    ((not (evilnc-fonts-at-point pos))
     ;; character under cursor is SPACE or TAB
     ;; and out of comment
-    (evilnc-is-whitespace pos))
+    (evilnc-whitespace-p pos))
    (t
-    (evilnc-is-pure-comment pos))))
+    (evilnc-pure-comment-p pos))))
 
-(defun evilnc-get-char (pos)
-  "Get character at POS."
-  (save-excursion
-    (goto-char pos)
-    (following-char)))
-
-(defun evilnc-is-comment-delimiter (pos)
-  "Is character at POS a comment delimiter?"
-  (let* ((fontfaces (evilnc-fonts-at-point pos)))
+(defun evilnc-comment-delimiter-p (position)
+  "Is character at POSITION a comment delimiter?"
+  (let* ((fontfaces (evilnc-fonts-at-point position)))
     (and fontfaces
          (evilnc--check-fonts fontfaces
                               '(font-lock-comment-delimiter-face)))))

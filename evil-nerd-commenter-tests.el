@@ -72,7 +72,7 @@
       (js-mode)
       (goto-char (point-min))
       (evilnc-copy-and-comment-lines 2)
-      (should (not (evilnc-is-pure-comment (point))))
+      (should (not (evilnc-pure-comment-p (point))))
       (setq lines (evilnc-get-lines (point-min) (point-max)))
       (should (string= (nth 0 lines) "// hello"))
       (should (string= (nth 1 lines) "// world"))
