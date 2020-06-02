@@ -56,9 +56,7 @@
 
 (defmacro evilnc-get-char (position)
   "Get character at POSITION."
-  `(save-excursion
-     (goto-char ,position)
-     (following-char)))
+  `(char-after ,position))
 
 (defmacro evilnc-whitespace-p (position)
   "Character at POSITION is white space."
