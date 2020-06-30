@@ -622,7 +622,7 @@ CORRECT comment syntax will be used for C++/Java/Javascript."
     ;; donot move the cursor
     ;; support negative number
     (cond
-     ((and (= 1 num) (string-match "^[ \t]*$" (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+     ((and (= 1 num) (string-match "^[ \t]*$" (evilnc-sdk-cur-line)))
       ;; comment on current empty line
       (comment-dwim nil))
      (t
@@ -880,10 +880,8 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
   "Html tag comment at position BEG?"
   (save-excursion
     (goto-char beg)
-    (let* ((line (buffer-substring-no-properties (line-beginning-position)
-                                                    (line-end-position)))
-           (re (concat "^[ \t]*" (regexp-quote (evilnc-html-comment-start)))))
-      (string-match-p re line))))
+    (string-match-p (concat "^[ \t]*" (regexp-quote (evilnc-html-comment-start)))
+                    (evilnc-sdk-cur-line))))
 
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-html-tag ()

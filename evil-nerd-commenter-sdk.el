@@ -92,6 +92,11 @@ or else we can't select multiple lines comment."
   (and (<= (line-beginning-position) beg)
        (<= end (line-end-position))))
 
+(defun evilnc-sdk-cur-line (&optional end)
+  "String from line beginning to END or line end."
+  (buffer-substring-no-properties (line-beginning-position)
+                                  (or end (line-end-position))))
+
 (defun evilnc-sdk-expand-to-contain-whole-lines (beg end)
   "Expand region between BEG and END so the region contain whole lines.
 Return new range like '(region_begin . region_end)."

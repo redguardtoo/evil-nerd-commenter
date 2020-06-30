@@ -220,7 +220,7 @@ Or expand the region to contain whole lines if it's not comment and certain cond
     ;; so we need go back
     (let* ((str (save-excursion
                   (goto-char e)
-                  (buffer-substring-no-properties (line-beginning-position) e)))
+                  (evilnc-sdk-cur-line e)))
            (empty-line-p (string-match "^[ \t]*$" str)))
       (if empty-line-p
           ;; empty line plus line feed
