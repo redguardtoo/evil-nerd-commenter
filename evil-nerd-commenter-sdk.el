@@ -1,4 +1,4 @@
-;;; evil-nerd-commenter-sdk.el --- SDK used by other files
+;;; evil-nerd-commenter-sdk.el --- SDK used by other files  -*- lexical-binding: t -*-
 
 ;; Author: Chen Bin <chenbin DOT sh AT gmail DOT com>
 

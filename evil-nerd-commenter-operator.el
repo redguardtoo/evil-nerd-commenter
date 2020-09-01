@@ -1,4 +1,4 @@
-;;; evil-nerd-commenter-operator.el --- evil operator for this program
+;;; evil-nerd-commenter-operator.el --- evil operator for this program  -*- lexical-binding: t -*-
 
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 

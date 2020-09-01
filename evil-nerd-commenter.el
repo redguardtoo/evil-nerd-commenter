@@ -1,4 +1,4 @@
-;;; evil-nerd-commenter.el --- Comment/uncomment lines efficiently. Like Nerd Commenter in Vim
+;;; evil-nerd-commenter.el --- Comment/uncomment lines efficiently. Like Nerd Commenter in Vim  -*- lexical-binding: t -*-
 
 ;; Author: Chen Bin <chenbin DOT sh AT gmail.com>
 
