@@ -844,9 +844,9 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
                        (> (length str) evilnc-min-comment-length-for-imenu))
               (setq m (make-marker))
               (set-marker m beg)
-              (add-to-list 'cands
-                           (cons (evilnc-frame-wide-string (format "%d:%s" linenum str)) m)
-                           t))
+              (setq cands (let ((temp (nreverse cands)))
+                            (cl-pushnew (cons (evilnc-frame-wide-string (format "%d:%s" linenum str)) m) temp)
+                            (nreverse temp))))
             (goto-char (min (1+ end) (point-max))))
            (t
             (setq searching nil))))))
