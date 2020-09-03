@@ -840,17 +840,19 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
                                           (unless (string-match-p "^[ \t]*$" s) s))
                                         a)))
               (setq str (mapconcat 'identity a "\n" )))
+
+
             (when (and (not (string-match-p "^[ \t\n\r]*$" str))
                        (> (length str) evilnc-min-comment-length-for-imenu))
               (setq m (make-marker))
               (set-marker m beg)
-              (add-to-list 'cands
-                           (cons (evilnc-frame-wide-string (format "%d:%s" linenum str)) m)
-                           t))
+              (push (cons (evilnc-frame-wide-string (format "%d:%s" linenum str)) m)
+                    cands))
+
             (goto-char (min (1+ end) (point-max))))
            (t
             (setq searching nil))))))
-    cands))
+    (nreverse cands)))
 
 (defun evilnc-html-comment-region (beg end)
   "Comment region between BEG and END."
@@ -933,6 +935,7 @@ Paragraphs are separated by empty lines."
   (interactive "p")
   (evilnc-do-paragraphs
    (lambda (b e)
+     (ignore e)
      ;; {{ make sure tag is focused
      (goto-char b)
      (sgml-skip-tag-forward 1)
