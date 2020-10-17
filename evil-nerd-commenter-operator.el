@@ -59,7 +59,7 @@
   "Value of`temporary-goal-column' specifying right edge of rectangle yank.")
 
 (defadvice evil-visual-highlight-block (around evil-visual-highlight-block-hack activate)
-  "Show overlay over innert comment text object."
+  "Show overlay over inner comment text object."
   ad-do-it
   (when (eq this-command 'evilnc-inner-comment)
     (dolist (overlay evil-visual-block-overlays)
@@ -190,7 +190,7 @@ Or expand the region to contain whole lines if it's not comment and certain cond
      (t
       (goto-char end)
       (evil-paste-before 1)
-      ;; actual comment operatio should happen at last
+      ;; actual comment operation should happen at last
       ;; or else begin end will be screwed up
       (comment-region begin end)))))
 

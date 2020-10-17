@@ -5,7 +5,7 @@
 
 This program can be used *WITHOUT* [[https://www.emacswiki.org/emacs/Evil][evil-mode]]!
 
-A [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] emulation, help you comment code efficiently. For example, you can press key =,,99j= or =99,ci= to comment out 99 lines.
+A [[http://www.vim.org/scripts/script.php?script_id=1218][Nerd Commenter]] emulation, help you comment code efficiently. For example, you can press =99,ci= to comment out 99 lines.
 
 I recommend using it with Evil though Evil is optional.
 

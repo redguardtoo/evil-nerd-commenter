@@ -160,7 +160,7 @@ Please note it has NOT effect on evil text object!")
     ("js-mode" "{/* " " */}")
     (("web-mode" "html-mode") "<!-- " " -->"))
   "List of html tag comment rules.
-The 1st item of each rule is the major mode(s) to match curernt `major-mode'.
+The 1st item of each rule is the major mode(s) to match current `major-mode'.
 Current `major-mode' could equal or derive from the listed major mode(s).
 The 2nd and 3rd item is the comment start and comment end.")
 
@@ -595,7 +595,7 @@ to comment to the line 6453"
 
 ;;;###autoload
 (defun evilnc-toggle-comment-empty-lines ()
-  "Toggle the flag which decide wether empty line will be commented."
+  "Toggle the flag which decide if empty line will be commented."
   (interactive)
   (if comment-empty-lines
       (setq comment-empty-lines nil)

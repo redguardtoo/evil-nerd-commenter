@@ -207,7 +207,7 @@
               "* heading\n"
               "subtext\n")
 
-      ;; move foucs to the middle of source block
+      ;; move focus to the middle of source block
       (goto-char (point-min))
       (search-forward "hello world")
       ;; extract src block info
@@ -224,7 +224,7 @@
               "console.log('hello world');")
 
       (goto-char (point-min))
-      ;; move foucs to the middle the line
+      ;; move focus to the middle the line
       (search-forward "hello world")
       (should (evilnc-sdk-inside-one-line-p (point) (1- (line-end-position))))
       (should (not (evilnc-sdk-inside-one-line-p (point) (1- (point-max)))))
@@ -238,5 +238,23 @@
         (setq range (evilnc-sdk-expand-to-contain-whole-lines b e))
         (should (eq (car range) (save-excursion (goto-char b) (line-beginning-position))))
         (should (eq (cdr range) (save-excursion (goto-char e) (line-end-position))))))))
+
+(ert-deftest evilnc-test-latest-web-mode ()
+  (with-temp-buffer
+    (let* (lines
+           (buffer-file-name "hello.css"))
+      (insert ".App {\n"
+              "  text-align: center;\n"
+              "}\n")
+      (web-mode)
+      (goto-char (point-min))
+      ;; comment first line
+      (evilnc-comment-or-uncomment-lines 1)
+      (setq lines (evilnc-get-lines (point-min) (line-end-position)))
+      (should (string= (car lines) "/* .App { */"))
+
+      ;; TODO, test uncomment when web-mode has fixed its bug
+      ;; @see https://github.com/redguardtoo/evil-nerd-commenter/issues/115
+      )))
 
 (ert-run-tests-batch-and-exit)
