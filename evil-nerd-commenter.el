@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin DOT sh AT gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.5.1
+;; Version: 3.5.2
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: convenience evil
 ;;
@@ -111,6 +111,19 @@
 ;;   (local-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines))
 ;; (add-hook 'matlab-mode-hook 'matlab-mode-hook-config)
 ;;
+;; Most commands call `evilnc-comment-or-uncomment-region-function'.
+;; You can modify this variable to customize the comment style,
+;;
+;;   (with-eval-after-load 'evil-nerd-commenter
+;;     (defun my-comment-or-uncomment-region (beg end)
+;;       (let* ((comment-start "aaa")
+;;              (comment-end "bbb"))
+;;         (evilnc-comment-or-uncomment-region-internal beg end)))
+;;     (setq evilnc-comment-or-uncomment-region-function
+;;           'my-comment-or-uncomment-region))
+;;
+;; See "Options Controlling Comments" in Emacs manual for comment options.
+;;
 ;; See https://github.com/redguardtoo/evil-nerd-commenter for detail.
 ;;
 ;;; Code:
@@ -129,6 +142,10 @@
 (defvar evilnc-invert-comment-line-by-line nil
   "If t then invert region comment status line by line.
 Please note it has NOT effect on evil text object!")
+
+(defvar evilnc-comment-or-uncomment-region-function
+  'evilnc-comment-or-uncomment-region-internal
+  "Comment or uncomment region.")
 
 (defvar evilnc-cpp-like-comment-syntax-modes
   '(java-mode
@@ -464,7 +481,8 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
       (goto-char end)
       (web-mode-comment-or-uncomment))))
 
-(defun evilnc--comment-or-uncomment-region (beg end)
+;;;###autoload
+(defun evilnc-comment-or-uncomment-region-internal (beg end)
   "Comment or uncomment region from BEG to END."
   (cond
    ((eq major-mode 'web-mode)
@@ -475,6 +493,11 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
     (evilnc--web-mode-comment-or-uncomment beg end))
    (t
     (evilnc--working-on-region beg end 'comment-or-uncomment-region))))
+
+;;;###autoload
+(defun evilnc-comment-or-uncomment-region (beg end)
+  "Comment or uncomment region from BEG to END."
+  (funcall evilnc-comment-or-uncomment-region-function beg end))
 
 (defun evilnc--current-line-num ()
   "Get current line number."
@@ -551,7 +574,7 @@ Paragraphs are separated by empty lines."
   (evilnc-do-paragraphs
    (lambda (b e)
      (evilnc--fix-buggy-major-modes)
-     (evilnc--comment-or-uncomment-region b e))
+     (evilnc-comment-or-uncomment-region b e))
    num))
 
 ;;;###autoload
@@ -568,7 +591,7 @@ Paragraphs are separated by empty lines."
           (if (> (line-end-position) e)
               (setq e (line-end-position)))
           (evilnc--fix-buggy-major-modes)
-          (evilnc--comment-or-uncomment-region b e)))))
+          (evilnc-comment-or-uncomment-region b e)))))
 
 ;;;###autoload
 (defun evilnc-quick-comment-or-uncomment-to-the-line (&optional last-digits)
@@ -632,7 +655,7 @@ CORRECT comment syntax will be used for C++/Java/Javascript."
           (setq num (- 0 num)))
         (evilnc--operation-on-lines-or-region '(lambda (b e)
                                                  (evilnc--fix-buggy-major-modes)
-                                                 (evilnc--comment-or-uncomment-region b e))
+                                                 (evilnc-comment-or-uncomment-region b e))
                                               num))
       (goto-char orig-pos)))))
 
@@ -737,7 +760,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.5.1"))
+  (message "3.5.2"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)

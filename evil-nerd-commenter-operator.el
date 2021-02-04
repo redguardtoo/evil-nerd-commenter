@@ -145,7 +145,7 @@ Or expand the region to contain whole lines if it's not comment and certain cond
   (cond
    ((eq type 'block)
     (let* ((newpos (evilnc-expand-to-whole-comment-or-line beg end) ))
-      (evil-apply-on-block #'evilnc--comment-or-uncomment-region
+      (evil-apply-on-block #'evilnc-comment-or-uncomment-region
                            (car newpos)
                            (cdr newpos)
                            nil)))
@@ -156,11 +156,11 @@ Or expand the region to contain whole lines if it's not comment and certain cond
              (/= (char-before end) ?\n))
          (/= beg (point-min))
          (=  (char-before beg) ?\n))
-    (evilnc--comment-or-uncomment-region (1- beg) end))
+    (evilnc-comment-or-uncomment-region (1- beg) end))
 
    ((eq type 'line)
     ;; comment whole line, for now
-    (evilnc--comment-or-uncomment-region beg
+    (evilnc-comment-or-uncomment-region beg
                                          (save-excursion
                                            (goto-char (1- end))
                                            (line-end-position))))
@@ -168,7 +168,7 @@ Or expand the region to contain whole lines if it's not comment and certain cond
    (t
     (when (and beg end)
       (let* ((newpos (evilnc-expand-to-whole-comment-or-line beg end)))
-        (evilnc--comment-or-uncomment-region (car newpos) (cdr newpos))))))
+        (evilnc-comment-or-uncomment-region (car newpos) (cdr newpos))))))
 
   ;; place cursor on beginning of line
   (if (and (called-interactively-p 'any) (eq type 'line))

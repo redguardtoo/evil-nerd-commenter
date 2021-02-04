@@ -282,6 +282,20 @@ Most popular programming languages are supported.
 You can set up =evilnc-original-above-comment-when-copy-and-comment= to decide which style to use when =evilnc-copy-and-comment-lines= or =evilnc-copy-and-comment-operator=,
 - Place the commented out text above original text
 - Or place the original text above commented out text
+** Customize comment style
+Most commands call =evilnc-comment-or-uncomment-region-function=.
+
+You can modify this variable to customize the comment style.
+
+#+begin_src elisp
+(with-eval-after-load 'evil-nerd-commenter
+  (defun my-comment-or-uncomment-region (beg end)
+    (let* ((comment-start "aaa")
+           (comment-end "bbb"))
+      (evilnc-comment-or-uncomment-region-internal beg end)))
+  (setq evilnc-comment-or-uncomment-region-function
+        'my-comment-or-uncomment-region))
+#+end_src
 * Credits
 - [[https://github.com/lalopmak][Lally Oppenheimer (AKA lalopmak)]] added the support for text-object in Evil
 - [[https://github.com/ryuslash][Tom Willemse (AKA ryuslash)]] provided the fix to make Emacs 24.4 work
