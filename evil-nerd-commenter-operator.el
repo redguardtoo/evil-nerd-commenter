@@ -175,11 +175,17 @@ Or expand the region to contain whole lines if it's not comment and certain cond
       (evil-first-non-blank)))
 
 (evil-define-operator evilnc-copy-and-comment-operator (begin end)
-  "Inserts an out commented copy of the text from BEGIN to END."
+  "Inserts a commented copy of the text from BEGIN to END."
   :move-point (not evilnc-original-above-comment-when-copy-and-comment)
   (interactive "<r>")
   (evil-with-single-undo
+    ;; yank original text
     (evil-yank-lines begin end nil 'lines)
+
+    (when (evil-visual-state-p)
+      ;; `evil-paste-before' does not work in visual state.
+      (evil-normal-state))
+
     (cond
      (evilnc-original-above-comment-when-copy-and-comment
       (let* ((p (point)))
@@ -187,6 +193,7 @@ Or expand the region to contain whole lines if it's not comment and certain cond
         (goto-char begin)
         (evil-paste-before 1)
         (goto-char p)))
+
      (t
       (goto-char end)
       (evil-paste-before 1)
