@@ -255,6 +255,8 @@ Example 7: ",,it", comment the region inside html tags (all html major modes are
 ** evilnc-copy-and-comment-operator
 =evilnc-copy-and-comment-operator= is another evil-mode operator. Instead of commenting out the text in the operator-range, it inserts an copy of the text in the range and comments out that copy. Its hot key is ",.". For example, ",.," to comment out the current line.
 
+** evilnc-yank-and-comment-operator
+Operator to comment or uncomment the text and yank the original text at the same time.
 * Tips
 ** Yank in evil-mode
 You can yank to line 99 using hotkey =y99G= or =y99gg=. That's the feature from evil-mode.

@@ -174,10 +174,8 @@ Or expand the region to contain whole lines if it's not comment and certain cond
   (if (and (called-interactively-p 'any) (eq type 'line))
       (evil-first-non-blank)))
 
-(evil-define-operator evilnc-copy-and-comment-operator (begin end)
-  "Inserts a commented copy of the text from BEGIN to END."
-  :move-point (not evilnc-original-above-comment-when-copy-and-comment)
-  (interactive "<r>")
+(defun evilnc-comment-or-uncomment-region-then-action (begin end commenter &optional action)
+  "Comment/uncomment between BEGIN and END using COMMENTER, then take ACTION."
   (evil-with-single-undo
     ;; yank original text
     (evil-yank-lines begin end nil 'lines)
@@ -189,17 +187,34 @@ Or expand the region to contain whole lines if it's not comment and certain cond
     (cond
      (evilnc-original-above-comment-when-copy-and-comment
       (let* ((p (point)))
-        (comment-region begin end)
+        (funcall commenter begin end)
         (goto-char begin)
-        (evil-paste-before 1)
+        (when action (funcall action))
         (goto-char p)))
 
      (t
       (goto-char end)
-      (evil-paste-before 1)
+      (when action (funcall action))
       ;; actual comment operation should happen at last
       ;; or else begin end will be screwed up
-      (comment-region begin end)))))
+      (funcall commenter begin end)))))
+
+(evil-define-operator evilnc-yank-and-comment-operator (begin end)
+  "(Un)comment and yank the text from BEGIN to END."
+  :move-point (not evilnc-original-above-comment-when-copy-and-comment)
+  (interactive "<r>")
+  (evilnc-comment-or-uncomment-region-then-action begin
+                                                  end
+                                                  evilnc-comment-or-uncomment-region-function))
+
+(evil-define-operator evilnc-copy-and-comment-operator (begin end)
+  "Inserts a commented copy of the text from BEGIN to END."
+  :move-point (not evilnc-original-above-comment-when-copy-and-comment)
+  (interactive "<r>")
+  (evilnc-comment-or-uncomment-region-then-action begin
+                                                  end
+                                                  'comment-region
+                                                  (lambda () (evil-paste-before 1))))
 
 (defun evilnc-one-line-comment-p (begin end)
   "Test if text between BEGIN and END is one line comment."

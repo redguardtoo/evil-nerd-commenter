@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin DOT sh AT gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.5.3
+;; Version: 3.5.4
 ;; Package-Requires: ((emacs "24.4"))
 ;; Keywords: convenience evil
 ;;
@@ -88,7 +88,9 @@
 ;;   - Place the commented out text above original text
 ;;   - Or place the original text above commented out text
 ;;
-;; We defined comment text object "c" which can have multi-lines.
+;; `evilnc-yank-and-comment-operator' (un)comment&yank text in one shot.
+;;
+;; Comment text object "c" is defined.  It can have multi-lines.
 ;; Press "vac" to select outer object (comment with limiters).
 ;; Press "vic" to select inner object (comment without limiter).
 ;;
@@ -760,7 +762,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.5.3"))
+  (message "3.5.4"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
