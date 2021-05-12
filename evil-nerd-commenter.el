@@ -629,6 +629,20 @@ to comment to the line 6453"
                "Empty line(s) will be commented"
              "Empty line(s) will NOT be commented")))
 
+(defun evilnc-visual-line-p ()
+  "In Evil visual line mode."
+  (and (fboundp 'evil-visual-type) (eq (evil-visual-type) 'line)))
+
+(defun evilnc-guess-position-at-point ()
+  "Guess current position when evil visual line state is on or off."
+  (cond
+   ((and (evilnc-visual-line-p)
+         (eq (point) (nth 1 (evil-visual-range))))
+    ;; In evil visual line state, point is beginning or end visual range
+    (1- (point)))
+   (t
+    (point))))
+
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-lines (&optional num)
   "Comment or uncomment NUM lines.  NUM could be negative.
@@ -643,7 +657,7 @@ Case 3: If a region inside of ONE line is selected,
 we comment/uncomment that region.
 CORRECT comment syntax will be used for C++/Java/Javascript."
   (interactive "p")
-  (let* ((orig-pos (point)))
+  (let* ((orig-pos (evilnc-guess-position-at-point)))
     ;; donot move the cursor
     ;; support negative number
     (cond
@@ -655,10 +669,14 @@ CORRECT comment syntax will be used for C++/Java/Javascript."
         (when (< num 0)
           (evilnc--forward-line (1+ num))
           (setq num (- 0 num)))
-        (evilnc--operation-on-lines-or-region '(lambda (b e)
-                                                 (evilnc--fix-buggy-major-modes)
-                                                 (evilnc-comment-or-uncomment-region b e))
-                                              num))
+        (evilnc--operation-on-lines-or-region
+         (lambda (b e)
+           (setq orig-pos (point))
+           (evilnc--fix-buggy-major-modes)
+           ;; when comment in evil visual state, the cursor may be rogue
+           (when (evilnc-visual-line-p) (evil-normal-state))
+           (evilnc-comment-or-uncomment-region b e))
+         num))
       (goto-char orig-pos)))))
 
 ;;;###autoload
