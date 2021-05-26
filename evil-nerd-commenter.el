@@ -313,7 +313,7 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
         (setq comment-start "/* ")
         (setq comment-end " */")
         (setq comment-start-skip "\\(//+\\|/\\*+\\)\\s *")
-        (setq comment-end-skip "[ 	]*\\(\\s>\\|\\*+/\\)")
+        (setq comment-end-skip "[   ]*\\(\\s>\\|\\*+/\\)")
 
         (funcall fn (region-beginning) (region-end))
 
@@ -639,9 +639,9 @@ to comment to the line 6453"
    ((and (evilnc-visual-line-p)
          (eq (point) (nth 1 (evil-visual-range))))
     ;; In evil visual line state, point is beginning or end visual range
-    (1- (point)))
+    (cons (line-number-at-pos) (1- (current-column))))
    (t
-    (point))))
+    (cons (line-number-at-pos) (current-column)))))
 
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-lines (&optional num)
@@ -671,13 +671,14 @@ CORRECT comment syntax will be used for C++/Java/Javascript."
           (setq num (- 0 num)))
         (evilnc--operation-on-lines-or-region
          (lambda (b e)
-           (setq orig-pos (point))
            (evilnc--fix-buggy-major-modes)
            ;; when comment in evil visual state, the cursor may be rogue
            (when (evilnc-visual-line-p) (evil-normal-state))
            (evilnc-comment-or-uncomment-region b e))
          num))
-      (goto-char orig-pos)))))
+
+      (goto-line (car orig-pos))
+      (forward-char (cdr orig-pos))))))
 
 ;;;###autoload
 (defun evilnc-copy-and-comment-lines (&optional num)
