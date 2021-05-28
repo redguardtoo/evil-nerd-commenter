@@ -678,7 +678,9 @@ CORRECT comment syntax will be used for C++/Java/Javascript."
          num))
 
       (goto-line (car orig-pos))
-      (forward-char (cdr orig-pos))))))
+      ;; make sure we stay on original line
+      (goto-char (min (+ (line-beginning-position) (cdr orig-pos))
+                     (1- (line-end-position))))))))
 
 ;;;###autoload
 (defun evilnc-copy-and-comment-lines (&optional num)
