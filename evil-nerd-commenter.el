@@ -4,7 +4,7 @@
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
 ;; Version: 3.5.4
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: convenience evil
 ;;
 ;; This file is not part of GNU Emacs.
