@@ -234,7 +234,20 @@ Press =vac= to select outer object (comment with limiters).
 
 Press =vic= to select inner object (comment without limiter).
 
-You can assign other key instead of "c" to the text object by customising =evilnc-comment-text-object=.
+The comment text object is created automatically in =evilnc-default-hotkeys=.
+
+You can assign other key instead of "c" to the text object by changing =evilnc-comment-text-object=.
+#+begin_src elisp
+(setq evilnc-comment-text-object "c")
+(evilnc-default-hotkeys)
+#+end_src
+
+You can also manually created the comment text object using below code,
+#+begin_src elisp
+(setq evilnc-comment-text-object "a")
+(define-key evil-inner-text-objects-map evilnc-comment-text-object 'evilnc-inner-commenter)
+(define-key evil-outer-text-objects-map evilnc-comment-text-object 'evilnc-outer-commenter)
+#+end_src
 ** evilnc-comment-operator
 =evilnc-comment-operator= acts much like the delete/change operator. Takes a motion or text object and comments it out, yanking its content in the process.
 

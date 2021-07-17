@@ -61,7 +61,7 @@
 (defadvice evil-visual-highlight-block (around evil-visual-highlight-block-hack activate)
   "Show overlay over inner comment text object."
   ad-do-it
-  (when (eq this-command 'evilnc-inner-comment)
+  (when (eq this-command 'evilnc-inner-commenter)
     (dolist (overlay evil-visual-block-overlays)
       (let* ((b (overlay-start overlay))
              (e (save-excursion
@@ -84,39 +84,39 @@
     (setq last-command tmp-command)
     (setq evilnc-temporary-goal-column 0)))
 
-(defun evilnc-expand-to-whole-comment-or-line (beg end)
-  "Expand the comment region defined by BEG and END so all comment is included.
-Or expand the region to contain whole lines if it's not comment and certain conditions met."
+(defun evilnc-expand-to-whole-comment-or-line (start end)
+  "Expand the comment region defined by START and END so all comment is included.
+Or expand the region to contain whole lines."
 
   (cond
-   ((evilnc-pure-comment-p beg)
+   ((evilnc-pure-comment-p start)
     (save-excursion
-      (let* ((newbeg beg)
+      (let* ((newstart start)
              (newend end))
 
         ;; expand the beginning
-        (goto-char newbeg)
-        (while (and (>= (1- newbeg) (line-beginning-position)) (evilnc-pure-comment-p (1- newbeg)))
-          (setq newbeg (1- newbeg)))
+        (goto-char newstart)
+        (while (and (>= (1- newstart) (line-beginning-position)) (evilnc-pure-comment-p (1- newstart)))
+          (setq newstart (1- newstart)))
 
         ;; expand the end
         (goto-char newend)
         (while (and (<= newend (line-end-position)) (evilnc-pure-comment-p newend))
           (setq newend (1+ newend)))
 
-        (cons newbeg newend))))
+        (cons newstart newend))))
 
    ;; try to expand region to contain whole line if,
    ;; - currently more than one line text in the region,
    ;; - a specific text object is touched just before the operator
-   ((and (not (evilnc-sdk-inside-one-line-p beg end))
+   ((and (not (evilnc-sdk-inside-one-line-p start end))
          evilnc-current-text-object
          (member (car evilnc-current-text-object) evilnc-whole-line-text-objects)
          ;; 0.5 second
          (< (- (float-time (current-time)) (cdr evilnc-current-text-object)) 0.5))
-    (evilnc-sdk-expand-to-contain-whole-lines beg end))
+    (evilnc-sdk-expand-to-contain-whole-lines start end))
    (t
-    (cons beg end))))
+    (cons start end))))
 
 ;; {{ know text object type to operate on
 (defun evilnc-set-current-text-object (text-object)
@@ -139,12 +139,12 @@ Or expand the region to contain whole lines if it's not comment and certain cond
   (evilnc-set-current-text-object 'evil-forward-paragraph))
 ;; }}
 
-(evil-define-operator evilnc-comment-operator (beg end type)
-  "Comments text from BEG to END with TYPE."
+(evil-define-operator evilnc-comment-operator (start end type)
+  "Comments text from START to END with TYPE."
   (interactive "<R>")
   (cond
    ((eq type 'block)
-    (let* ((newpos (evilnc-expand-to-whole-comment-or-line beg end) ))
+    (let* ((newpos (evilnc-expand-to-whole-comment-or-line start end) ))
       (evil-apply-on-block #'evilnc-comment-or-uncomment-region
                            (car newpos)
                            (cdr newpos)
@@ -152,33 +152,33 @@ Or expand the region to contain whole lines if it's not comment and certain cond
 
    ((and (eq type 'line)
          (= end (point-max))
-         (or (= beg end)
+         (or (= start end)
              (/= (char-before end) ?\n))
-         (/= beg (point-min))
-         (=  (char-before beg) ?\n))
-    (evilnc-comment-or-uncomment-region (1- beg) end))
+         (/= start (point-min))
+         (=  (char-before start) ?\n))
+    (evilnc-comment-or-uncomment-region (1- start) end))
 
    ((eq type 'line)
     ;; comment whole line, for now
-    (evilnc-comment-or-uncomment-region beg
+    (evilnc-comment-or-uncomment-region start
                                          (save-excursion
                                            (goto-char (1- end))
                                            (line-end-position))))
 
    (t
-    (when (and beg end)
-      (let* ((newpos (evilnc-expand-to-whole-comment-or-line beg end)))
+    (when (and start end)
+      (let* ((newpos (evilnc-expand-to-whole-comment-or-line start end)))
         (evilnc-comment-or-uncomment-region (car newpos) (cdr newpos))))))
 
   ;; place cursor on beginning of line
   (if (and (called-interactively-p 'any) (eq type 'line))
       (evil-first-non-blank)))
 
-(defun evilnc-comment-or-uncomment-region-then-action (begin end commenter &optional action)
-  "Comment/uncomment between BEGIN and END using COMMENTER, then take ACTION."
+(defun evilnc-comment-or-uncomment-region-then-action (start end commenter &optional action)
+  "Comment/uncomment between START and END using COMMENTER, then take ACTION."
   (evil-with-single-undo
     ;; yank original text
-    (evil-yank-lines begin end nil 'lines)
+    (evil-yank-lines start end nil 'lines)
 
     (when (evil-visual-state-p)
       ;; `evil-paste-before' does not work in visual state.
@@ -187,8 +187,8 @@ Or expand the region to contain whole lines if it's not comment and certain cond
     (cond
      (evilnc-original-above-comment-when-copy-and-comment
       (let* ((p (point)))
-        (funcall commenter begin end)
-        (goto-char begin)
+        (funcall commenter start end)
+        (goto-char start)
         (when action (funcall action))
         (goto-char p)))
 
@@ -196,41 +196,41 @@ Or expand the region to contain whole lines if it's not comment and certain cond
       (goto-char end)
       (when action (funcall action))
       ;; actual comment operation should happen at last
-      ;; or else begin end will be screwed up
-      (funcall commenter begin end)))))
+      ;; or else "(start end)" is screwed up
+      (funcall commenter start end)))))
 
-(evil-define-operator evilnc-yank-and-comment-operator (begin end)
-  "(Un)comment and yank the text from BEGIN to END."
+(evil-define-operator evilnc-yank-and-comment-operator (start end)
+  "(Un)comment and yank the text from START to END."
   :move-point (not evilnc-original-above-comment-when-copy-and-comment)
   (interactive "<r>")
-  (evilnc-comment-or-uncomment-region-then-action begin
+  (evilnc-comment-or-uncomment-region-then-action start
                                                   end
                                                   evilnc-comment-or-uncomment-region-function))
 
-(evil-define-operator evilnc-copy-and-comment-operator (begin end)
-  "Inserts a commented copy of the text from BEGIN to END."
+(evil-define-operator evilnc-copy-and-comment-operator (start end)
+  "Inserts a commented copy of the text from START to END."
   :move-point (not evilnc-original-above-comment-when-copy-and-comment)
   (interactive "<r>")
-  (evilnc-comment-or-uncomment-region-then-action begin
+  (evilnc-comment-or-uncomment-region-then-action start
                                                   end
                                                   'comment-region
                                                   (lambda () (evil-paste-before 1))))
 
-(defun evilnc-one-line-comment-p (begin end)
-  "Test if text between BEGIN and END is one line comment."
+(defun evilnc-one-line-comment-p (start end)
+  "Test if text between START and END is one line comment."
   (save-excursion
-    (goto-char begin)
-    (and (<= (line-beginning-position) begin)
+    (goto-char start)
+    (and (<= (line-beginning-position) start)
          ;; end is the upper limit great than (line-end-position)
          (<= end (1+ (line-end-position))))))
 
 (defun evilnc-get-comment-bounds ()
-  "Return bounds like (cons beg end)."
+  "Return bounds like (cons start end)."
   (let* ((b (point))
          (e (point))
          (col 0)
          rlt)
-    ;; decrease begin
+    ;; decrease start position
     (while (evilnc-comment-p (- b 1))
       (setq b (- b 1)))
 
@@ -251,11 +251,11 @@ Or expand the region to contain whole lines if it's not comment and certain cond
      ((>= b e)
       (setq rlt nil))
      ((evilnc-one-line-comment-p b e)
-      ;; contract begin
+      ;; contract from start position
       (while (not (evilnc-pure-comment-p b))
         (setq b (+ b 1)))
 
-      ;; contract end
+      ;; contract from end position
       (while (not (evilnc-pure-comment-p e))
         (setq e (- e 1)))
 
@@ -297,28 +297,28 @@ Or expand the region to contain whole lines if it's not comment and certain cond
        (= (evilnc-get-char pos) ?/)
        (= (memq (evilnc-get-char (1+ pos)) '(?/ ?*)))))
 
-(defun evilnc-comment-column-bounds (beg end &optional c-style)
-  "From BEG to END find column bounds of rectangle selection.
+(defun evilnc-comment-column-bounds (start end &optional c-style)
+  "From START to END find column bounds of rectangle selection.
 Return (cons col-min col-max) or nil.  If C-STYLE is t,
 we are processing C like language."
   (let* ((col-min most-positive-fixnum)
          (col-max 0))
-    (while (< beg end)
-      (when (and (not (evilnc-whitespace-p beg))
-                 (evilnc-pure-comment-p beg)
-                 (not (or (evilnc-comment-delimiter-p beg)
+    (while (< start end)
+      (when (and (not (evilnc-whitespace-p start))
+                 (evilnc-pure-comment-p start)
+                 (not (or (evilnc-comment-delimiter-p start)
                           (and c-style
-                               (memq (evilnc-get-char beg) '(?/ ?*))))))
-        (let* ((col (evil-column beg)))
+                               (memq (evilnc-get-char start) '(?/ ?*))))))
+        (let* ((col (evil-column start)))
           (if (< col col-min)
               (setq col-min col))
           (if (> col col-max)
               (setq col-max col))))
-      (setq beg (1+ beg)))
+      (setq start (1+ start)))
     (if (< col-min col-max)
         (cons col-min col-max))))
 
-(evil-define-text-object evilnc-inner-comment (&optional count begin end type)
+(evil-define-text-object evilnc-inner-commenter (&optional count start end type)
   "An inner comment text object."
   (let* ((bounds (evilnc-get-comment-bounds))
          b
@@ -376,17 +376,22 @@ we are processing C like language."
      (t
       (error "Not inside a comment")))))
 
-(evil-define-text-object evilnc-outer-commenter (&optional count begin end type)
+(evil-define-text-object evilnc-outer-commenter (&optional count start end type)
   "An outer comment text object."
   (let* ((bounds (evilnc-get-comment-bounds)))
     (cond
      (bounds
-      (let* ((b (car bounds))
-             (e (cdr bounds)))
-        (evil-range b e 'exclusive :expanded t)))
+      (evil-range (car bounds) (cdr bounds) 'exclusive :expanded t))
      (t
       (error "Not inside a comment")))))
 
+(evil-define-text-object evilnc-inner-comment (&optional count start end type)
+  "An inner comment text object."
+  (evilnc-inner-commenter count start end type))
+
+(evil-define-text-object evilnc-outer-comment (&optional count start end type)
+  "An outer comment text object."
+  (evilnc-outer-commenter count start end type))
 
 (provide 'evil-nerd-commenter-operator)
 ;;; evil-nerd-commenter-operator.el ends here

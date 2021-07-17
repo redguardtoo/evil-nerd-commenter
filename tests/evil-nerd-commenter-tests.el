@@ -22,12 +22,31 @@
 
 ;;; Commentary:
 
+;;; Code:
+
 (require 'ert)
 (require 'evil-nerd-commenter)
 (require 'js)
+(require 'evil)
 
-(defun evilnc-get-lines (start end)
-  (split-string (buffer-substring-no-properties start end) "\n"))
+(defun evilnc-get-full-path (filename)
+  "Get full path of FILENAME in current directory."
+  (concat
+   (if load-file-name (file-name-directory load-file-name) default-directory)
+   filename))
+
+(defun evilnc-get-lines (begin end)
+  "Get line from BEGIN to END."
+  (split-string (buffer-substring-no-properties begin end) "\n"))
+
+(defun evilnc-next-lines-text (n)
+  "Text of current line and next N lines."
+  (let* ((start (line-beginning-position))
+         end)
+    (save-excursion
+      (forward-line n)
+      (setq end (line-end-position)))
+    (buffer-substring-no-properties start end)))
 
 (ert-deftest evilnc-test-forward-line ()
   (with-temp-buffer
@@ -257,4 +276,50 @@
       ;; @see https://github.com/redguardtoo/evil-nerd-commenter/issues/115
       )))
 
+(ert-deftest evilnc-test-evil-comment-text-object ()
+  (with-temp-buffer
+    (let* (rlt)
+      (insert-file-contents (evilnc-get-full-path "hello.js"))
+      (js-mode)
+      (evil-mode)
+      (goto-char (point-min))
+      (should (string= evilnc-comment-text-object "c"))
+      (search-forward "comment begin")
+      (font-lock-ensure (point-min) (point-max))
+
+      ;; User presses "vac"
+      (setq rlt (evilnc-outer-commenter))
+      (should (eq (nth 0 rlt) 1))
+      (should (eq (nth 1 rlt) 41))
+      (should (eq (nth 2 rlt) 'exclusive))
+
+      ;; User presses "vic"
+      (setq rlt (evilnc-inner-commenter))
+      (should (eq (nth 0 rlt) 4))
+      (should (eq (nth 1 rlt) 41))
+      (should (eq (nth 2 rlt) 'block)))))
+
+(ert-deftest evilnc-test-evil-comment-operator ()
+  (with-temp-buffer
+    (let* (rlt)
+      (insert-file-contents (evilnc-get-full-path "hello.js"))
+      (js-mode)
+      (evil-mode)
+      (goto-char (point-min))
+      (search-forward "comment begin")
+      (font-lock-ensure (point-min) (point-max))
+
+      ;; press "gcj" to uncomment current line and next line
+      (should (string= (evilnc-next-lines-text 2)
+                       "// comment begin\n// hello\n// comment end"))
+      (evilnc-comment-operator 1 27 'line)
+      (should (string= (evilnc-next-lines-text 2)
+                       "comment begin\nhello\n// comment end"))
+      ;; press "gcj" again to restore the comment
+      (evilnc-comment-operator 1 21 'line)
+      (should (string= (evilnc-next-lines-text 2)
+                       "// comment begin\n// hello\n// comment end"))
+      (should (eq major-mode 'js-mode)))))
+
 (ert-run-tests-batch-and-exit)
+;;; evil-nerd-commenter-tests.el ends here

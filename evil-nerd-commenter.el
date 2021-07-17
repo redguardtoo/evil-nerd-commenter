@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin DOT sh AT gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.5.4
+;; Version: 3.5.5
 ;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: convenience evil
 ;;
@@ -93,9 +93,15 @@
 ;; Comment text object "c" is defined.  It can have multi-lines.
 ;; Press "vac" to select outer object (comment with limiters).
 ;; Press "vic" to select inner object (comment without limiter).
-;;
 ;; You can assign other key instead of "c" to the text object by
-;; customizing `evilnc-comment-text-object'.
+;; customizing `evilnc-comment-text-object'.  Either,
+;;   (setq evilnc-comment-text-object "c")
+;;   (evilnc-default-hotkeys)
+;;
+;; Or,
+;;   (setq evilnc-comment-text-object "a")
+;;   (define-key evil-inner-text-objects-map evilnc-comment-text-object 'evilnc-inner-commenter)
+;;   (define-key evil-outer-text-objects-map evilnc-comment-text-object 'evilnc-outer-commenter)
 ;;
 ;; You can list of comments in current buffer through using imenu.
 ;; by setup `imenu-create-index-function' to `evilnc-imenu-create-index-function',
@@ -490,8 +496,10 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
    ((eq major-mode 'web-mode)
     ;; elixir is not supported in web-mode for now
     (unless (fboundp 'web-mode-comment-elixir-block)
-      (defalias 'web-mode-comment-elixir-block 'web-mode-comment-erb-block)
-      (defalias 'web-mode-uncomment-elixir-block 'web-mode-uncomment-erb-block))
+      (defun web-mode-comment-elixir-block (pos)
+        (web-mode-comment-erb-block pos))
+      (defun web-mode-uncomment-elixir-block (pos)
+        (web-mode-uncomment-erb-block pos)))
     (evilnc--web-mode-comment-or-uncomment beg end))
    (t
     (evilnc--working-on-region beg end 'comment-or-uncomment-region))))
@@ -783,7 +791,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.5.4"))
+  (message "3.5.5"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
@@ -814,6 +822,10 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
     (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
     (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
     (define-key evil-normal-state-map ",cv" 'evilnc-toggle-invert-comment-line-by-line)
+
+    ;; comment itself is text object
+    (define-key evil-inner-text-objects-map evilnc-comment-text-object 'evilnc-inner-commenter)
+    (define-key evil-outer-text-objects-map evilnc-comment-text-object 'evilnc-outer-commenter)
 
     (when evilnc-use-comment-object-setup
       ;; Install operator for evil text objects

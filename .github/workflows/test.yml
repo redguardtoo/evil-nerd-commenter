@@ -12,7 +12,7 @@ jobs:
           - 25.3
           - 26.3
           - 27.1
-          - snapshot
+          # - snapshot # evil 1.14 has legacy api call of defalias
     steps:
     - uses: purcell/setup-emacs@master
       with:
