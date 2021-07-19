@@ -85,7 +85,8 @@
     (setq evilnc-temporary-goal-column 0)))
 
 (defun evilnc-expand-to-whole-comment-or-line (start end)
-  "Expand the comment region defined by START and END so all comment is included.
+  "Expand the comment region defined by START and END.
+Make sure all comment is included.
 Or expand the region to contain whole lines."
 
   (cond

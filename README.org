@@ -224,7 +224,7 @@ if(flag==true){ doSomething(); }
 #+END_SRC
 The first line is production code. The second line is your debug code. You want to invert the comment status of these two lines (for example, comment out first line and uncomment the second line) for debug purpose.
 
-All you need to is =M-x evilnc-toggle-invert-comment-line-by-line= then =C-u 2 evilnc-comment-or-uncomment-lines=. The first command turn on some flag, so the behaviour of (un)commenting is different.
+All you need to is =M-x evilnc-toggle-invert-comment-line-by-line= then =C-u 2 evilnc-comment-or-uncomment-lines=. The first command turn on some flag, so the behavior of (un)commenting is different.
 * Evil usage
 If you use [[http://emacswiki.org/emacs/Evil][Evil]], you can use [[http://vimdoc.sourceforge.net/htmldoc/motion.html#text-objects][text objects and motions]]. But if you only *deals with lines*, I suggest using =evilnc-comment-or-uncomment-lines= instead.
 ** commenter text object "c"
@@ -297,10 +297,10 @@ Most popular programming languages are supported.
 You can set up =evilnc-original-above-comment-when-copy-and-comment= to decide which style to use when =evilnc-copy-and-comment-lines= or =evilnc-copy-and-comment-operator=,
 - Place the commented out text above original text
 - Or place the original text above commented out text
-** Customise comment style
+** Customize comment style
 Most commands call =evilnc-comment-or-uncomment-region-function=.
 
-You can modify this variable to customise the comment style.
+You can modify this variable to customize the comment style.
 
 #+begin_src elisp
 (with-eval-after-load 'evil-nerd-commenter

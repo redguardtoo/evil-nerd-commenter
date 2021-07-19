@@ -25,6 +25,8 @@
 
 ;;; Code:
 
+(defvar evil-state)
+
 (defun evilnc--check-fonts (fonts-under-cursor fonts-list)
   "Check whether FONTS-UNDER-CURSOR among FONTS-LIST."
   (delq nil
@@ -87,9 +89,9 @@ or else we can't select multiple lines comment."
          (evilnc--check-fonts fontfaces
                               '(font-lock-comment-delimiter-face)))))
 
-(defun evilnc-sdk-inside-one-line-p (beg end)
-  "Test BEG and END is inside one line."
-  (and (<= (line-beginning-position) beg)
+(defun evilnc-sdk-inside-one-line-p (start end)
+  "Test START and END is inside one line."
+  (and (<= (line-beginning-position) start)
        (<= end (line-end-position))))
 
 (defun evilnc-sdk-cur-line (&optional end)
@@ -97,24 +99,27 @@ or else we can't select multiple lines comment."
   (buffer-substring-no-properties (line-beginning-position)
                                   (or end (line-end-position))))
 
-(defun evilnc-sdk-expand-to-contain-whole-lines (beg end)
-  "Expand region between BEG and END so the region contain whole lines.
+(defun evilnc-sdk-expand-to-contain-whole-lines (start end)
+  "Expand region between START and END so the region contain whole lines.
 Return new range like '(region_begin . region_end)."
   (save-excursion
     ;; Another work around for evil-visual-line bug:
     ;; In `evil-mode', if we use hotkey V or `evil-visual-line' to select line,
     ;; the (line-beginning-position) of the line which is after the last selected
     ;; line is always (region-end)! Don't know why.
-    (when (and (> end beg)
-               (save-excursion (goto-char end) (= end (line-beginning-position)))
-               (boundp 'evil-state) (eq evil-state 'visual))
+    (when (and (> end start)
+               (save-excursion
+                 (goto-char end)
+                 (= end (line-beginning-position)))
+               (boundp 'evil-state)
+               (eq evil-state 'visual))
       (setq end (1- end)))
 
-    (goto-char beg)
-    (setq beg (line-beginning-position))
+    (goto-char start)
+    (setq start (line-beginning-position))
     (goto-char end)
     (setq end (line-end-position)))
-  (cons beg end))
+  (cons start end))
 
 (provide 'evil-nerd-commenter-sdk)
 ;;; evil-nerd-commenter-sdk.el ends here
