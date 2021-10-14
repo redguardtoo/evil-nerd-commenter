@@ -192,7 +192,7 @@ The 2nd and 3rd item is the comment start and comment end.")
 (defun evilnc-html-jsx-p ()
   "Test if current file is jsx."
   (and buffer-file-name
-       (string-match-p "\.jsx?$" buffer-file-name)))
+       (string-match-p "\.[tj]sx?$" buffer-file-name)))
 
 (defun evilnc-html-match-comment-delimiters-p (target-mode)
   "Use `major-mode' to match TARGET-MODE which could be:
