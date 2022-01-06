@@ -1,5 +1,6 @@
 * evil-nerd-commenter
 [[https://github.com/redguardtoo/evil-nerd-commenter/actions/workflows/test.yml][https://github.com/redguardtoo/evil-nerd-commenter/actions/workflows/test.yml/badge.svg]]
+[[https://elpa.nongnu.org/nongnu/evil-nerd-commenter.html][file:https://elpa.nongnu.org/nongnu/evil-nerd-commenter.svg]]
 [[http://melpa.org/#/evil-nerd-commenter][file:http://melpa.org/packages/evil-nerd-commenter-badge.svg]]
 [[http://stable.melpa.org/#/evil-nerd-commenter][file:http://stable.melpa.org/packages/evil-nerd-commenter-badge.svg]]
 

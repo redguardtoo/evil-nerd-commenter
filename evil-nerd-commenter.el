@@ -3,7 +3,7 @@
 ;; Author: Chen Bin <chenbin DOT sh AT gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.5.5
+;; Version: 3.5.6
 ;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: convenience evil
 ;;
@@ -782,7 +782,7 @@ Then we operate the expanded region.  NUM is ignored."
 (defun evilnc-version ()
   "The version number."
   (interactive)
-  (message "3.5.5"))
+  (message "3.5.6"))
 
 (defvar evil-normal-state-map)
 (defvar evil-visual-state-map)
