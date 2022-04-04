@@ -1,6 +1,6 @@
 ;; evil-nerd-commenter-tests.el --- unit tests for evil-nerd-commenter -*- coding: utf-8 -*-
 
-;; Author: Chen Bin <chenbin DOT sh AT gmail DOT com>
+;; Author: Chen Bin
 
 ;;; License:
 
