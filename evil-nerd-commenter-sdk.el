@@ -25,6 +25,7 @@
 
 ;;; Code:
 
+(require 'evil nil t)
 (defvar evil-state)
 
 (defun evilnc--check-fonts (fonts-under-cursor fonts-list)
