@@ -579,14 +579,14 @@ Paragraphs are separated by empty lines."
    num))
 
 ;;;###autoload
-(defun evilnc-comment-or-uncomment-to-the-line (&optional LINENUM)
-  "Comment or uncomment from current line to LINENUM line."
+(defun evilnc-comment-or-uncomment-to-the-line (&optional line-num)
+  "Comment or uncomment from current line to LINE-NUM line."
   (interactive "nLine: ")
   (if (not (region-active-p))
       (let* ((b (line-beginning-position))
              (e (line-end-position)))
         (save-excursion
-          (evilnc--goto-line LINENUM)
+          (evilnc--goto-line line-num)
           (if (< (line-beginning-position) b)
               (setq b (line-beginning-position)))
           (if (> (line-end-position) e)
@@ -676,7 +676,7 @@ CORRECT comment syntax will be used for C++/Java/Javascript."
            (evilnc-comment-or-uncomment-region b e))
          num))
 
-      (goto-line (car orig-pos))
+      (evilnc--goto-line (car orig-pos))
       ;; make sure we stay on original line
       (goto-char (min (+ (line-beginning-position) (cdr orig-pos))
                      (1- (line-end-position))))))))
