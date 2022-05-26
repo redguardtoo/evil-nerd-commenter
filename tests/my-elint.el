@@ -3,7 +3,6 @@
 ;; Copyright (C) 2022 Free Software Foundation, Inc.
 ;;
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
-;; URL: https://github.com/tumashu/pyim
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -21,7 +20,7 @@
 ;; along with this program; if not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;;  Syntax check the pyim code.  It's used in Emacs cli.
+;;  Syntax check the code.  It's used in Emacs cli.
 ;;
 
 ;;; Code:

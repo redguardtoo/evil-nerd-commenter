@@ -1,9 +1,8 @@
 ;;; my-elint.el --- syntax check the code  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022 Free Software Foundation, Inc.
+;; Copyright (C) 2022 Chen Bin
 ;;
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
-;; URL: https://github.com/tumashu/pyim
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -35,12 +34,7 @@
                      (string-match "\\.el$" file)
                      (not (string-match "\\.dir-locals\\.el" file))))
               (lambda (dir parent)
-                (not (or (string= dir ".")
-                         (string= dir "..")
-                         (string= dir ".git")
-                         (string= dir ".svn")
-                         (string= dir "deps")
-                         (string= dir "tests")
+                (not (or (member dir '("." ".." ".git" ".svn" "deps" "tests"))
                          (file-symlink-p (expand-file-name dir parent))))))))
   (dolist (file files)
     (byte-compile-file file)))
