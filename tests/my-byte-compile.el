@@ -20,7 +20,7 @@
 ;; along with this program; if not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;;  Syntax check the pyim code.  It's used in Emacs cli.
+;;  Syntax check the code.  It's used in Emacs cli.
 ;;
 
 ;;; Code:
@@ -40,4 +40,4 @@
     (byte-compile-file file)))
 
 (provide 'my-byte-compile)
-;;; my-elint.el ends here
+;;; my-byte-compile.el ends here
