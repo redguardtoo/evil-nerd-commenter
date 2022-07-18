@@ -24,9 +24,6 @@ deps:
 	@if [ ! -f deps/evil-1.14.2/evil.el ]; then curl -L https://stable.melpa.org/packages/evil-1.14.2.tar | tar x -C deps/; fi;
 	@if [ ! -f deps/web-mode.el ]; then curl -L https://raw.githubusercontent.com/fxbois/web-mode/master/web-mode.el > deps/web-mode.el; fi;
 
-lint: deps
-	@$(EMACS) $(EMACS_BATCH_OPTS) -l tests/my-elint.el 2>&1 | grep -E "([Ee]rror|[Ww]arning):" && exit 1 || exit 0
-
 compile: deps
 	$(RM) *.elc
 	@$(EMACS) $(EMACS_BATCH_OPTS) -l tests/my-byte-compile.el 2>&1 | grep -E "([Ee]rror|[Ww]arning):" && exit 1 || exit 0
