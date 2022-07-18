@@ -469,20 +469,6 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
                comment-operation))
     is-comment))
 
-(defun evilnc--web-mode-comment-or-uncomment (start end)
-  "Comment/uncomment line by line from START to END."
-  ;; end will change when you comment line by line
-  (let* (tmp)
-    ;; make sure start <= end
-    (when (> start end)
-      (setq tmp start)
-      (setq start end)
-      (setq end tmp))
-    (save-excursion
-      (push-mark start t t)
-      (goto-char end)
-      (web-mode-comment-or-uncomment))))
-
 ;;;###autoload
 (defun evilnc-comment-or-uncomment-region-internal (start end)
   "Comment or uncomment region from START to END."
@@ -494,7 +480,7 @@ Code snippets embedded in Org-mode is identified and right `major-mode' is used.
         (funcall 'web-mode-comment-erb-block pos))
       (defun web-mode-uncomment-elixir-block (pos)
         (funcall 'web-mode-uncomment-erb-block pos)))
-    (evilnc--web-mode-comment-or-uncomment start end))
+    (web-mode-comment-or-uncomment-region start end))
    (t
     (evilnc--working-on-region start end 'comment-or-uncomment-region))))
 
