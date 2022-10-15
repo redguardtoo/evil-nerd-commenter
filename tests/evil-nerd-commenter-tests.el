@@ -290,7 +290,7 @@
       ;; User presses "vac"
       (setq rlt (evilnc-outer-commenter))
       (should (eq (nth 0 rlt) 1))
-      (should (eq (nth 1 rlt) 41))
+      (should (eq (nth 1 rlt) 42))
       (should (eq (nth 2 rlt) 'exclusive))
 
       ;; User presses "vic"

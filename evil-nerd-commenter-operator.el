@@ -245,9 +245,9 @@ Or expand the region to contain whole lines."
                   (goto-char e)
                   (evilnc-sdk-cur-line e)))
            (empty-line-p (string-match "^[ \t]*$" str)))
-      (if empty-line-p
-          ;; empty line plus line feed
-          (setq e (- e (length str) 1))))
+      (when empty-line-p
+        ;; empty line plus line feed
+        (setq e (- e (length str) 1))))
     (cond
      ((>= b e)
       (setq rlt nil))
@@ -260,10 +260,10 @@ Or expand the region to contain whole lines."
       (while (not (evilnc-pure-comment-p e))
         (setq e (- e 1)))
 
-      (if (< b e) (setq rlt (cons b (+ e 1)))))
+      (if (< b e) (setq rlt (cons b (1+ e)))))
      (t
       ;; multi-line comment
-      (setq rlt (cons b e))))
+      (setq rlt (cons b (1+ e)))))
     rlt))
 
 (defun evilnc-adjusted-comment-end (b e)
