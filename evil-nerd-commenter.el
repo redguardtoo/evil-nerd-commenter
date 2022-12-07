@@ -3,8 +3,8 @@
 ;; Author: Chen Bin <chenbin.sh@gmail.com>
 
 ;; URL: http://github.com/redguardtoo/evil-nerd-commenter
-;; Version: 3.5.8
-;; Package-Requires: ((emacs "25.1"))
+;; Version: 3.6.0
+;; Package-Requires: ((emacs "26.1"))
 ;; Keywords: convenience evil
 ;;
 ;; This file is not part of GNU Emacs.
@@ -48,8 +48,8 @@
 ;; For example, `C-u 9 evilnc-quick-comment-or-uncomment-to-the-line` comments
 ;; code from current line to line 99 if you current line is 91.
 ;;
-;; Though this program could be used *independently*, though I highly recommend
-;; using it with Evil (https://bitbucket.org/lyro/evil/)
+;; Though this program could be used *independently*, it's recommended to
+;; us it with Evil.
 ;;
 ;; Evil makes you take advantage of power of Vi to comment lines.
 ;; For example, you can press key `99,ci` to comment out 99 lines.
@@ -57,34 +57,24 @@
 ;; Setup:
 ;;
 ;; If comma is your leader key, as most Vim users do, setup is one liner,
-;; (evilnc-default-hotkeys)
+;;   (evilnc-default-hotkeys)
 ;;
-;; If you use evil-leader and its default leader key,
-;; insert below setup into your ~/.emacs instead,
+;; Or else you can set up key bindings of below commands by yourself.
+;;   `evilnc-comment-or-uncomment-lines'
+;;   `evilnc-quick-comment-or-uncomment-to-the-line'
+;;   `evilnc-comment-and-kill-ring-save'
+;;   `evilnc-copy-and-comment-lines'
+;;   `evilnc-comment-or-uncomment-paragraphs'
+;;   `evilnc-comment-box'
+;;   `evilnc-toggle-invert-comment-line-by-line'
+;;   `evilnc-copy-and-comment-operator'
+;;   `evilnc-comment-operator'
+;;   `evilnc-comment-or-uncomment-html-tag'
+;;   `evilnc-comment-or-uncomment-html-paragraphs'
 ;;
-;; (global-set-key (kbd "M-;") 'evilnc-comment-or-uncomment-lines)
-;;
-;; (require 'evil-leader)
-;; (global-evil-leader-mode)
-;; (evil-leader/set-key
-;;   "ci" 'evilnc-comment-or-uncomment-lines
-;;   "cl" 'evilnc-quick-comment-or-uncomment-to-the-line
-;;   "ll" 'evilnc-quick-comment-or-uncomment-to-the-line
-;;   ;; Or use `evilnc-comment-and-kill-ring-save' instead
-;;   "cc" 'evilnc-copy-and-comment-lines
-;;   "cp" 'evilnc-comment-or-uncomment-paragraphs
-;;   "cr" 'comment-or-uncomment-region
-;;   "cv" 'evilnc-toggle-invert-comment-line-by-line
-;;   "."  'evilnc-copy-and-comment-operator
-;;   "\\" 'evilnc-comment-operator)
-;;
-;; `evilnc-comment-or-uncomment-html-tag' comment/uncomment html tag(s).
-;; `evilnc-comment-or-uncomment-html-paragraphs' comment/uncomment paragraphs
-;; containing html tags.
-;;
-;; You can setup `evilnc-original-above-comment-when-copy-and-comment'
-;; to decide which style to use when `evilnc-copy-and-comment-lines'
-;; or `evilnc-copy-and-comment-operator',
+;; Set up `evilnc-original-above-comment-when-copy-and-comment'
+;; to decide which style to use in `evilnc-copy-and-comment-lines'
+;; and `evilnc-copy-and-comment-operator',
 ;;   - Place the commented out text above original text
 ;;   - Or place the original text above commented out text
 ;;
@@ -799,6 +789,8 @@ if NO-EMACS-KEYBINDINGS is t, we don't define keybindings in EMACS mode."
     (define-key evil-normal-state-map ",cc" 'evilnc-copy-and-comment-lines)
     (define-key evil-visual-state-map ",cc" 'evilnc-copy-and-comment-lines)
     (define-key evil-normal-state-map ",cp" 'evilnc-comment-or-uncomment-paragraphs)
+    (define-key evil-normal-state-map ",cs" 'evilnc-comment-box)
+    (define-key evil-visual-state-map ",cs" 'evilnc-comment-box)
     (define-key evil-normal-state-map ",cr" 'comment-or-uncomment-region)
     (define-key evil-normal-state-map ",cv" 'evilnc-toggle-invert-comment-line-by-line)
 
@@ -979,6 +971,38 @@ Paragraphs are separated by empty lines."
      ;; }}
      (evilnc-comment-or-uncomment-html-tag))
    num))
+
+(defun evilnc-comment-box (&optional num)
+  "Comment out NUM lines, putting it inside a box.  NUM could be negative.
+If NUM is nil, comment out current paragraph.  This command uses `comment-box'."
+  (interactive "P")
+  (let* ((orig-pos (evilnc-guess-position-at-point))
+         range)
+
+    (cond
+     ((or (not num))
+      (when (setq range (bounds-of-thing-at-point 'paragraph))
+        (evilnc--fix-buggy-major-modes)
+        (when (evilnc-visual-line-p) (evil-normal-state))
+        (comment-box (car range) (cdr range) 1)))
+     (t
+      (save-excursion
+        (when (< num 0)
+          (evilnc--forward-line (1+ num))
+          (setq num (- 0 num)))
+        (evilnc--operation-on-lines-or-region
+         (lambda (b e)
+           (evilnc--fix-buggy-major-modes)
+           ;; when comment in evil visual state, the cursor may be rogue
+           (when (evilnc-visual-line-p) (evil-normal-state))
+           (comment-box b e 1))
+         num))))
+
+    (unless (eq (evilnc-guess-position-at-point) orig-pos)
+      (evilnc--goto-line (car orig-pos))
+      ;; make sure we stay on original line
+      (goto-char (min (+ (line-beginning-position) (cdr orig-pos))
+                      (1- (line-end-position)))))))
 
 ;; Attempt to define the operator on first load.
 ;; Will only work if evil has been loaded
