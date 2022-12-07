@@ -31,3 +31,4 @@ compile: deps
 # Run tests.
 test: compile deps
 	@$(EMACS) $(EMACS_BATCH_OPTS) -l tests/evil-nerd-commenter-tests.el
+	@$(RM) *.elc
