@@ -263,10 +263,9 @@ See http://lists.gnu.org/archive/html/bug-gnu-emacs/2013-03/msg00891.html."
     ;;     (or (match-end 1) (match-beginning 0)))
     ;;     (do-something))
     ;; My regex makes sure (match-end 1) return the position of comment starter
-    (if (and (boundp 'comment-use-syntax) (not comment-use-syntax))
-        ;; Maybe autoconf.el will (setq comment-use-syntax t) in the future?
-        (setq comment-start-skip "^\\(\\s*\\)\\(dnl\\|#\\) +"))
-    )
+    (when (and (boundp 'comment-use-syntax) (not comment-use-syntax))
+      ;; Maybe autoconf.el will (setq comment-use-syntax t) in the future?
+      (setq comment-start-skip "^\\(\\s*\\)\\(dnl\\|#\\) +")))
    ((eq major-mode 'haml-mode)
     (setq comment-use-syntax nil)
     (setq comment-start "-# ")
