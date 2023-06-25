@@ -55,6 +55,7 @@
            (evilnc-web-mode-comment-p pos))
       (evilnc--check-fonts (evilnc-fonts-at-point pos)
                            '(font-lock-comment-face
+                             tree-sitter-hl-face:comment
                              font-lock-comment-delimiter-face))))
 
 (defmacro evilnc-get-char (position)
