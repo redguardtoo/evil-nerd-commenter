@@ -9,7 +9,6 @@ jobs:
       fail-fast: false
       matrix:
         emacs_version:
-          - 25.3
           - 26.3
           - 27.1
           # - snapshot # evil 1.14 has legacy api call of defalias
